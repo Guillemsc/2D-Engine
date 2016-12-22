@@ -1,0 +1,10 @@
+﻿  j1Scene.cpp
+     Creating library C:\Users\guillemsc1\Documents\GitHub\UI-Console\Release\Development - Class 11 Handout.lib and object C:\Users\guillemsc1\Documents\GitHub\UI-Console\Release\Development - Class 11 Handout.exp
+  Generating code
+  15 of 535 functions ( 2.8%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    25 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+physfs.lib(physfs.obj) : warning LNK4049: locally defined symbol _sprintf imported
+  Motor2D.vcxproj -> C:\Users\guillemsc1\Documents\GitHub\UI-Console\Release\Development - Class 11 Handout.exe
+  Motor2D.vcxproj -> C:\Users\guillemsc1\Documents\GitHub\UI-Console\Release\Development - Class 11 Handout.pdb (Full PDB)
