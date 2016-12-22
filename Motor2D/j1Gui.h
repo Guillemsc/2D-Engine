@@ -14,7 +14,8 @@ enum ui_element
 	ui_text,
 	ui_image,
 	ui_window,
-	ui_scroll_bar
+	ui_scroll_bar,
+	ui_colored_rect
 };
 
 // -----------------------------------------
@@ -68,6 +69,10 @@ public:
 
 	void Tab();
 
+	void GetChilds(UI_Element * element, p2List<UI_Element*>& visited);
+
+private:
+
 public:
 	// Atlas --
 	SDL_Texture*		   atlas = nullptr;
@@ -120,14 +125,14 @@ public:
 	bool MouseClickEnterLeftIntern();
 	bool MouseClickOutLeftIntern();
 
-	void SetColor(int r, int g, int b, int a);
+	void SetDebugColor(SDL_Color color);
 
 protected:
 
 	// Helper functions
 	void GetChilds(UI_Element* element, p2List<UI_Element*> &visited);
 	bool PutWindowToTop();
-	int CheckClickOverlap(int x, int y);
+	int  CheckClickOverlap(int x, int y);
 
 	// Window general movement
 	bool Move_Element();
@@ -139,6 +144,8 @@ public:
 	bool                print = true;
 	bool				dinamic = false;
 	bool				enabled = true;
+	bool				click_through = false;
+	bool				always_top = false;
 
 	// Layers --
 	int				    layer = 0;
@@ -176,16 +183,17 @@ public:
 
 	bool update();
 
-	void Set(iPoint pos, int w, int h, bool isConsole = false);
+	void Set(iPoint pos, int w, int h);
 
 	UI_Element* CreateButton(iPoint _pos, int w, int h, bool dinamic = false);
 	UI_Element* CreateText(iPoint pos, _TTF_Font* font, int spacing = 0, bool dinamic = false, uint r = 255, uint g = 255, uint b = 255);
 	UI_Element* CreateImage(iPoint pos, SDL_Rect image, bool dinamic = false);
 	UI_Element* CreateTextInput(iPoint pos, int w, _TTF_Font* font, bool dinamic = false, uint r = 255, uint g = 255, uint b = 255);
 	UI_Element* CreateScrollBar(iPoint pos, int view_w, int view_h, int scroll, int button_size = 11, bool dinamic = false);
+	UI_Element* CreateColoredRect(iPoint pos, int view_w, int view_h, SDL_Color color, bool filled = true, bool dinamic = false);
 
 public:
-	bool is_consolse = false;
+
 };
 
 // ----------------------------
@@ -363,8 +371,6 @@ private:
 	int min_bar = 0;
 	int bar_distance = 0;
 
-
-
 };
 
 // ------------------------
@@ -409,19 +415,23 @@ private:
 
 };
 
-class UI_Linker
+class UI_ColoredRect : public UI_Element
 {
 public:
-	UI_Linker();
-	~UI_Linker();
+	UI_ColoredRect();
+	~UI_ColoredRect();
 
-	void Set();
+	void Set(iPoint pos, int w, int h, SDL_Color color, bool filled = true);
+
+	bool update();
+
+	void SetColor(SDL_Color color);
 
 public:
-	int x = 0;
-	int y = 0;
-	SDL_Rect rect;
-	UI_Element* element = nullptr;
+	
+private:
+	SDL_Color color;
+	bool filled = true;
 };
 
 #endif // __j1GUI_H__

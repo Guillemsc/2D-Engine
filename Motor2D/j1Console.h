@@ -3,13 +3,14 @@
 
 #include "j1Module.h"
 #include "p2Point.h"
+#include "p2List.h"
 
 class UI_Window;
+class UI_Text;
 
 class j1Console : public j1Module
 {
 public:
-
 	j1Console();
 
 	// Destructor
@@ -31,7 +32,7 @@ public:
 
 private:
 	UI_Window* window = nullptr;
-
+	p2List<UI_Text*> console_text;
 };
 
 #endif // __j1CONSOLE_H__

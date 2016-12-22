@@ -19,7 +19,9 @@ j1Scene::j1Scene() : j1Module()
 
 // Destructor
 j1Scene::~j1Scene()
-{}
+{
+
+}
 
 // Called before render is available
 bool j1Scene::Awake()
@@ -33,7 +35,8 @@ bool j1Scene::Awake()
 // Called before the first frame
 bool j1Scene::Start()
 {
-
+	window1 = (UI_Window*)App->gui->UI_CreateWin(iPoint(0, 0), 500, 500, true);
+	window1->CreateImage(iPoint(0, 0), { 0, 0, 500, 500 });
 	return true;
 }
 

@@ -54,6 +54,8 @@ bool j1Gui::Update(float dt)
 		debug = !debug;
 	}
 	
+	p2List<UI_Element*> to_top;
+
 	// What we want to update
 	p2List<UI_Element*> to_update;
 	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
@@ -83,11 +85,10 @@ bool j1Gui::Update(float dt)
 			higher_layer = elements->priority;
 	}
 
-	// Update if enabled
+	// Update normal
 	for (uint i = 0; i < to_update.count(); i++)
 	{
-			// Update
-			to_update[i]->update();
+		to_update[i]->update();
 	}
 
 	// Check if tab
@@ -183,29 +184,10 @@ void j1Gui::Tab()
 {
 }
 
-// -----------------------------------
-// ------------------------- Class Gui
-
-// -----------------------------------
-// Element ---------------------------
-
-UI_Element::UI_Element()
-{
-}
-
-UI_Element::~UI_Element()
-{
-}
-
-bool UI_Element::update()
-{
-	return true;
-}
-
 // ---------------------------------------------------------------------
-// Helper funcion to get all childs of a UI_Element
+// Funcion to get all childs of a UI_Element
 // ---------------------------------------------------------------------
-void UI_Element::GetChilds(UI_Element* element, p2List<UI_Element*> &visited)
+void j1Gui::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
 {
 	p2List<UI_Element*> frontier;
 
@@ -239,6 +221,25 @@ void UI_Element::GetChilds(UI_Element* element, p2List<UI_Element*> &visited)
 	}
 
 	// ---------------------------------------
+}
+
+// -----------------------------------
+// ------------------------- Class Gui
+
+// -----------------------------------
+// Element ---------------------------
+
+UI_Element::UI_Element()
+{
+}
+
+UI_Element::~UI_Element()
+{
+}
+
+bool UI_Element::update()
+{
+	return true;
 }
 
 // ---------------------------------------------------------------------
@@ -281,7 +282,7 @@ bool UI_Element::Move_Element()
 
 		// Get childs 
 		p2List<UI_Element*> visited;
-		GetChilds(this, visited);
+		App->gui->GetChilds(this, visited);
 
 		// Move all childs ------
 		for(uint i = 0; i < visited.count(); i++)
@@ -337,12 +338,17 @@ void UI_Element::SetEnabled(bool set)
 void UI_Element::SetEnabledAndChilds(bool set)
 {
 	p2List<UI_Element*> visited;
-	GetChilds(this, visited);
+	App->gui->GetChilds(this, visited);
 
 	for (int i = 0; i < visited.count(); i++)
 	{
 			visited[i]->enabled = set;
 	}
+}
+
+
+void UI_Element::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
+{
 }
 
 // ---------------------------------------------------------------------
@@ -356,7 +362,7 @@ bool UI_Element::PutWindowToTop()
 	p2List<UI_Element*> copy;
 
 	// Get childs from the window parent
-	GetChilds(parent, visited);
+	App->gui->GetChilds(parent, visited);
 
 	// Update layer
 	for (int i = 0; i<visited.count(); i++)
@@ -398,7 +404,7 @@ int UI_Element::CheckClickOverlap(int x, int y)
 			if (y > elements->data->rect.y && y < elements->data->rect.y + elements->data->rect.h)
 			{
 				// Check if is dinamic
-				if (elements->data->dinamic)
+				if (elements->data->dinamic && !elements->data->click_through)
 				{
 					// Add to check
 					contactors.add(elements->data->layer);
@@ -481,9 +487,9 @@ bool UI_Element::MouseClickOutLeftIntern()
 	return false;
 }
 
-void UI_Element::SetColor(int r, int g, int b, int a)
+void UI_Element::SetDebugColor(SDL_Color _color)
 {
-	color.r = r; color.g = g; color.b = b; color.a = a;
+	color.r = _color.r; color.g = _color.g; color.b = _color.b; color.a = _color.a;
 }
 
 // -----------------------------------
@@ -505,23 +511,19 @@ bool UI_Window::update()
 	if (App->gui->debug)
 		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 
-	if(is_consolse)
-		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, true);
-
 	Move_Element();
 	
 	return true;
 }
 
-void UI_Window::Set(iPoint pos, int w, int h, bool isConsole)
+void UI_Window::Set(iPoint pos, int w, int h)
 {
 	rect.x = pos.x;
 	rect.y = pos.y;
 	rect.w = w;
 	rect.h = h;
-	is_consolse = isConsole;
 
-	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+	color.r = color.g = color.b = color.a = 255;
 }
 
 // ---------------------------------------------------------------------
@@ -658,6 +660,31 @@ UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int 
 	return ret;
 }
 
+UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color color, bool filled, bool dinamic)
+{
+	UI_ColoredRect* ret = nullptr;
+	ret = new UI_ColoredRect();
+
+	if (ret != nullptr)
+	{
+		ret->type = ui_colored_rect;
+		ret->Set(pos, w, h, color, filled);
+		ret->parent = this;
+		ret->dinamic = dinamic;
+
+		// Layers --
+
+		ret->layer = childs.count() + layer + 1;
+
+		// ---------
+
+		App->gui->elements_list.Push(ret, ret->layer);
+		childs.add((UI_Element*)ret);
+	}
+
+	return ret;
+}
+
 // -----------------------------------
 // ---------------------------- Window
 
@@ -679,7 +706,7 @@ void UI_Button::Set(iPoint _pos, int w, int h)
 	rect.w = w;
 	rect.h = h;
 
-	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+	color.r = color.g = color.b = color.a = 255;
 }
 
 bool UI_Button::update()
@@ -885,7 +912,7 @@ void UI_Text::Set(iPoint _pos, _TTF_Font* _font, int _spacing, uint r, uint g, u
 
 	spacing = _spacing;
 
-	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+	color.r = color.g = color.b = color.a = 255;
 }
 
 void UI_Text::SetText(p2SString _text)
@@ -985,7 +1012,7 @@ void UI_Image::Set(iPoint _pos, SDL_Rect _image)
 	rect.w = _image.w;
 	rect.h = _image.h;
 
-	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+	color.r = color.g = color.b = color.a = 255;
 }
 
 void UI_Image::ChangeImage(SDL_Rect _rect)
@@ -1039,7 +1066,7 @@ void UI_Text_Input::Set(iPoint pos, int w, _TTF_Font* font, uint r, uint g, uint
 	bar.w = 1;
 	rect.h = bar.h;
 
-	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+	color.r = color.g = color.b = color.a = 255;
 }
 
 bool UI_Text_Input::update()
@@ -1377,7 +1404,7 @@ void UI_Scroll_Bar::Set(iPoint pos, int view_w, int view_h, int scroll, int butt
 	button->rect.y = min_bar;
 	// ----------
 
-	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+	color.r = color.g = color.b = color.a = 255;
 }
 
 bool UI_Scroll_Bar::update()
@@ -1696,3 +1723,36 @@ void UI_WindowManager::MinimizeOrMaximise()
 	}
 }
 
+UI_ColoredRect::UI_ColoredRect()
+{
+}
+
+UI_ColoredRect::~UI_ColoredRect()
+{
+}
+
+void UI_ColoredRect::Set(iPoint pos, int w, int h, SDL_Color _color, bool filled)
+{
+	rect.x = pos.x;
+	rect.y = pos.y;
+	rect.w = w;
+	rect.h = h;
+	color = _color;
+}
+
+bool UI_ColoredRect::update()
+{
+	if (!enabled)
+		return false;
+
+	App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, filled);
+
+	Move_Element();
+
+	return true;
+}
+
+void UI_ColoredRect::SetColor(SDL_Color _color)
+{
+	color = _color;
+}
