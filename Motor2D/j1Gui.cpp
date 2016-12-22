@@ -481,6 +481,11 @@ bool UI_Element::MouseClickOutLeftIntern()
 	return false;
 }
 
+void UI_Element::SetColor(int r, int g, int b, int a)
+{
+	color.r = r; color.g = g; color.b = b; color.a = a;
+}
+
 // -----------------------------------
 // --------------------------- Element
 
@@ -498,19 +503,25 @@ UI_Window::~UI_Window()
 bool UI_Window::update()
 {
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
+
+	if(is_consolse)
+		App->render->DrawQuad(rect, 255, 255, 255, 255, true);
 
 	Move_Element();
 	
 	return true;
 }
 
-void UI_Window::Set(iPoint pos, int w, int h)
+void UI_Window::Set(iPoint pos, int w, int h, bool isConsole)
 {
 	rect.x = pos.x;
 	rect.y = pos.y;
 	rect.w = w;
 	rect.h = h;
+	is_consolse = isConsole;
+
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 // ---------------------------------------------------------------------
@@ -667,6 +678,8 @@ void UI_Button::Set(iPoint _pos, int w, int h)
 	rect.y = _pos.y;
 	rect.w = w;
 	rect.h = h;
+
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 bool UI_Button::update()
@@ -675,7 +688,7 @@ bool UI_Button::update()
 		return false;
 
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 
 	if(print)
 		App->render->Blit(App->gui->atlas, rect.x, rect.y, &curr);
@@ -871,6 +884,8 @@ void UI_Text::Set(iPoint _pos, _TTF_Font* _font, int _spacing, uint r, uint g, u
 	rect.h = -1;
 
 	spacing = _spacing;
+
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 void UI_Text::SetText(p2SString _text)
@@ -924,7 +939,7 @@ bool UI_Text::update()
 	rect.h = h;
 
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 	
 	if (print)
 	{
@@ -970,6 +985,7 @@ void UI_Image::Set(iPoint _pos, SDL_Rect _image)
 	rect.w = _image.w;
 	rect.h = _image.h;
 
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 void UI_Image::ChangeImage(SDL_Rect _rect)
@@ -987,7 +1003,7 @@ bool UI_Image::update()
 
 	if (App->gui->debug)
 	{
-		App->render->DrawQuad(rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 	}
 	
 	if(print)
@@ -1022,6 +1038,8 @@ void UI_Text_Input::Set(iPoint pos, int w, _TTF_Font* font, uint r, uint g, uint
 	App->font->CalcSize("@", bar.x, bar.h, font);
 	bar.w = 1;
 	rect.h = bar.h;
+
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 bool UI_Text_Input::update()
@@ -1030,7 +1048,7 @@ bool UI_Text_Input::update()
 		return false;
 
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 
 	p2SString test = intern_text;
 
@@ -1249,7 +1267,7 @@ void UI_Text_Input::DrawBar()
 	bar.x = rect.x + bar_x;
 	bar.y = rect.y;
 
-	App->render->DrawQuad(bar, 255, 255, 255, 255, true);
+	App->render->DrawQuad(bar, color.r, color.g, color.b, color.a, true);
 }
 
 void UI_Text_Input::SetPasword()
@@ -1359,6 +1377,7 @@ void UI_Scroll_Bar::Set(iPoint pos, int view_w, int view_h, int scroll, int butt
 	button->rect.y = min_bar;
 	// ----------
 
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 bool UI_Scroll_Bar::update()
@@ -1396,7 +1415,7 @@ bool UI_Scroll_Bar::update()
 	// Viewport debug -----
 	if (App->gui->debug)
 	{
-		App->render->DrawQuad(viewport_rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(viewport_rect, color.r, color.g, color.b, color.a, false);
 		App->render->DrawQuad(rect, 255, 255, 0, 255, false);
 		App->render->DrawLine(rect.x + rect.w + 10, rect.y, rect.x + rect.w + 10, rect.y + rect.h, 255, 255, 255, 255);
 	}
@@ -1594,6 +1613,8 @@ void UI_WindowManager::Set(iPoint pos, int w, int h)
 	rect.h = h;
 
 	max_w = rect.w / 4;
+
+	color.r = 255; color.g = 255; color.b = 255; color.a = 255;
 }
 
 bool UI_WindowManager::update()
@@ -1609,7 +1630,7 @@ bool UI_WindowManager::update()
 	}
 
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, 255, 255, 255, 255, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 	
 	if (print)
 	{

@@ -120,6 +120,8 @@ public:
 	bool MouseClickEnterLeftIntern();
 	bool MouseClickOutLeftIntern();
 
+	void SetColor(int r, int g, int b, int a);
+
 protected:
 
 	// Helper functions
@@ -146,6 +148,9 @@ public:
 
 	//bool		        highlighted;
 
+protected:
+	SDL_Color			color;
+
 private:
 	// Moving ---
 	bool			    moving = false;
@@ -153,7 +158,6 @@ private:
 	int					mouse_y;
 	bool				clicked = false;
 	// ----------
-
 
 };
 
@@ -172,7 +176,7 @@ public:
 
 	bool update();
 
-	void Set(iPoint pos, int w, int h);
+	void Set(iPoint pos, int w, int h, bool isConsole = false);
 
 	UI_Element* CreateButton(iPoint _pos, int w, int h, bool dinamic = false);
 	UI_Element* CreateText(iPoint pos, _TTF_Font* font, int spacing = 0, bool dinamic = false, uint r = 255, uint g = 255, uint b = 255);
@@ -181,6 +185,7 @@ public:
 	UI_Element* CreateScrollBar(iPoint pos, int view_w, int view_h, int scroll, int button_size = 11, bool dinamic = false);
 
 public:
+	bool is_consolse = false;
 };
 
 // ----------------------------
