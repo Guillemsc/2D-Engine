@@ -506,7 +506,7 @@ bool UI_Window::update()
 		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 
 	if(is_consolse)
-		App->render->DrawQuad(rect, 255, 255, 255, 255, true);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, true);
 
 	Move_Element();
 	

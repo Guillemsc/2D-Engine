@@ -16,7 +16,7 @@ public:
 	virtual ~j1Console();
 
 	// Called before render is available
-	bool Awake(pugi::xml_node&);
+	bool Awake(pugi::xml_node& node);
 
 	bool Start();
 

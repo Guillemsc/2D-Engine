@@ -11,8 +11,7 @@
 #include "j1Gui.h"
 #include "j1Scene.h"
 
-#define BOX_HORIZONTAL 71
-#define BOX_VERTICAL 93
+
 j1Scene::j1Scene() : j1Module()
 {
 	name.create("scene");
