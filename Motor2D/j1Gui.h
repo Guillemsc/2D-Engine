@@ -34,6 +34,7 @@ class UI_Element;
 class UI_Window;
 class UI_Text;
 class UI_WindowManager;
+
 class j1Gui : public j1Module
 {
 public:
@@ -70,6 +71,8 @@ public:
 	void Tab();
 
 	void GetChilds(UI_Element * element, p2List<UI_Element*>& visited);
+	void GetAlwaysTopElements(p2List<UI_Element*>& always_top);
+	void ReorderElements();
 
 private:
 
@@ -96,7 +99,7 @@ public:
 	bool				   debug = false;
 
 private:
-	//int				   tab_pos = 0;
+	bool				   start = true;
 };
 
 // -------------------------
@@ -130,7 +133,6 @@ public:
 protected:
 
 	// Helper functions
-	void GetChilds(UI_Element* element, p2List<UI_Element*> &visited);
 	bool PutWindowToTop();
 	int  CheckClickOverlap(int x, int y);
 
@@ -165,7 +167,6 @@ private:
 	int					mouse_y;
 	bool				clicked = false;
 	// ----------
-
 };
 
 

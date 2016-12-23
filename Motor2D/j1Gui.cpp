@@ -48,23 +48,41 @@ bool j1Gui::Start()
 // ---------------------------------------------------------------------
 bool j1Gui::Update(float dt)
 {
+	// Start -------------------------------------------------
+	if (start)
+	{
+		// Put all always top elements to top ----
+		p2List<UI_Element*> always_top;
+		GetAlwaysTopElements(always_top);
+
+		for (int i = 0; i < always_top.count(); i++)
+			always_top[i]->layer = elements_list.Count() + i;
+		
+		ReorderElements();
+		// ---------------------------------------
+
+		start = false;
+	}
+
+	// -------------------------------------------------------
+
 	// Debug
 	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 	{
 		debug = !debug;
 	}
 	
+	// Update all elements in order
 	p2List<UI_Element*> to_top;
-
-	// What we want to update
 	p2List<UI_Element*> to_update;
+
 	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
 	{
 		if (elements->data->enabled)
 		{
 			to_update.add(elements->data);
 
-			// Debug lines
+			// Debug lines --------
 			if (debug)
 			{
 				for (int y = 0; y < elements->data->childs.count(); y++)
@@ -79,20 +97,19 @@ bool j1Gui::Update(float dt)
 					}
 				}
 			}
+			// ---------------------
 		}
+
 		//Take higher layer
 		if (elements->next == nullptr)
 			higher_layer = elements->priority;
 	}
 
-	// Update normal
+	// Update
 	for (uint i = 0; i < to_update.count(); i++)
 	{
 		to_update[i]->update();
 	}
-
-	// Check if tab
-	//Tab();
 
 	return true;
 }
@@ -223,6 +240,50 @@ void j1Gui::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
 	// ---------------------------------------
 }
 
+void j1Gui::GetAlwaysTopElements(p2List<UI_Element*>& always_top)
+{
+	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
+	{
+		if (elements->data->always_top)
+		{
+			p2List<UI_Element*> childs;
+			GetChilds(elements->data, childs);
+
+			for (int i = 0; i < childs.count(); i++)
+			{
+				childs[i]->always_top = true;
+			}
+		}
+	}
+
+	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
+	{
+		if (elements->data->always_top)
+			always_top.add(elements->data);
+	}
+}
+
+void j1Gui::ReorderElements()
+{
+	p2List<UI_Element*> copy;
+
+	// Copy all elements of PQ and clean it
+	while (App->gui->elements_list.Count() != 0)
+	{
+		UI_Element* tmp;
+		App->gui->elements_list.Pop(tmp);
+		copy.add(tmp);
+	}
+
+	App->gui->elements_list.Clear();
+
+	// Place againt he elements on the PQ (now they are on the correct order)
+	for (int i = 0; i < copy.count(); i++)
+	{
+		App->gui->elements_list.Push(copy[i], copy[i]->layer);
+	}
+}
+
 // -----------------------------------
 // ------------------------- Class Gui
 
@@ -347,10 +408,6 @@ void UI_Element::SetEnabledAndChilds(bool set)
 }
 
 
-void UI_Element::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
-{
-}
-
 // ---------------------------------------------------------------------
 // Put all elements of a window to the top of the PQ
 // ---------------------------------------------------------------------
@@ -361,30 +418,30 @@ bool UI_Element::PutWindowToTop()
 	p2List<UI_Element*> visited;
 	p2List<UI_Element*> copy;
 
+	p2List<UI_Element*> always_top;
+
 	// Get childs from the window parent
 	App->gui->GetChilds(parent, visited);
 
+	// Get always top elements
+	App->gui->GetAlwaysTopElements(always_top);
+
 	// Update layer
-	for (int i = 0; i<visited.count(); i++)
+	int i = 0;
+	for (; i<visited.count(); i++)
 	{
+		if(!visited[i]->always_top)
 		visited[i]->layer = App->gui->higher_layer + i + 1;
 	}
 
-	// Copy all elements of PQ and clean it
-	while(App->gui->elements_list.Count() != 0)
+	// Update always top layer
+	for (int y = 0; y < always_top.count(); y++)
 	{
-		UI_Element* tmp;
-		App->gui->elements_list.Pop(tmp);
-		copy.add(tmp);
+		always_top[y]->layer = App->gui->higher_layer + i + 1;
 	}
 
-	App->gui->elements_list.Clear();
-
-	// Place againt he elements on the PQ (now they are on the correct order)
-	for (int i = 0; i < copy.count(); i++)
-	{
-		App->gui->elements_list.Push(copy[i], copy[i]->layer);
-	}
+	// Rorded the elements of the PQ
+	App->gui->ReorderElements();
 
 	return ret;
 }

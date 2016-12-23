@@ -26,11 +26,15 @@ bool j1Console::Awake(pugi::xml_node &node)
 
 bool j1Console::Start()
 {
+	console_color = { 40, 0, 0, 150 };
+
 	window = (UI_Window*)App->gui->UI_CreateWin(iPoint(App->render->camera.x, App->render->camera.y), 
 			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, true);
 	window->always_top = true;
-	window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, { 40, 0, 0, 150 });
 
+	colored_rect1 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, console_color);
+	top_text = (UI_Text*)window->CreateText(iPoint(1, 1), App->font->default);
+	top_text->SetText("Console");
 
 	return true;
 }

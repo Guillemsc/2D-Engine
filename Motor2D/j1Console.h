@@ -4,9 +4,11 @@
 #include "j1Module.h"
 #include "p2Point.h"
 #include "p2List.h"
+#include "j1Fonts.h"
 
 class UI_Window;
 class UI_Text;
+class UI_ColoredRect;
 
 class j1Console : public j1Module
 {
@@ -29,10 +31,14 @@ public:
 private:
 
 public:
+	SDL_Color console_color;
 
 private:
 	UI_Window* window = nullptr;
 	p2List<UI_Text*> console_text;
+
+	UI_ColoredRect* colored_rect1 = nullptr;
+	UI_Text* top_text = nullptr;
 };
 
 #endif // __j1CONSOLE_H__
