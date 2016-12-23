@@ -37,6 +37,8 @@ public:
 
 	UI_Window* window1 = nullptr;
 		UI_Image* background = nullptr;
+	UI_Window* window2 = nullptr;
+
 
 private:
 

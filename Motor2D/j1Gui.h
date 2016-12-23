@@ -15,7 +15,8 @@ enum ui_element
 	ui_image,
 	ui_window,
 	ui_scroll_bar,
-	ui_colored_rect
+	ui_colored_rect,
+	ui_undefined
 };
 
 // -----------------------------------------
@@ -71,8 +72,11 @@ public:
 	void Tab();
 
 	void GetChilds(UI_Element * element, p2List<UI_Element*>& visited);
+	void GetParentElements(UI_Element * element, p2List<UI_Element*>& visited);
 	void GetAlwaysTopElements(p2List<UI_Element*>& always_top);
 	void ReorderElements();
+	bool Move_Elements();
+	UI_Element* CheckClickMove(int x, int y);
 
 private:
 
@@ -100,6 +104,13 @@ public:
 
 private:
 	bool				   start = true;
+
+	// Movement
+	bool				   moving = false;
+	int					   mouse_x = 0;
+	int					   mouse_y = 0;
+	UI_Element*			   to_move = nullptr;
+	//
 };
 
 // -------------------------
@@ -130,17 +141,15 @@ public:
 
 	void SetDebugColor(SDL_Color color);
 
+	bool PutWindowToTop();
+
 protected:
 
 	// Helper functions
-	bool PutWindowToTop();
 	int  CheckClickOverlap(int x, int y);
 
-	// Window general movement
-	bool Move_Element();
-
 public:
-	ui_element          type;
+	ui_element          type = ui_undefined;
 	SDL_Rect            rect;
 
 	bool                print = true;
@@ -153,20 +162,20 @@ public:
 	int				    layer = 0;
 	p2List<UI_Element*> childs;
 	UI_Window*			parent = nullptr;
+	UI_Element*			parent_element = nullptr;
 	// ----------
 
 	//bool		        highlighted;
+
+	int					mouse_x = 0;
+	int					mouse_y = 0;
 
 protected:
 	SDL_Color			color;
 
 private:
-	// Moving ---
-	bool			    moving = false;
-	int					mouse_x;
-	int					mouse_y;
+
 	bool				clicked = false;
-	// ----------
 };
 
 
@@ -194,6 +203,8 @@ public:
 	UI_Element* CreateColoredRect(iPoint pos, int view_w, int view_h, SDL_Color color, bool filled = true, bool dinamic = false);
 
 public:
+
+private:
 
 };
 

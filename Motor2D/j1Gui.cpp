@@ -111,6 +111,8 @@ bool j1Gui::Update(float dt)
 		to_update[i]->update();
 	}
 
+	Move_Elements();
+
 	return true;
 }
 
@@ -240,6 +242,17 @@ void j1Gui::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
 	// ---------------------------------------
 }
 
+void j1Gui::GetParentElements(UI_Element * element, p2List<UI_Element*>& visited)
+{
+	UI_Element* curr = element;
+	
+	while (curr != nullptr)
+	{
+		visited.add(curr);
+		curr = curr->parent_element;
+	}
+}
+
 void j1Gui::GetAlwaysTopElements(p2List<UI_Element*>& always_top)
 {
 	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
@@ -284,6 +297,138 @@ void j1Gui::ReorderElements()
 	}
 }
 
+// ---------------------------------------------------------------------
+// Moves all the UI_Element childs with the mouse
+// ---------------------------------------------------------------------
+bool j1Gui::Move_Elements()
+{
+	int ret = false;
+
+	// Click
+	if((App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN) && !moving)
+	{
+		App->input->GetMousePosition(mouse_x, mouse_y);
+
+		mouse_x -= App->render->camera.x;
+		mouse_y -= App->render->camera.y;
+
+		// Get the object with the higher layer
+		to_move = CheckClickMove(mouse_x, mouse_y);
+
+		if (to_move != nullptr)
+		{
+			// Put window and childs to top
+			to_move->PutWindowToTop();
+			moving = true;
+			ret = true;
+		}
+	}
+
+	// Move ---------------------
+	if (moving)
+	{
+		// Get Mouse ------------
+
+		int curr_x; int curr_y;
+		App->input->GetMousePosition(curr_x, curr_y);
+
+		curr_x -= App->render->camera.x;
+		curr_y -= App->render->camera.y;
+
+		// ----------------------
+
+		// Get childs 
+		p2List<UI_Element*> visited;
+		App->gui->GetChilds(to_move, visited);
+
+		// Move all childs ------
+		for (uint i = 0; i < visited.count(); i++)
+		{
+			if (curr_x != mouse_x)
+				visited[i]->rect.x -= mouse_x - curr_x;
+
+			if (curr_y != mouse_y)
+				visited[i]->rect.y -= mouse_y - curr_y;
+		}
+
+		// Update mouse stored
+		for (uint i = 0; i < visited.count(); i++)
+		{
+			visited[i]->mouse_x = curr_x;
+			visited[i]->mouse_y = curr_y;
+		}
+
+		mouse_x = curr_x;
+		mouse_y = curr_y;
+
+		// ----------------------
+	}
+
+	// Release click
+	if ((App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_UP))
+	{
+		to_move = nullptr;
+		moving = false;
+	}
+
+	return ret;
+}
+
+UI_Element* j1Gui::CheckClickMove(int x, int y)
+{
+	p2List<UI_Element*> elements_clicked;
+
+	// Check the UI_Elements that are in the point
+	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
+	{
+		if (x > elements->data->rect.x && x < elements->data->rect.x + elements->data->rect.w)
+		{
+			if (y > elements->data->rect.y && y < elements->data->rect.y + elements->data->rect.h)
+			{
+				// Check if you can click through it and if it's enabled
+				if (!elements->data->click_through || !elements->data->enabled)
+				{
+					elements_clicked.add(elements->data);
+				}
+			}
+		}
+	}
+
+	// Get the higher element
+	int higher_layer = -1;
+	UI_Element* higher_element = nullptr;
+
+	if (elements_clicked.count() > 0)
+	{
+		for (uint i = 0; i < elements_clicked.count(); i++)
+		{
+			if (elements_clicked[i]->layer > higher_layer)
+			{
+				higher_layer = elements_clicked[i]->layer;
+				higher_element = elements_clicked[i];
+			}
+		}
+
+		//  If the current it's not dynamic, check if there is dinamic parents
+		if (!higher_element->dinamic)
+		{
+			p2List<UI_Element*> parents_list;
+			App->gui->GetParentElements(higher_element, parents_list);
+
+			for (int i = parents_list.count() - 1; i > 0; i--)
+			{
+				if (parents_list[i]->dinamic)
+				{
+					higher_element = parents_list[i];
+					break;
+				}
+			}
+		}
+	}
+
+	return higher_element;
+}
+
 // -----------------------------------
 // ------------------------- Class Gui
 
@@ -301,91 +446,6 @@ UI_Element::~UI_Element()
 bool UI_Element::update()
 {
 	return true;
-}
-
-// ---------------------------------------------------------------------
-// Moves all the UI_Element childs with the mouse
-// ---------------------------------------------------------------------
-bool UI_Element::Move_Element()
-{
-	int ret = false;
-
-	// Click
-	if(MouseClickEnterLeftIntern() && !moving)
-	{
-		App->input->GetMousePosition(mouse_x, mouse_y);
-
-		mouse_x -= App->render->camera.x;
-		mouse_y -= App->render->camera.y;
-
-		//Check if there is another object on the same point
-		if (CheckClickOverlap(mouse_x, mouse_y) == layer)
-		{
-			// Put window and childs to top
-			PutWindowToTop();
-			moving = true;
-			ret = true;
-		}	
-	}
-
-	// Move ---------------------
-	if(moving)
-	{
-		// Get Mouse ------------
-
-		int curr_x; int curr_y;
-		App->input->GetMousePosition(curr_x, curr_y);
-
-		curr_x -= App->render->camera.x;
-		curr_y -= App->render->camera.y;
-
-		// ----------------------
-
-		// Get childs 
-		p2List<UI_Element*> visited;
-		App->gui->GetChilds(this, visited);
-
-		// Move all childs ------
-		for(uint i = 0; i < visited.count(); i++)
-		{
-			if (curr_x != mouse_x)
-				visited[i]->rect.x -= mouse_x - curr_x;
-
-			if (curr_y != mouse_y)
-				visited[i]->rect.y -= mouse_y - curr_y;
-		}
-
-		// Update mouse stored
-		for (uint i = 0; i < visited.count(); i++)
-		{
-			visited[i]->mouse_x = curr_x;
-			visited[i]->mouse_y = curr_y;
-		}
-
-		// ----------------------
-	}
-
-	//LOG("START---------------------------");
-	//LOG("Priority----------------");
-	//for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
-	//{
-	//	LOG("%d", elements->priority);
-	//}
-	//LOG("Layer------------------");
-	//for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
-	//{
-	//	LOG("%d", elements->data->layer);
-	//}
-	//LOG("----------------");
-	//LOG("END---------------------------");
-
-	// Release click
-	if (MouseClickOutLeftIntern())
-	{
-		moving = false;
-	}
-
-	return ret;
 }
 
 void UI_Element::SetEnabled(bool set)
@@ -461,20 +521,16 @@ int UI_Element::CheckClickOverlap(int x, int y)
 			if (y > elements->data->rect.y && y < elements->data->rect.y + elements->data->rect.h)
 			{
 				// Check if is dinamic
-				if (elements->data->dinamic && !elements->data->click_through)
-				{
-					// Add to check
+				if (!elements->data->click_through)
 					contactors.add(elements->data->layer);
-				}
 			}
 		}
 	}
 
 	// Get the higher layer
-	uint higher_layer;
+	int higher_layer = -1;
 	if (contactors.count() > 0)
 	{
-		higher_layer = 0;
 		for (uint i = 0; i < contactors.count(); i++)
 		{
 			if (contactors[i] > higher_layer)
@@ -482,11 +538,6 @@ int UI_Element::CheckClickOverlap(int x, int y)
 		}
 	}
 
-	// In case elements are not dinamics
-	else
-	{
-		higher_layer = -1;
-	}
 	return higher_layer;
 }
 
@@ -496,6 +547,7 @@ int UI_Element::CheckClickOverlap(int x, int y)
 void UI_Element::AddChild(UI_Element * _child)
 {
 	childs.add(_child);
+	_child->parent_element = this;
 }
 
 // ---------------------------------------------------------------------
@@ -504,7 +556,9 @@ void UI_Element::AddChild(UI_Element * _child)
 void UI_Element::AddChildBoth(UI_Element * _child)
 {
 	childs.add(_child);
+	_child->parent_element = this;
 	_child->childs.add(this);
+	this->parent_element = _child;
 }
 
 // ---------------------------------------------------------------------
@@ -567,8 +621,6 @@ bool UI_Window::update()
 {
 	if (App->gui->debug)
 		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
-
-	Move_Element();
 	
 	return true;
 }
@@ -596,6 +648,7 @@ UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic)
 		ret->type = ui_button;
 		ret->Set(pos, w, h);
 		ret->parent = this;
+		ret->parent_element = this;
 		ret->dinamic = _dinamic;
 
 		// Layers --
@@ -624,6 +677,7 @@ UI_Element* UI_Window::CreateText(iPoint pos, _TTF_Font * font, int spacing, boo
 		ret->type = ui_text;
 		ret->Set(pos, font, spacing, r, g, b);
 		ret->parent = this;
+		ret->parent_element = this;
 		ret->dinamic = _dinamic;
 
 		// Layers --
@@ -651,6 +705,7 @@ UI_Element* UI_Window::CreateImage(iPoint pos, SDL_Rect image, bool _dinamic)
 		ret->type = ui_image;
 		ret->Set(pos, image);
 		ret->parent = this;
+		ret->parent_element = this;
 		ret->dinamic = _dinamic;
 
 		// Layers --
@@ -678,6 +733,7 @@ UI_Element* UI_Window::CreateTextInput(iPoint pos, int w, _TTF_Font* font,bool _
 		ret->type = ui_text_input;
 		ret->Set(pos, w, font, r, g, b);
 		ret->parent = this;
+		ret->parent_element = this;
 		ret->dinamic = _dinamic;
 
 		// Layers --
@@ -702,6 +758,7 @@ UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int 
 		ret->type = ui_scroll_bar;
 		ret->Set(pos, view_w, view_h, scroll, button_size);
 		ret->parent = this;
+		ret->parent_element = this;
 		ret->dinamic = _dinamic;
 
 		// Layers --
@@ -717,7 +774,7 @@ UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int 
 	return ret;
 }
 
-UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color color, bool filled, bool dinamic)
+UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color color, bool filled, bool _dinamic)
 {
 	UI_ColoredRect* ret = nullptr;
 	ret = new UI_ColoredRect();
@@ -727,7 +784,8 @@ UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color co
 		ret->type = ui_colored_rect;
 		ret->Set(pos, w, h, color, filled);
 		ret->parent = this;
-		ret->dinamic = dinamic;
+		ret->parent_element = this;
+		ret->dinamic = _dinamic;
 
 		// Layers --
 
@@ -776,8 +834,6 @@ bool UI_Button::update()
 
 	if(print)
 		App->render->Blit(App->gui->atlas, rect.x, rect.y, &curr);
-
-	Move_Element();
 
 	return true;
 }
@@ -1038,8 +1094,6 @@ bool UI_Text::update()
 		}
 	}
 
-	Move_Element();
-
 	return true;
 }
 
@@ -1093,9 +1147,6 @@ bool UI_Image::update()
 	if(print)
 		App->render->Blit(App->gui->atlas, rect.x, rect.y, &image);
 
-	
-
-	Move_Element();
 
 	return true;
 }
@@ -1177,8 +1228,6 @@ bool UI_Text_Input::update()
 		// --------------------
 
 	}
-
-	Move_Element();
 
 	return true;
 }
@@ -1469,8 +1518,6 @@ bool UI_Scroll_Bar::update()
 	if (!enabled)
 		return false;
 
-	Move_Element();
-
 	SetMinMaxBar();
 
 	bar_pos = button->rect.y;
@@ -1724,8 +1771,6 @@ bool UI_WindowManager::update()
 
 	MinimizeOrMaximise();
 
-	Move_Element();
-
 	return true;
 }
 
@@ -1803,8 +1848,6 @@ bool UI_ColoredRect::update()
 		return false;
 
 	App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, filled);
-
-	Move_Element();
 
 	return true;
 }

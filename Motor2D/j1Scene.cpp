@@ -35,8 +35,11 @@ bool j1Scene::Awake()
 // Called before the first frame
 bool j1Scene::Start()
 {
-	window1 = (UI_Window*)App->gui->UI_CreateWin(iPoint(0, 0), 500, 500, true);
-	window1->CreateImage(iPoint(0, 0), { 0, 0, 500, 500 });
+	window1 = (UI_Window*)App->gui->UI_CreateWin(iPoint(0, 0), 300, 200, true);
+	//window1->CreateImage(iPoint(0, 0), { 0, 0, 500, 500 }, true);
+	window1->CreateColoredRect(iPoint(0, 0), 200, 200, {255, 51, 153, 255}, true, true);
+	window2 = (UI_Window*)App->gui->UI_CreateWin(iPoint(300, 0), 200, 500, true);
+	window2->CreateColoredRect(iPoint(300, 0), 200, 200, { 0, 51, 153, 255 }, true, true);
 	return true;
 }
 

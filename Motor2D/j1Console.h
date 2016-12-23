@@ -38,6 +38,10 @@ private:
 	p2List<UI_Text*> console_text;
 
 	UI_ColoredRect* colored_rect1 = nullptr;
+	UI_ColoredRect* colored_rect_top = nullptr;
+	UI_ColoredRect* colored_rect_left = nullptr;
+	UI_ColoredRect* colored_rect_right = nullptr;
+	UI_ColoredRect* colored_rect_bottom = nullptr;
 	UI_Text* top_text = nullptr;
 };
 
