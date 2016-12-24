@@ -27,10 +27,10 @@ bool j1Console::Awake(pugi::xml_node &node)
 
 bool j1Console::Start()
 {
-	console_color = { 32, 32, 32, 150 };
+	console_color = { 32, 32, 32, 200 };
 
 	window = (UI_Window*)App->gui->UI_CreateWin(iPoint(App->render->camera.x, App->render->camera.y), 
-			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, true);
+			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, false);
 	window->always_top = true;
 
 	colored_rect1 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, console_color);
@@ -45,8 +45,13 @@ bool j1Console::Start()
 	return true;
 }
 
-bool j1Console::Update()
+bool j1Console::Update(float dt)
 {
+	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
+	{
+		window->SetEnabledAndChilds(!window->enabled);
+	}
+
 	return true;
 }
 

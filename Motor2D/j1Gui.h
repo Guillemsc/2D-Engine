@@ -88,7 +88,7 @@ public:
 
 	// All elements
 	p2PQueue<UI_Element*>  elements_list;
-	uint				   higher_layer = 0;
+	double				   higher_layer = 0;
 
 	// Elements that can tab
 	p2List<UI_Element*>    tab_list;
@@ -159,7 +159,7 @@ public:
 	bool				always_top = false;
 
 	// Layers --
-	int				    layer = 0;
+	double				layer = 0;
 	p2List<UI_Element*> childs;
 	UI_Window*			parent = nullptr;
 	UI_Element*			parent_element = nullptr;

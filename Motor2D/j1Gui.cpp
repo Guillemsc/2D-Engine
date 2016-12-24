@@ -386,7 +386,7 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 			if (y > elements->data->rect.y && y < elements->data->rect.y + elements->data->rect.h)
 			{
 				// Check if you can click through it and if it's enabled
-				if (!elements->data->click_through || !elements->data->enabled)
+				if (!elements->data->click_through && elements->data->enabled)
 				{
 					elements_clicked.add(elements->data);
 				}
@@ -415,6 +415,7 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 			p2List<UI_Element*> parents_list;
 			App->gui->GetParentElements(higher_element, parents_list);
 
+			higher_element = nullptr;
 			for (int i = parents_list.count() - 1; i > 0; i--)
 			{
 				if (parents_list[i]->dinamic)
