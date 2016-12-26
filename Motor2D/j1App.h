@@ -97,6 +97,8 @@ public:
 	j1Gui*				gui = NULL;
 	j1Console*			console = NULL;
 
+	p2List<p2SString> logs;
+
 private:
 
 	p2List<j1Module*>	modules;

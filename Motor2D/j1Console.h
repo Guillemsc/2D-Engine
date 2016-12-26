@@ -23,15 +23,22 @@ public:
 
 	bool Start();
 
+	bool PreUpdate();
 	bool Update(float dt);
 
 	// Called before quitting
 	bool CleanUp();
 
+	void Log(p2SString string);
+
 private:
+	int last_text_pos = 1;
+	bool one_time = true;
+
 
 public:
 	SDL_Color console_color;
+	UI_Scroll_Bar* scroll = nullptr;
 
 private:
 	UI_Window* window = nullptr;
@@ -44,8 +51,8 @@ private:
 	UI_ColoredRect* colored_rect_bottom = nullptr;
 	UI_Text* top_text = nullptr;
 
-	UI_Scroll_Bar* scroll = nullptr;
-	UI_Text* text = nullptr;
+	UI_ColoredRect* bottom_scroll = nullptr;
+	UI_ColoredRect* top_scroll = nullptr;
 };
 
 #endif // __j1CONSOLE_H__

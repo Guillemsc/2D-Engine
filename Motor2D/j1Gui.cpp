@@ -1579,6 +1579,9 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 
 		button->rect.h = (button_starting_h * starting_h) / moving_rect.h;
 	}
+
+	min_bar = rect.y;
+	max_bar = min_bar + rect.h;
 }
 
 void UI_Scroll_Bar::MoveBar()
@@ -1622,18 +1625,6 @@ void UI_Scroll_Bar::MoveBar()
 				button->rect.y -= button->rect.y - min_bar;
 			}
 
-			int bar_distance = (min_bar + button->rect.h) - max_bar;
-			int moving_distance = (min_bar + moving_rect.h) - max_bar;
-			int position_bar = button->rect.y - min_bar;
-			
-			int regla = -floor((float)(position_bar * moving_distance) / bar_distance);
-			moving_rect.y = min_bar - regla;
-
-			for (int i = 0; i < elements.count(); i++)
-			{
-				elements[i].element->rect.y = elements[i].starting_pos - regla;
-			}
-			
 			mouse_y = curr_y;
 		}
 	}
@@ -1641,6 +1632,21 @@ void UI_Scroll_Bar::MoveBar()
 	if (button->MouseClickOutLeft())
 	{
 		is_scrolling = false;
+	}
+
+	int bar_distance = (min_bar + button->rect.h) - max_bar;
+	int moving_distance = (min_bar + moving_rect.h) - max_bar;
+	int position_bar = button->rect.y - min_bar;
+
+	if (bar_distance < 0)
+	{
+		int regla = -floor((float)(position_bar * moving_distance) / bar_distance);
+		moving_rect.y = min_bar - regla;
+
+		for (int i = 0; i < elements.count(); i++)
+		{
+			elements[i].element->rect.y = elements[i].starting_pos - regla;
+		}
 	}
 
 }

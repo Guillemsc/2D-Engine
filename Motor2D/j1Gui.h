@@ -370,9 +370,13 @@ private:
 public:
 	UI_Button* button = nullptr;
 
+	int min_bar = 0;
+	int max_bar = 0;
+
+	SDL_Rect moving_rect;
+
 private:
 	p2List<scroll_element> elements;
-	SDL_Rect moving_rect;
 
 	// Movement
 	int mouse_y;
@@ -381,8 +385,6 @@ private:
 
 	// Bar
 	int bar_pos = 0;
-	int min_bar = 0;
-	int max_bar = 0;
 
 	int starting_h = 0;
 	int button_starting_h = 0;
