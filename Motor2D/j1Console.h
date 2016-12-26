@@ -9,7 +9,7 @@
 class UI_Window;
 class UI_Text;
 class UI_ColoredRect;
-
+class UI_Scroll_Bar;
 class j1Console : public j1Module
 {
 public:
@@ -43,6 +43,9 @@ private:
 	UI_ColoredRect* colored_rect_right = nullptr;
 	UI_ColoredRect* colored_rect_bottom = nullptr;
 	UI_Text* top_text = nullptr;
+
+	UI_Scroll_Bar* scroll = nullptr;
+	UI_Text* text = nullptr;
 };
 
 #endif // __j1CONSOLE_H__

@@ -199,7 +199,7 @@ public:
 	UI_Element* CreateText(iPoint pos, _TTF_Font* font, int spacing = 0, bool dinamic = false, uint r = 255, uint g = 255, uint b = 255);
 	UI_Element* CreateImage(iPoint pos, SDL_Rect image, bool dinamic = false);
 	UI_Element* CreateTextInput(iPoint pos, int w, _TTF_Font* font, bool dinamic = false, uint r = 255, uint g = 255, uint b = 255);
-	UI_Element* CreateScrollBar(iPoint pos, int view_w, int view_h, int scroll, int button_size = 11, bool dinamic = false);
+	UI_Element* CreateScrollBar(iPoint pos, int view_w, int view_h, int button_size = 11, bool dinamic = false);
 	UI_Element* CreateColoredRect(iPoint pos, int view_w, int view_h, SDL_Color color, bool filled = true, bool dinamic = false);
 
 public:
@@ -344,45 +344,48 @@ private:
 // -----------------------------------
 // Scroll Bar ------------------------
 
+struct scroll_element
+{
+	UI_Element* element;
+	int starting_pos = 0;
+};
+
 class UI_Scroll_Bar : public UI_Element
 {
 public:
 	UI_Scroll_Bar();
 	~UI_Scroll_Bar();
 
-	void Set(iPoint pos, int w, int h, int scroll, int button_size = 11);
+	void Set(iPoint pos, int w, int h, int button_size = 11);
 
 	bool update();
 
-	UI_Element* AddButton(iPoint _pos, int w, int h, bool dinamic = false);
-	UI_Element* AddText(iPoint pos, _TTF_Font* font, int spacing, uint r, uint g, uint b, bool dinamic = false);
-	UI_Element* AddImage(iPoint pos, SDL_Rect image, bool dinamic = false);
-	UI_Element* AddTextInput(iPoint pos, int w, _TTF_Font* font, uint r, uint g, uint b, bool dinamic = false);
+	void AddElement(UI_Element* element);
+	int TakeLowestElement();
+	void ChangeHeightMovingRect();
+	void MoveBar();
 
 private:
-	bool ScrollWindow();
-	void AddElement(UI_Element* element);
-	void SetMinMaxBar();
-	float GetSpeed(int size);
 
 public:
 	UI_Button* button = nullptr;
 
 private:
-	p2List<UI_Element*> elements;
-	SDL_Rect viewport_rect;
+	p2List<scroll_element> elements;
+	SDL_Rect moving_rect;
 
 	// Movement
 	int mouse_y;
 	bool is_scrolling = false;
-	int bar_pos = 0;
 	int scroll = 0;
 
 	// Bar
-	int max_bar = 0;
+	int bar_pos = 0;
 	int min_bar = 0;
-	int bar_distance = 0;
+	int max_bar = 0;
 
+	int starting_h = 0;
+	int button_starting_h = 0;
 };
 
 // ------------------------
