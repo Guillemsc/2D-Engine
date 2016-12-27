@@ -33,7 +33,7 @@ bool j1Console::Start()
 	console_color = { 32, 32, 32, 200 };
 
 	window = (UI_Window*)App->gui->UI_CreateWin(iPoint(App->render->camera.x, App->render->camera.y), 
-			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, false);
+			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, true);
 	window->always_top = true;
 
 	colored_rect1 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, console_color);
@@ -47,7 +47,7 @@ bool j1Console::Start()
 
 	scroll = (UI_Scroll_Bar*)window->CreateScrollBar(iPoint(window->rect.x + FRAMES_SIZE, window->rect.y + TOP_FRAME_SIZE), window->rect.x + window->rect.w - (FRAMES_SIZE*2) - 15, CONSOLE_HEIGHT - FRAMES_SIZE - TOP_FRAME_SIZE, SCROLL_BUTTON_SIZE);
 
-	bottom_scroll = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button->rect.x, scroll->min_bar), scroll->button->rect.w, scroll->rect.h, {60, 60, 60, 200});
+	bottom_scroll = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button->rect.x, scroll->min_bar_v), scroll->button->rect.w, scroll->rect.h, {60, 60, 60, 200});
 	bottom_scroll->click_through = true;
 	top_scroll = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button->rect.x, scroll->button->rect.y), scroll->button->rect.w, scroll->button->rect.h, { 40, 40, 40, 250 });
 	top_scroll->click_through = true;
@@ -69,7 +69,7 @@ bool j1Console::Update(float dt)
 		window->SetEnabledAndChilds(!window->enabled);
 	}
 
-	if (scroll->max_bar == scroll->moving_rect.h)
+	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
 		top_scroll->enabled = false;
 	else
 		top_scroll->enabled = true;
@@ -88,7 +88,7 @@ void j1Console::Log(p2SString string)
 {
 	if (string.Length() > 0)
 	{
-		scroll->button->rect.y = scroll->max_bar - scroll->button->rect.h;
+		scroll->button->rect.y = scroll->max_bar_v - scroll->button->rect.h;
 
 		UI_Text* text = new UI_Text();
 		text->Set(iPoint(3, last_text_pos), App->font->default_15, 0, 255, 255, 255);

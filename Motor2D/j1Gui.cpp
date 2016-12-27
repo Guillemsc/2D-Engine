@@ -1518,8 +1518,8 @@ void UI_Scroll_Bar::Set(iPoint pos, int view_w, int view_h, int button_size)
 	App->gui->elements_list.Push(button, button->layer);
 	// ----------
 
-	min_bar = pos.y;
-	max_bar = min_bar + view_h;
+	min_bar_v = pos.y;
+	max_bar_v = min_bar_v + view_h;
 
 	color.r = color.g = color.b = color.a = 255;
 }
@@ -1533,7 +1533,7 @@ bool UI_Scroll_Bar::update()
 	{
 		App->render->DrawQuad(rect, 255, 0, 0, 255, false);
 		App->render->DrawQuad(moving_rect, color.r, color.g, color.b, color.a, false);
-		App->render->DrawLine(button->rect.x + (button->rect.w / 2), min_bar, button->rect.x + (button->rect.w / 2), max_bar, color.r, color.g, color.b, color.a);
+		App->render->DrawLine(button->rect.x + (button->rect.w / 2), min_bar_v, button->rect.x + (button->rect.w / 2), max_bar_v, color.r, color.g, color.b, color.a);
 	}
 
 	// Viewport -----------
@@ -1549,6 +1549,12 @@ bool UI_Scroll_Bar::update()
 
 	ChangeHeightMovingRect();
 	MoveBar();
+
+	if (button->MouseClickEnterLeftIntern())
+		parent->dinamic = false;
+	if(button->MouseClickOutLeftIntern())
+		parent->dinamic = true;
+
 }
 
 void UI_Scroll_Bar::AddElement(UI_Element * element)
@@ -1565,8 +1571,8 @@ int UI_Scroll_Bar::TakeLowestElement()
 	int lowest = 0;
 	for(int i = 0; i<elements.count(); i++)
 	{
-		if (((min_bar - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h) > lowest)
-			lowest = ((min_bar - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h);
+		if (((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h) > lowest)
+			lowest = ((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h);
 	}
 
 	return lowest;
@@ -1585,8 +1591,8 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 			button->rect.h = 20;
 	}
 
-	min_bar = rect.y;
-	max_bar = min_bar + rect.h;
+	min_bar_v = rect.y;
+	max_bar_v = min_bar_v + rect.h;
 
 
 }
@@ -1614,17 +1620,17 @@ void UI_Scroll_Bar::MoveBar()
 		if (curr_y != mouse_y)
 		{
 
-			if (((button->rect.y + button->rect.h) - (mouse_y - curr_y)) <= max_bar && (button->rect.y - (mouse_y - curr_y)) >= min_bar)
+			if (((button->rect.y + button->rect.h) - (mouse_y - curr_y)) <= max_bar_v && (button->rect.y - (mouse_y - curr_y)) >= min_bar_v)
 			{
 				button->rect.y -= mouse_y - curr_y;
 			}
-			else if(((button->rect.y + button->rect.h) - (mouse_y - curr_y)) > max_bar)
+			else if(((button->rect.y + button->rect.h) - (mouse_y - curr_y)) > max_bar_v)
 			{
-				button->rect.y += max_bar - (button->rect.y + button->rect.h);
+				button->rect.y += max_bar_v - (button->rect.y + button->rect.h);
 			}
-			else if ((button->rect.y - (mouse_y - curr_y)) < min_bar)
+			else if ((button->rect.y - (mouse_y - curr_y)) < min_bar_v)
 			{
-				button->rect.y -= button->rect.y - min_bar;
+				button->rect.y -= button->rect.y - min_bar_v;
 			}
 
 			mouse_y = curr_y;
@@ -1636,14 +1642,14 @@ void UI_Scroll_Bar::MoveBar()
 		is_scrolling = false;
 	}
 
-	int bar_distance = (min_bar + button->rect.h) - max_bar;
-	int moving_distance = (min_bar + moving_rect.h) - max_bar;
-	int position_bar = button->rect.y - min_bar;
+	int bar_distance = (min_bar_v + button->rect.h) - max_bar_v;
+	int moving_distance = (min_bar_v + moving_rect.h) - max_bar_v;
+	int position_bar = button->rect.y - min_bar_v;
 
 	if (bar_distance < 0)
 	{
 		scroll = -floor((float)(position_bar * moving_distance) / bar_distance);
-		moving_rect.y = min_bar - scroll;
+		moving_rect.y = min_bar_v - scroll;
 		moving_rect.x = rect.x;
 
 		for (int i = 0; i < elements.count(); i++)
