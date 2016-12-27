@@ -241,9 +241,13 @@ private:
 	p2List<SDL_Rect>  rect_list;
 	SDL_Rect		  curr;
 
+	bool			  to_enter = false;
 	bool			  enter = false;
 
+	bool			  to_clicked_left = false;
 	bool			  clicked_left = false;
+
+	bool			  to_clicked_right = false;
 	bool			  clicked_right = false;
 };
 

@@ -836,6 +836,19 @@ bool UI_Button::update()
 	if(print)
 		App->render->Blit(App->gui->atlas, rect.x, rect.y, &curr);
 
+	if (to_enter)
+		enter = true;
+	if (!to_enter)
+		enter = false;
+	if (to_clicked_left)
+		clicked_left = true;
+	if (!to_clicked_left)
+		clicked_left = false;
+	if (to_clicked_right)
+		clicked_right = true;
+	if (!to_clicked_right)
+		clicked_right = false;
+
 	return true;
 }
 
@@ -859,7 +872,7 @@ bool UI_Button::MouseEnter()
 		{
 			if (!enter)
 			{
-				enter = true;
+				to_enter = true;
 				return true;
 			}
 			return false;
@@ -892,7 +905,7 @@ bool UI_Button::MouseOut()
 
 	if(enter)
 	{
-		enter = false;
+		to_enter = false;
 		return true;
 	}
 	else
@@ -919,7 +932,7 @@ bool UI_Button::MouseClickEnterLeft()
 		{
 			if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
 			{
-				clicked_left = true;
+				to_clicked_left = true;
 				return true;
 			}
 		}
@@ -936,7 +949,7 @@ bool UI_Button::MouseClickOutLeft()
 	{
 		if (clicked_left)
 		{
-			clicked_left = false;
+			to_clicked_left = false;
 			return true;
 		}
 	}
@@ -963,7 +976,7 @@ bool UI_Button::MouseClickEnterRight()
 		{
 			if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
 			{
-				clicked_right = true;
+				to_clicked_right = true;
 				return true;
 			}
 		}
@@ -980,7 +993,7 @@ bool UI_Button::MouseClickOutRight()
 	{
 		if (clicked_right)
 		{
-			clicked_right = false;
+			to_clicked_right = false;
 			return true;
 		}
 
@@ -1550,9 +1563,9 @@ bool UI_Scroll_Bar::update()
 	ChangeHeightMovingRect();
 	MoveBar();
 
-	if (button->MouseClickEnterLeftIntern())
+	if (button->MouseClickEnterLeft())
 		parent->dinamic = false;
-	if(button->MouseClickOutLeftIntern())
+	if(button->MouseClickOutLeft())
 		parent->dinamic = true;
 
 }
