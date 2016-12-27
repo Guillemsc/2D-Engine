@@ -31,10 +31,10 @@ public:
 
 	void Log(p2SString string);
 
+	void LoadLogs();
+
 private:
 	int last_text_pos = 1;
-	bool one_time = true;
-
 
 public:
 	SDL_Color console_color;

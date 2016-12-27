@@ -1088,10 +1088,13 @@ bool UI_Text::update()
 		int space = 0;
 		for (int i = 0; i < texts.count(); i++)
 		{
-			texture = App->font->Print(texts[i].GetString(), color, font);
-			App->render->Blit(texture, rect.x, rect.y + space, NULL);
-			space += spacing;
-			App->tex->UnLoad(texture);
+			if (strcmp(texts[i].GetString(), "") == 1)
+			{
+				texture = App->font->Print(texts[i].GetString(), color, font);
+				App->render->Blit(texture, rect.x, rect.y + space, NULL);
+				space += spacing;
+				App->tex->UnLoad(texture);
+			}
 		}
 	}
 
@@ -1578,10 +1581,14 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 		moving_rect.h = lowest;
 
 		button->rect.h = (button_starting_h * starting_h) / moving_rect.h;
+		if (button->rect.h < 20)
+			button->rect.h = 20;
 	}
 
 	min_bar = rect.y;
 	max_bar = min_bar + rect.h;
+
+
 }
 
 void UI_Scroll_Bar::MoveBar()
@@ -1606,11 +1613,6 @@ void UI_Scroll_Bar::MoveBar()
 
 		if (curr_y != mouse_y)
 		{
-			//int distance = max_bar - button->rect.h;
-			//int distance2 = rect.h - moving_rect.h;
-			//float speed = ((float)distance2 / (float)distance);
-
-			int movement = button->rect.y;
 
 			if (((button->rect.y + button->rect.h) - (mouse_y - curr_y)) <= max_bar && (button->rect.y - (mouse_y - curr_y)) >= min_bar)
 			{
@@ -1640,12 +1642,13 @@ void UI_Scroll_Bar::MoveBar()
 
 	if (bar_distance < 0)
 	{
-		int regla = -floor((float)(position_bar * moving_distance) / bar_distance);
-		moving_rect.y = min_bar - regla;
+		scroll = -floor((float)(position_bar * moving_distance) / bar_distance);
+		moving_rect.y = min_bar - scroll;
+		moving_rect.x = rect.x;
 
 		for (int i = 0; i < elements.count(); i++)
 		{
-			elements[i].element->rect.y = elements[i].starting_pos - regla;
+			elements[i].element->rect.y = elements[i].starting_pos - scroll;
 		}
 	}
 

@@ -13,7 +13,7 @@
 #define TOP_FRAME_SIZE 30
 #define FRAMES_SIZE 5
 #define SCROLL_BUTTON_SIZE 15
-#define TEXT_DISTANCE 20
+#define TEXT_DISTANCE 22
 
 j1Console::j1Console()
 {
@@ -57,21 +57,13 @@ bool j1Console::Start()
 
 bool j1Console::PreUpdate()
 {
-	if (one_time)
-	{
-		Log("Welcome to the console");
-		for (int i = 0; i < App->logs.count(); i++)
-		{
-			Log(App->logs[i].GetString());
-		}
-		one_time = false;
-	}
-
 	return true;
 }
 
 bool j1Console::Update(float dt)
 {
+	LoadLogs();
+
 	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
 	{
 		window->SetEnabledAndChilds(!window->enabled);
@@ -94,7 +86,7 @@ bool j1Console::CleanUp()
 
 void j1Console::Log(p2SString string)
 {
-	if (string.Length() > 1)
+	if (string.Length() > 0)
 	{
 		scroll->button->rect.y = scroll->max_bar - scroll->button->rect.h;
 
@@ -104,4 +96,14 @@ void j1Console::Log(p2SString string)
 		scroll->AddElement(text);
 		last_text_pos += TEXT_DISTANCE;
 	}
+}
+
+void j1Console::LoadLogs()
+{
+	//Log("Welcome to the console");
+	for (int i = 0; i < App->logs.count(); i++)
+	{
+		Log(App->logs[i].GetString());
+	}
+	App->logs.clear();	
 }
