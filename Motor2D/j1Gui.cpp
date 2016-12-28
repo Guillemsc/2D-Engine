@@ -146,7 +146,7 @@ const void j1Gui::GetAtlas() const
 // ---------------------------------------------------------------------
 // Create a new Window
 // ---------------------------------------------------------------------
-UI_Element* j1Gui::UI_CreateWin(iPoint pos, int w, int h, bool _dinamic)
+UI_Element* j1Gui::UI_CreateWin(iPoint pos, int w, int h, bool _dinamic, bool _is_ui)
 {
 	UI_Window* ret = nullptr;
 	ret = new UI_Window();
@@ -155,6 +155,7 @@ UI_Element* j1Gui::UI_CreateWin(iPoint pos, int w, int h, bool _dinamic)
 	{
 		ret->Set(pos, w, h);
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layer
 
@@ -639,7 +640,7 @@ void UI_Window::Set(iPoint pos, int w, int h)
 // ---------------------------------------------------------------------
 // Create a button linked to the current window
 // ---------------------------------------------------------------------
-UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic)
+UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic, bool _is_ui = true)
 {
 	UI_Button* ret = nullptr;
 	ret = new UI_Button();
@@ -651,6 +652,7 @@ UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic)
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layers --
 
@@ -668,7 +670,7 @@ UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic)
 // ---------------------------------------------------------------------
 // Create text linked to the current window
 // ---------------------------------------------------------------------
-UI_Element* UI_Window::CreateText(iPoint pos, _TTF_Font * font, int spacing, bool _dinamic, uint r, uint g, uint b)
+UI_Element* UI_Window::CreateText(iPoint pos, _TTF_Font * font, int spacing, bool _dinamic, bool _is_ui, uint r, uint g, uint b)
 {
 	UI_Text* ret = nullptr;
 	ret = new UI_Text();
@@ -680,6 +682,7 @@ UI_Element* UI_Window::CreateText(iPoint pos, _TTF_Font * font, int spacing, boo
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layers --
 
@@ -696,7 +699,7 @@ UI_Element* UI_Window::CreateText(iPoint pos, _TTF_Font * font, int spacing, boo
 // ---------------------------------------------------------------------
 // Create an image linked to the current window
 // ---------------------------------------------------------------------
-UI_Element* UI_Window::CreateImage(iPoint pos, SDL_Rect image, bool _dinamic)
+UI_Element* UI_Window::CreateImage(iPoint pos, SDL_Rect image, bool _dinamic, bool _is_ui)
 {
 	UI_Image* ret = nullptr;
 	ret = new UI_Image();
@@ -708,6 +711,7 @@ UI_Element* UI_Window::CreateImage(iPoint pos, SDL_Rect image, bool _dinamic)
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layers --
 
@@ -724,7 +728,7 @@ UI_Element* UI_Window::CreateImage(iPoint pos, SDL_Rect image, bool _dinamic)
 // ---------------------------------------------------------------------
 // Create a text input box to the current window
 // ---------------------------------------------------------------------
-UI_Element* UI_Window::CreateTextInput(iPoint pos, int w, _TTF_Font* font,bool _dinamic, uint r, uint g, uint b)
+UI_Element* UI_Window::CreateTextInput(iPoint pos, int w, _TTF_Font* font, bool _dinamic, bool _is_ui, uint r, uint g, uint b)
 {
 	UI_Text_Input* ret = nullptr;
 	ret = new UI_Text_Input();
@@ -736,6 +740,7 @@ UI_Element* UI_Window::CreateTextInput(iPoint pos, int w, _TTF_Font* font,bool _
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layers --
 
@@ -749,7 +754,7 @@ UI_Element* UI_Window::CreateTextInput(iPoint pos, int w, _TTF_Font* font,bool _
 	return ret;
 }
 
-UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int button_size, bool _dinamic)
+UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int button_size, bool _dinamic, bool _is_ui)
 {
 	UI_Scroll_Bar* ret = nullptr;
 	ret = new UI_Scroll_Bar();
@@ -761,6 +766,7 @@ UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int 
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layers --
 
@@ -775,7 +781,7 @@ UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int 
 	return ret;
 }
 
-UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color color, bool filled, bool _dinamic)
+UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color color, bool filled, bool _dinamic, bool _is_ui)
 {
 	UI_ColoredRect* ret = nullptr;
 	ret = new UI_ColoredRect();
@@ -787,6 +793,7 @@ UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color co
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->is_ui = _is_ui;
 
 		// Layers --
 
