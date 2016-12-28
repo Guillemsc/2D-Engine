@@ -831,10 +831,10 @@ bool UI_Button::update()
 		return false;
 
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 
 	if(print)
-		App->render->Blit(App->gui->atlas, rect.x - App->render->camera.x, rect.y - App->render->camera.y, &curr);
+		App->render->Blit(App->gui->atlas, rect.x, rect.y, &curr);
 
 	ChangeButtonStats();
 
@@ -868,6 +868,9 @@ bool UI_Button::MouseEnter()
 	if (CheckClickOverlap(mouse_x, mouse_y) != layer)
 		return false;
 
+	mouse_x -= App->render->camera.x;
+	mouse_y -= App->render->camera.y;
+
 	if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
 	{
 		if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
@@ -893,6 +896,9 @@ bool UI_Button::MouseOut()
 
 	if (CheckClickOverlap(mouse_x, mouse_y) != layer && !enter)
 		return true;
+
+	mouse_x -= App->render->camera.x;
+	mouse_y -= App->render->camera.y;
 
 	if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
 	{
@@ -923,6 +929,9 @@ bool UI_Button::MouseClickEnterLeft()
 
 		if (CheckClickOverlap(mouse_x, mouse_y) != layer)
 			return false;
+
+		mouse_x -= App->render->camera.x;
+		mouse_y -= App->render->camera.y;
 
 		if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
 		{
@@ -964,6 +973,9 @@ bool UI_Button::MouseClickEnterRight()
 
 		if (CheckClickOverlap(mouse_x, mouse_y) != layer)
 			return false;
+
+		mouse_x -= App->render->camera.x;
+		mouse_y -= App->render->camera.y;
 
 		if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
 		{
@@ -1086,7 +1098,7 @@ bool UI_Text::update()
 	rect.h = h;
 
 	if (App->gui->debug)
-		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false, false);
+		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
 	
 	if (print)
 	{
@@ -1097,7 +1109,7 @@ bool UI_Text::update()
 			if (strcmp(texts[i].GetString(), "") == 1)
 			{
 				texture = App->font->Print(texts[i].GetString(), color, font);
-				App->render->Blit(texture, rect.x - App->render->camera.x, rect.y + space - App->render->camera.y, NULL);
+				App->render->Blit(texture, rect.x, rect.y + space, NULL);
 				space += spacing;
 				App->tex->UnLoad(texture);
 			}
@@ -1546,14 +1558,15 @@ bool UI_Scroll_Bar::update()
 
 	if (App->gui->debug)
 	{
-		App->render->DrawQuad(moving_rect, color.r, color.g, color.b, color.a, false, false);
-		App->render->DrawQuad(rect, 255, 0, 0, 255, false, false);
-		App->render->DrawLine(button_v->rect.x + (button_v->rect.w / 2), min_bar_v, button_v->rect.x + (button_v->rect.w / 2), max_bar_v, color.r, color.g, color.b, color.a, false);
-		App->render->DrawLine(min_bar_h, button_h->rect.y + (button_h->rect.h / 2), max_bar_h, button_h->rect.y + (button_h->rect.h / 2), color.r, color.g, color.b, color.a, false);
+		App->render->DrawQuad(moving_rect, color.r, color.g, color.b, color.a, false);
+		App->render->DrawQuad(rect, 255, 0, 0, 255, false);
+		App->render->DrawLine(button_v->rect.x + (button_v->rect.w / 2), min_bar_v, button_v->rect.x + (button_v->rect.w / 2), max_bar_v, color.r, color.g, color.b, color.a);
+		App->render->DrawLine(min_bar_h, button_h->rect.y + (button_h->rect.h/2), max_bar_h, button_h->rect.y + (button_h->rect.h / 2), color.r, color.g, color.b, color.a);
 	}
 
+
 	// Viewport -----------
-	App->render->SetViewPort({rect.x, rect.y, rect.w + rect.x, rect.h});
+	App->render->SetViewPort(rect);
 
 	for (int i = 0; i < elements.count(); i++)
 	{
@@ -1619,7 +1632,7 @@ void UI_Scroll_Bar::ChangeWidthMovingRect()
 			higher = (min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w;
 	}
 
-	if (starting_h < higher)
+	if (starting_v < higher)
 	{
 		moving_rect.w = higher;
 
@@ -1635,21 +1648,10 @@ void UI_Scroll_Bar::ChangeWidthMovingRect()
 
 void UI_Scroll_Bar::MoveBarV()
 {
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
-	{
-		int mouse_x, mouse_y;
-		App->input->GetMousePosition(mouse_x, mouse_y);
-
-		mouse_x -= App->render->camera.x;
-		mouse_y -= App->render->camera.y;
-
-		//LOG("%d - %d - %d | %d - %d - %d", button_v->rect.x, mouse_x + App->render->camera.x, button_v->rect.x + button_v->rect.w, button_v->rect.y + App->render->camera.y, mouse_y, button_v->rect.y + button_v->rect.h);
-	}
 	if (button_v->MouseClickEnterLeft())
 	{
 		int mouse_x_tmp;
 		App->input->GetMousePosition(mouse_x_tmp, mouse_y);
-		mouse_x_tmp -= App->render->camera.x;
 
 		is_scrolling_v = true;
 	}
@@ -1887,7 +1889,7 @@ bool UI_ColoredRect::update()
 	if (!enabled)
 		return false;
 
-	App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, filled, false);
+	App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, filled);
 
 	return true;
 }
