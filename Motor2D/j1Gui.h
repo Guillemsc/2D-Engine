@@ -111,6 +111,9 @@ private:
 	int					   mouse_y = 0;
 	UI_Element*			   to_move = nullptr;
 	//
+
+	int camera_x = 0;
+	int camera_y = 0;
 };
 
 // -------------------------

@@ -1566,7 +1566,7 @@ bool UI_Scroll_Bar::update()
 
 
 	// Viewport -----------
-	App->render->SetViewPort(rect);
+	App->render->SetViewPort({ rect.x, rect.y, rect.w + rect.x, rect.h });
 
 	for (int i = 0; i < elements.count(); i++)
 	{
@@ -1632,7 +1632,7 @@ void UI_Scroll_Bar::ChangeWidthMovingRect()
 			higher = (min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w;
 	}
 
-	if (starting_v < higher)
+	if (starting_h < higher)
 	{
 		moving_rect.w = higher;
 
