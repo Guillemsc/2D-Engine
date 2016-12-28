@@ -235,6 +235,9 @@ public:
 	void AddImage(SDL_Rect rect);
 	void SetImage(int index);
 
+private:
+	void ChangeButtonStats();
+
 public:
 
 private:
@@ -351,7 +354,8 @@ private:
 struct scroll_element
 {
 	UI_Element* element;
-	int starting_pos = 0;
+	int starting_pos_x = 0;
+	int starting_pos_y = 0;
 };
 
 class UI_Scroll_Bar : public UI_Element
@@ -365,17 +369,23 @@ public:
 	bool update();
 
 	void AddElement(UI_Element* element);
-	int TakeLowestElement();
-	void ChangeHeightMovingRect();
-	void MoveBar();
 
 private:
+	void ChangeHeightMovingRect();
+	void ChangeWidthMovingRect();
+	void MoveBarV();
+	void MoveBarH();
 
 public:
-	UI_Button* button = nullptr;
+	// Vertical
+	UI_Button* button_v = nullptr;
+	int        min_bar_v = 0;
+	int        max_bar_v = 0;
 
-	int min_bar_v = 0;
-	int max_bar_v = 0;
+	// Horizontal
+	UI_Button* button_h = nullptr;
+	int        min_bar_h = 0;
+	int        max_bar_h = 0;
 
 	SDL_Rect moving_rect;
 
@@ -383,12 +393,18 @@ private:
 	p2List<scroll_element> elements;
 
 	// Movement
+	int mouse_x;
 	int mouse_y;
-	bool is_scrolling = false;
-	int scroll = 0;
+	bool is_scrolling_v = false;
+	bool is_scrolling_h = false;
+	int scroll_v = 0;
+	int scroll_h = 0;
 
 	int starting_h = 0;
 	int button_starting_h = 0;
+
+	int starting_v = 0;
+	int button_starting_v = 0;
 };
 
 // ------------------------

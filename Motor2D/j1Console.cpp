@@ -9,9 +9,9 @@
 #include "j1Gui.h"
 #include "p2Point.h"
 
-#define CONSOLE_HEIGHT 200
+#define CONSOLE_HEIGHT 300
 #define TOP_FRAME_SIZE 30
-#define FRAMES_SIZE 5
+#define FRAMES_SIZE 15
 #define SCROLL_BUTTON_SIZE 15
 #define TEXT_DISTANCE 22
 
@@ -47,10 +47,15 @@ bool j1Console::Start()
 
 	scroll = (UI_Scroll_Bar*)window->CreateScrollBar(iPoint(window->rect.x + FRAMES_SIZE, window->rect.y + TOP_FRAME_SIZE), window->rect.x + window->rect.w - (FRAMES_SIZE*2) - 15, CONSOLE_HEIGHT - FRAMES_SIZE - TOP_FRAME_SIZE, SCROLL_BUTTON_SIZE);
 
-	bottom_scroll = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button->rect.x, scroll->min_bar_v), scroll->button->rect.w, scroll->rect.h, {60, 60, 60, 200});
-	bottom_scroll->click_through = true;
-	top_scroll = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button->rect.x, scroll->button->rect.y), scroll->button->rect.w, scroll->button->rect.h, { 40, 40, 40, 250 });
-	top_scroll->click_through = true;
+	bottom_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->min_bar_v), scroll->button_v->rect.w, scroll->rect.h, {80, 80, 80, 200});
+	bottom_scroll_v->click_through = true;
+	top_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->button_v->rect.y), scroll->button_v->rect.w, scroll->button_v->rect.h, { 40, 40, 40, 250 });
+	top_scroll_v->click_through = true;
+
+	bottom_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->min_bar_h, scroll->button_h->rect.y), scroll->rect.w, scroll->button_h->rect.h, { 80, 80, 80, 200 });
+	bottom_scroll_h->click_through = true;
+	top_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_h->rect.x, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 40, 40, 40, 250 });
+	top_scroll_h->click_through = true;
 
 	return true;
 }
@@ -70,11 +75,17 @@ bool j1Console::Update(float dt)
 	}
 
 	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
-		top_scroll->enabled = false;
+		top_scroll_v->enabled = false;
 	else
-		top_scroll->enabled = true;
+		top_scroll_v->enabled = true;
 
-	top_scroll->rect = { scroll->button->rect.x, scroll->button->rect.y, scroll->button->rect.w, scroll->button->rect.h };
+	if (scroll->max_bar_h == scroll->moving_rect.w || !scroll->parent->enabled)
+		top_scroll_h->enabled = false;
+	else
+		top_scroll_h->enabled = true;
+
+	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
+	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
 
 	return true;
 }
@@ -88,7 +99,7 @@ void j1Console::Log(p2SString string)
 {
 	if (string.Length() > 0)
 	{
-		scroll->button->rect.y = scroll->max_bar_v - scroll->button->rect.h;
+		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
 
 		UI_Text* text = new UI_Text();
 		text->Set(iPoint(3, last_text_pos), App->font->default_15, 0, 255, 255, 255);

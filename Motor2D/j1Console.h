@@ -51,8 +51,11 @@ private:
 	UI_ColoredRect* colored_rect_bottom = nullptr;
 	UI_Text* top_text = nullptr;
 
-	UI_ColoredRect* bottom_scroll = nullptr;
-	UI_ColoredRect* top_scroll = nullptr;
+	UI_ColoredRect* bottom_scroll_v = nullptr;
+	UI_ColoredRect* top_scroll_v = nullptr;
+
+	UI_ColoredRect* bottom_scroll_h = nullptr;
+	UI_ColoredRect* top_scroll_h = nullptr;
 };
 
 #endif // __j1CONSOLE_H__
