@@ -37,6 +37,9 @@ bool j1Gui::Start()
 	if (atlas == nullptr)
 		atlas = App->tex->Load(atlas_file_name.GetString());
 
+	camera_x = App->render->camera.x;
+	camera_y = App->render->camera.y;
+
 	if (atlas != nullptr)
 		return true;
 
@@ -82,6 +85,13 @@ bool j1Gui::Update(float dt)
 		{
 			to_update.add(elements->data);
 
+
+			if (elements->data->is_ui && (camera_x != App->render->camera.x || camera_y != App->render->camera.y))
+			{
+				elements->data->rect.x += camera_x - App->render->camera.x;
+				elements->data->rect.y += camera_y - App->render->camera.y;
+			}
+
 			// Debug lines --------
 			if (debug)
 			{
@@ -112,6 +122,9 @@ bool j1Gui::Update(float dt)
 	}
 
 	Move_Elements();
+
+	camera_x = App->render->camera.x;
+	camera_y = App->render->camera.y;
 
 	return true;
 }
@@ -640,7 +653,7 @@ void UI_Window::Set(iPoint pos, int w, int h)
 // ---------------------------------------------------------------------
 // Create a button linked to the current window
 // ---------------------------------------------------------------------
-UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic, bool _is_ui = true)
+UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic, bool _is_ui)
 {
 	UI_Button* ret = nullptr;
 	ret = new UI_Button();
