@@ -47,15 +47,15 @@ bool j1Console::Start()
 
 	scroll = (UI_Scroll_Bar*)window->CreateScrollBar(iPoint(window->rect.x + FRAMES_SIZE, window->rect.y + TOP_FRAME_SIZE), window->rect.x + window->rect.w - (FRAMES_SIZE*2) - 15, CONSOLE_HEIGHT - FRAMES_SIZE - TOP_FRAME_SIZE, SCROLL_BUTTON_SIZE);
 
-	bottom_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->min_bar_v), scroll->button_v->rect.w, scroll->rect.h, {80, 80, 80, 200});
-	bottom_scroll_v->click_through = true;
-	top_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->button_v->rect.y), scroll->button_v->rect.w, scroll->button_v->rect.h, { 40, 40, 40, 250 });
-	top_scroll_v->click_through = true;
+	//bottom_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->min_bar_v), scroll->button_v->rect.w, scroll->rect.h, {80, 80, 80, 200});
+	//bottom_scroll_v->click_through = true;
+	//top_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->button_v->rect.y), scroll->button_v->rect.w, scroll->button_v->rect.h, { 40, 40, 40, 250 });
+	//top_scroll_v->click_through = true;
 
-	bottom_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->min_bar_h, scroll->button_h->rect.y), scroll->rect.w, scroll->button_h->rect.h, { 80, 80, 80, 200 });
+	/*bottom_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->min_bar_h, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 80, 80, 80, 200 });
 	bottom_scroll_h->click_through = true;
 	top_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_h->rect.x, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 40, 40, 40, 250 });
-	top_scroll_h->click_through = true;
+	top_scroll_h->click_through = true;*/
 
 	return true;
 }
@@ -74,7 +74,7 @@ bool j1Console::Update(float dt)
 		window->SetEnabledAndChilds(!window->enabled);
 	}
 
-	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
+	/*f (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
 		top_scroll_v->enabled = false;
 	else
 		top_scroll_v->enabled = true;
@@ -85,7 +85,7 @@ bool j1Console::Update(float dt)
 		top_scroll_h->enabled = true;
 
 	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
-	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
+	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };*/
 
 	return true;
 }
