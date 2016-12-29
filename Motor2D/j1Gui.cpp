@@ -33,17 +33,20 @@ bool j1Gui::Awake(pugi::xml_node& conf)
 // Called before the first frame
 bool j1Gui::Start()
 {
+	bool ret = false;
+
 	// Load atlas
 	if (atlas == nullptr)
 		atlas = App->tex->Load(atlas_file_name.GetString());
 
+	// Starting intern camera position
 	camera_x = App->render->camera.x;
 	camera_y = App->render->camera.y;
 
 	if (atlas != nullptr)
-		return true;
+		ret = true;
 
-	return true;
+	return ret;
 }
 
 // ---------------------------------------------------------------------
@@ -85,14 +88,14 @@ bool j1Gui::Update(float dt)
 		{
 			to_update.add(elements->data);
 
-
+			// Move elements if the camera si moving
 			if (elements->data->is_ui && (camera_x != App->render->camera.x || camera_y != App->render->camera.y))
 			{
 				elements->data->rect.x += camera_x - App->render->camera.x;
 				elements->data->rect.y += camera_y - App->render->camera.y;
 			}
 
-			// Debug lines --------
+			// Debug lines ------------------------------------
 			if (debug)
 			{
 				for (int y = 0; y < elements->data->childs.count(); y++)
@@ -107,7 +110,7 @@ bool j1Gui::Update(float dt)
 					}
 				}
 			}
-			// ---------------------
+			// -------------------------------------------------
 		}
 
 		//Take higher layer
@@ -121,8 +124,10 @@ bool j1Gui::Update(float dt)
 		to_update[i]->update();
 	}
 
+	// Move clicked elements
 	Move_Elements();
 
+	// Update intern camera position
 	camera_x = App->render->camera.x;
 	camera_y = App->render->camera.y;
 
@@ -186,6 +191,9 @@ UI_Element* j1Gui::UI_CreateWin(iPoint pos, int w, int h, bool _dinamic, bool _i
 	return ret;
 }
 
+// ---------------------------------------------------------------------
+// Create a Window Manager
+// ---------------------------------------------------------------------
 void j1Gui::UI_CreateWinManager(iPoint pos, int w, int h, bool _dinamic)
 {
 	if (window_manager != nullptr)
@@ -211,14 +219,8 @@ void j1Gui::UI_CreateWinManager(iPoint pos, int w, int h, bool _dinamic)
 	}
 }
 
-// ----------------------------------
-
-void j1Gui::Tab()
-{
-}
-
 // ---------------------------------------------------------------------
-// Funcion to get all childs of a UI_Element
+// Gets all the childs of a UI_Element.
 // ---------------------------------------------------------------------
 void j1Gui::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
 {
@@ -256,6 +258,9 @@ void j1Gui::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
 	// ---------------------------------------
 }
 
+// ---------------------------------------------------------------------
+// Gets all the parents of a UI_Element.
+// ---------------------------------------------------------------------
 void j1Gui::GetParentElements(UI_Element * element, p2List<UI_Element*>& visited)
 {
 	UI_Element* curr = element;
@@ -267,6 +272,9 @@ void j1Gui::GetParentElements(UI_Element * element, p2List<UI_Element*>& visited
 	}
 }
 
+// ---------------------------------------------------------------------
+// Looks for all the elements that must be always on the top.
+// ---------------------------------------------------------------------
 void j1Gui::GetAlwaysTopElements(p2List<UI_Element*>& always_top)
 {
 	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
@@ -290,6 +298,9 @@ void j1Gui::GetAlwaysTopElements(p2List<UI_Element*>& always_top)
 	}
 }
 
+// ---------------------------------------------------------------------
+// Updates the PQ elements order.
+// ---------------------------------------------------------------------
 void j1Gui::ReorderElements()
 {
 	p2List<UI_Element*> copy;
@@ -312,7 +323,7 @@ void j1Gui::ReorderElements()
 }
 
 // ---------------------------------------------------------------------
-// Moves all the UI_Element childs with the mouse
+// Moves the clicked UI_Element, and it's childs, with the mouse.
 // ---------------------------------------------------------------------
 bool j1Gui::Move_Elements()
 {
@@ -388,6 +399,9 @@ bool j1Gui::Move_Elements()
 	return ret;
 }
 
+// ---------------------------------------------------------------------
+// Chooses the element that has to be moved.
+// ---------------------------------------------------------------------
 UI_Element* j1Gui::CheckClickMove(int x, int y)
 {
 	p2List<UI_Element*> elements_clicked;
@@ -469,7 +483,7 @@ void UI_Element::SetEnabled(bool set)
 }
 
 // ---------------------------------------------------------------------
-// Enables or disables all the childs of an UI_Element
+// Enables or disables all the childs of an UI_Element.
 // ---------------------------------------------------------------------
 void UI_Element::SetEnabledAndChilds(bool set)
 {
@@ -478,13 +492,13 @@ void UI_Element::SetEnabledAndChilds(bool set)
 
 	for (int i = 0; i < visited.count(); i++)
 	{
-			visited[i]->enabled = set;
+		visited[i]->enabled = set;
 	}
 }
 
 
 // ---------------------------------------------------------------------
-// Put all elements of a window to the top of the PQ
+// Put all elements of a window to the top of the PQ.
 // ---------------------------------------------------------------------
 bool UI_Element::PutWindowToTop()
 {
@@ -522,7 +536,7 @@ bool UI_Element::PutWindowToTop()
 }
 
 // ---------------------------------------------------------------------
-// Detects the highest layer of a clicked point
+// Detects the highest layer of a clicked point.
 // ---------------------------------------------------------------------
 int UI_Element::CheckClickOverlap(int x, int y)
 {
@@ -557,7 +571,7 @@ int UI_Element::CheckClickOverlap(int x, int y)
 }
 
 // ---------------------------------------------------------------------
-// Adds a child to an UI_Element
+// Adds a child to an UI_Element.
 // ---------------------------------------------------------------------
 void UI_Element::AddChild(UI_Element * _child)
 {
@@ -566,7 +580,7 @@ void UI_Element::AddChild(UI_Element * _child)
 }
 
 // ---------------------------------------------------------------------
-// Adds both childs one to the other to avoid the overlaping check
+// Adds both childs one to the other to avoid the overlaping check.
 // ---------------------------------------------------------------------
 void UI_Element::AddChildBoth(UI_Element * _child)
 {
@@ -577,8 +591,9 @@ void UI_Element::AddChildBoth(UI_Element * _child)
 }
 
 // ---------------------------------------------------------------------
-// Mouse check functions
+// Mouse check functions.
 // ---------------------------------------------------------------------
+
 bool UI_Element::MouseClickEnterLeftIntern()
 {
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)

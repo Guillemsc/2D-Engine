@@ -67,26 +67,26 @@ bool j1Console::PreUpdate()
 
 bool j1Console::Update(float dt)
 {
-	/*LoadLogs();
+	//LoadLogs();
 
-	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
-	{
-		window->SetEnabledAndChilds(!window->enabled);
-	}
+	//if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
+	//{
+	//	window->SetEnabledAndChilds(!window->enabled);
+	//}
 
-	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
-		top_scroll_v->enabled = false;
-	else
-		top_scroll_v->enabled = true;
+	//if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
+	//	top_scroll_v->enabled = false;
+	//else
+	//	top_scroll_v->enabled = true;
 
-	if (scroll->max_bar_h == scroll->moving_rect.w || !scroll->parent->enabled)
-		top_scroll_h->enabled = false;
-	else
-		top_scroll_h->enabled = true;
+	//if (scroll->max_bar_h == scroll->moving_rect.w || !scroll->parent->enabled)
+	//	top_scroll_h->enabled = false;
+	//else
+	//	top_scroll_h->enabled = true;
 
-	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
-	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
-	*/
+	//top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
+	//top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
+	//
 	return true;
 }
 
@@ -97,16 +97,16 @@ bool j1Console::CleanUp()
 
 void j1Console::Log(p2SString string)
 {
-	/*if (string.Length() > 0)
-	{
-		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
+	//if (string.Length() > 0)
+	//{
+	//	scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
 
-		UI_Text* text = new UI_Text();
-		text->Set(iPoint(3, last_text_pos), App->font->default_15, 0, 255, 255, 255);
-		text->SetText(string.GetString());
-		scroll->AddElement(text);
-		last_text_pos += TEXT_DISTANCE;
-	}*/
+	//	UI_Text* text = new UI_Text();
+	//	text->Set(iPoint(3, last_text_pos), App->font->default_15, 0, 255, 255, 255);
+	//	text->SetText(string.GetString());
+	//	scroll->AddElement(text);
+	//	last_text_pos += TEXT_DISTANCE;
+	//}
 }
 
 void j1Console::LoadLogs()
