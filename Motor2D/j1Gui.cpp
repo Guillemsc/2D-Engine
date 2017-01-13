@@ -570,6 +570,19 @@ int UI_Element::CheckClickOverlap(int x, int y)
 	return higher_layer;
 }
 
+bool UI_Element::CheckClickRect(int x, int y)
+{
+	if (x > rect.x && x < rect.x + rect.w)
+	{
+		if (y > rect.y && y < rect.y + rect.h)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // ---------------------------------------------------------------------
 // Adds a child to an UI_Element.
 // ---------------------------------------------------------------------
@@ -900,24 +913,22 @@ bool UI_Button::MouseEnter()
 	int mouse_x, mouse_y;
 	App->input->GetMousePosition(mouse_x, mouse_y);
 
-	if (CheckClickOverlap(mouse_x, mouse_y) != layer)
-		return false;
-
 	mouse_x -= App->render->camera.x;
 	mouse_y -= App->render->camera.y;
 
-	if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
+	if (CheckClickOverlap(mouse_x, mouse_y) != layer)
+		return false;
+
+	if(CheckClickRect(mouse_x, mouse_y))
 	{
-		if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
+		if (!enter)
 		{
-			if (!enter)
-			{
-				to_enter = true;
-				return true;
-			}
-			return false;
+			to_enter = true;
+			return true;
 		}
+		return false;
 	}
+
 	return false;
 }
 
@@ -929,19 +940,14 @@ bool UI_Button::MouseOut()
 	int mouse_x, mouse_y;
 	App->input->GetMousePosition(mouse_x, mouse_y);
 
-	if (CheckClickOverlap(mouse_x, mouse_y) != layer && !enter)
-		return true;
-
 	mouse_x -= App->render->camera.x;
 	mouse_y -= App->render->camera.y;
 
-	if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
-	{
-		if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
-		{
-			return false;
-		}
-	}
+	if (CheckClickOverlap(mouse_x, mouse_y) != layer && !enter)
+		return true;
+
+	if (CheckClickRect(mouse_x, mouse_y))
+		return false;
 
 	if(enter)
 	{
@@ -962,19 +968,16 @@ bool UI_Button::MouseClickEnterLeft()
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
 
-		if (CheckClickOverlap(mouse_x, mouse_y) != layer)
-			return false;
-
 		mouse_x -= App->render->camera.x;
 		mouse_y -= App->render->camera.y;
 
-		if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
+		if (CheckClickOverlap(mouse_x, mouse_y) != layer)
+			return false;
+
+		if (CheckClickRect(mouse_x, mouse_y))
 		{
-			if (mouse_y > rect.y && mouse_y < rect.y + rect.h)
-			{
-				to_clicked_left = true;
-				return true;
-			}
+			to_clicked_left = true;
+			return true;
 		}
 	}
 	return false;
@@ -1006,11 +1009,11 @@ bool UI_Button::MouseClickEnterRight()
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
 
-		if (CheckClickOverlap(mouse_x, mouse_y) != layer)
-			return false;
-
 		mouse_x -= App->render->camera.x;
 		mouse_y -= App->render->camera.y;
+
+		if (CheckClickOverlap(mouse_x, mouse_y) != layer)
+			return false;
 
 		if (mouse_x > rect.x && mouse_x < rect.x + rect.w)
 		{
@@ -1601,7 +1604,7 @@ bool UI_Scroll_Bar::update()
 
 
 	// Viewport -----------
-	App->render->SetViewPort({ rect.x, rect.y, rect.w + rect.x, rect.h });
+	App->render->SetViewPort({ rect.x + App->render->camera.x, rect.y + App->render->camera.y, rect.w, rect.h});
 
 	for (int i = 0; i < elements.count(); i++)
 	{
@@ -1621,6 +1624,7 @@ bool UI_Scroll_Bar::update()
 	if(button_v->MouseClickOutLeft() || button_h->MouseClickOutLeft())
 		parent->dinamic = true;
 
+	//LOG("%d %d %d", moving_rect.x, rect.x, min_bar_h);
 }
 
 void UI_Scroll_Bar::AddElement(UI_Element * element)
@@ -1639,8 +1643,8 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 	int lowest = 0;
 	for (int i = 0; i<elements.count(); i++)
 	{
-		if (((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h) > lowest)
-			lowest = ((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h);
+		if (((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h + App->render->camera.y) > lowest)
+			lowest = ((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h) + App->render->camera.y;
 	}
 	// ----------------
 
@@ -1663,8 +1667,8 @@ void UI_Scroll_Bar::ChangeWidthMovingRect()
 	int higher = 0;
 	for (int i = 0; i < elements.count(); i++)
 	{
-		if ((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w > higher)
-			higher = (min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w;
+		if (((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w + App->render->camera.x) > higher)
+			higher = ((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w) + App->render->camera.x;
 	}
 
 	if (starting_h < higher)
@@ -1737,7 +1741,16 @@ void UI_Scroll_Bar::MoveBarV()
 
 		for (int i = 0; i < elements.count(); i++)
 		{
-			elements[i].element->rect.y = elements[i].starting_pos_y - scroll_v;
+			elements[i].element->rect.y = elements[i].starting_pos_y - scroll_v - App->render->camera.y;
+		}
+	}
+	else
+	{
+		moving_rect.y = min_bar_v - scroll_v;
+
+		for (int i = 0; i < elements.count(); i++)
+		{
+			elements[i].element->rect.y = elements[i].starting_pos_y - scroll_v - App->render->camera.y;
 		}
 	}
 
@@ -1798,7 +1811,16 @@ void UI_Scroll_Bar::MoveBarH()
 
 		for (int i = 0; i < elements.count(); i++)
 		{
-			elements[i].element->rect.x = elements[i].starting_pos_x - scroll_h;
+			elements[i].element->rect.x = elements[i].starting_pos_x - scroll_h - App->render->camera.x;
+		}
+	}
+	else
+	{
+		moving_rect.x = min_bar_h - scroll_h;
+
+		for (int i = 0; i < elements.count(); i++)
+		{
+			elements[i].element->rect.x = elements[i].starting_pos_x - scroll_h - App->render->camera.x;
 		}
 	}
 }

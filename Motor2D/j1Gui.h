@@ -150,6 +150,7 @@ protected:
 
 	// Helper functions
 	int  CheckClickOverlap(int x, int y);
+	bool CheckClickRect(int x, int y);
 
 public:
 	ui_element          type = ui_undefined;
