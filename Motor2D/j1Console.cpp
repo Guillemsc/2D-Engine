@@ -8,6 +8,9 @@
 #include "j1Input.h"
 #include "j1Gui.h"
 #include "p2Point.h"
+#include <iostream>
+
+using namespace std;
 
 #define CONSOLE_HEIGHT 300
 #define TOP_FRAME_SIZE 30
@@ -57,7 +60,8 @@ bool j1Console::Start()
 	top_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_h->rect.x, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 40, 40, 40, 250 });
 	top_scroll_h->click_through = true;
 
-	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.h + 50), window->rect.w, App->font->default_15);
+	colored_rect_text_input = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w, 25, { 32, 32, 32, 255 });
+	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w - FRAMES_SIZE, App->font->default_15);
 
 	Log("Welcome to the console :-D");
 	return true;
@@ -125,12 +129,80 @@ void j1Console::Log(p2SString string, uint r, uint g, uint b)
 	}
 }
 
-void j1Console::Tokenize(p2SString string)
+void j1Console::Tokenize(p2SString s)
 {
-	if (strcmp(string.GetString(), "help") == 0)
+	string cs = s.GetString();
+
+	p2List<p2SString> strings;
+	p2List<int> ints;
+
+	p2SString current;
+
+	p2SString number;
+
+	for (int i = 0; i < s.Length(); i++)
+	{
+		if (cs[i] != ' ')
+		{
+			if (isdigit(cs[i]))
+			{
+				if (current.Length() > 0)
+				{
+					strings.add(current);
+					current.Clear();
+				}
+
+				if (number.Length() > 0)
+					number.create("%s%c", number.GetString(), cs[i]);
+				else
+					number.create("%c", cs[i]);
+			}
+			else
+			{
+				if (!isdigit(cs[i]))
+				{
+					if (number.Length() > 0)
+					{
+						ints.add(atoi(number.GetString()));
+						number.Clear();
+					}
+				}
+
+				if (current.Length() > 0)
+					current.create("%s%c", current.GetString(), cs[i]);
+				else
+					current.create("%c", cs[i]);
+			}
+		}
+	}
+
+	if (current.Length() > 0)
+	{
+		strings.add(current);
+		current.Clear();
+	}
+
+	if (number.Length() > 0)
+	{
+		ints.add(atoi(number.GetString()));
+		number.Clear();
+	}
+	
+	if (strcmp(strings[0].GetString(), "help") == 0)
 	{
 		LOG("\nBasic commands:");
 		LOG("   - 'help' xD");
+	}
+	else if (strcmp(strings[0].GetString(), "fps") == 0)
+	{
+		if (ints.count() > 0)
+		{
+			if (ints[0] == 100)
+			{
+				LOG("Works");
+			}
+		}
+
 	}
 	else
 	{

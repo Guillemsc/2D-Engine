@@ -51,6 +51,7 @@ private:
 	UI_ColoredRect* colored_rect_left = nullptr;
 	UI_ColoredRect* colored_rect_right = nullptr;
 	UI_ColoredRect* colored_rect_bottom = nullptr;
+	UI_ColoredRect*	colored_rect_text_input = nullptr;
 	UI_Text* top_text = nullptr;
 
 	UI_ColoredRect* bottom_scroll_v = nullptr;
