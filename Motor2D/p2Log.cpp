@@ -16,5 +16,5 @@ void log(const char file[], int line, const char* format, ...)
 	OutputDebugString(tmp_string2);
 
 	if(App != nullptr)
-	App->logs.add(tmp_string2);
+	App->logs.add(tmp_string);
 }

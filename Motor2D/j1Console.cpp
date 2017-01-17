@@ -57,7 +57,9 @@ bool j1Console::Start()
 	top_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_h->rect.x, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 40, 40, 40, 250 });
 	top_scroll_h->click_through = true;
 
-	Log("Welcome to the console");
+	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.h + 50), window->rect.w, App->font->default_15);
+
+	Log("Welcome to the console :-D");
 	return true;
 }
 
@@ -87,6 +89,20 @@ bool j1Console::Update(float dt)
 
 	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
 	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
+
+	if (text_input->active)
+	{
+		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+		{
+			Tokenize(text_input->intern_text);
+		}
+	}
+
+	if (scroll->button_v->MouseClickEnterLeft())
+		stay_bottom = false;
+
+	if (stay_bottom)
+		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
 	
 	return true;
 }
@@ -96,18 +112,32 @@ bool j1Console::CleanUp()
 	return true;
 }
 
-void j1Console::Log(p2SString string)
+void j1Console::Log(p2SString string, uint r, uint g, uint b)
 {
 	if (string.Length() > 0)
 	{
-		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
-
 		UI_Text* text = new UI_Text();
-		text->Set(iPoint(3, last_text_pos), App->font->default_15, 0, 255, 255, 255);
+		text->Set(iPoint(3, last_text_pos), App->font->default_15, 15, r, g, b);
 		text->SetText(string.GetString());
 		scroll->AddElement(text);
 		last_text_pos += TEXT_DISTANCE;
+		stay_bottom = true;
 	}
+}
+
+void j1Console::Tokenize(p2SString string)
+{
+	if (strcmp(string.GetString(), "help") == 0)
+	{
+		LOG("\nBasic commands:");
+		LOG("   - 'help' xD");
+	}
+	else
+	{
+		Log("> Could not understand this command", 255, 67, 67);
+	}
+
+	text_input->Clear();
 }
 
 void j1Console::LoadLogs()
@@ -116,5 +146,7 @@ void j1Console::LoadLogs()
 	{
 		Log(App->logs[i].GetString());
 	}
+
 	App->logs.clear();	
 }
+

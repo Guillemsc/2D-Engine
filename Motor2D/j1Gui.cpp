@@ -1082,7 +1082,7 @@ void UI_Text::Set(iPoint _pos, _TTF_Font* _font, int _spacing, uint r, uint g, u
 
 	spacing = _spacing;
 
-	color.r = color.g = color.b = color.a = 255;
+	color.a = 255;
 }
 
 void UI_Text::SetText(p2SString _text)
@@ -1491,6 +1491,16 @@ char* UI_Text_Input::Enter()
 	return ret;
 }
 
+void UI_Text_Input::Clear()
+{
+	intern_text.Clear();
+
+	bar_pos = 0;
+	bar_x = 0;
+
+	words_lenght.clear();
+}
+
 
 void UI_Text_Input::SetIsActive()
 {
@@ -1602,9 +1612,8 @@ bool UI_Scroll_Bar::update()
 		App->render->DrawLine(min_bar_h, button_h->rect.y + (button_h->rect.h/2), max_bar_h, button_h->rect.y + (button_h->rect.h / 2), color.r, color.g, color.b, color.a);
 	}
 
-
 	// Viewport -----------
-	App->render->SetViewPort({ rect.x + App->render->camera.x, rect.y + App->render->camera.y, rect.w, rect.h});
+	App->render->SetViewPort({ rect.x + App->render->camera.x, rect.y + App->render->camera.y, rect.x + rect.w + App->render->camera.x, rect.h});
 
 	for (int i = 0; i < elements.count(); i++)
 	{
@@ -1616,6 +1625,7 @@ bool UI_Scroll_Bar::update()
 
 	ChangeHeightMovingRect();
 	ChangeWidthMovingRect();
+
 	MoveBarV();
 	MoveBarH();
 
@@ -1659,7 +1669,7 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 	}
 
 	min_bar_v = rect.y;
-	max_bar_v = min_bar_v + rect.h;
+	max_bar_v = rect.y + rect.h;
 }
 
 void UI_Scroll_Bar::ChangeWidthMovingRect()
@@ -1707,7 +1717,6 @@ void UI_Scroll_Bar::MoveBarV()
 
 		if (curr_y != mouse_y)
 		{
-
 			if (((button_v->rect.y + button_v->rect.h) - (mouse_y - curr_y)) <= max_bar_v && (button_v->rect.y - (mouse_y - curr_y)) >= min_bar_v)
 			{
 				button_v->rect.y -= mouse_y - curr_y;

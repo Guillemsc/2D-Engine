@@ -10,6 +10,7 @@ class UI_Window;
 class UI_Text;
 class UI_ColoredRect;
 class UI_Scroll_Bar;
+class UI_Text_Input;
 class j1Console : public j1Module
 {
 public:
@@ -29,7 +30,8 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	void Log(p2SString string);
+	void Log(p2SString string, uint r = 245, uint g = 245, uint b = 245);
+	void Tokenize(p2SString string);
 
 	void LoadLogs();
 
@@ -56,6 +58,10 @@ private:
 
 	UI_ColoredRect* bottom_scroll_h = nullptr;
 	UI_ColoredRect* top_scroll_h = nullptr;
+
+	UI_Text_Input* text_input = nullptr;
+
+	bool stay_bottom = true;
 };
 
 #endif // __j1CONSOLE_H__

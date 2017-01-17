@@ -273,7 +273,7 @@ public:
 
 	bool update();
 
-	void Set(iPoint pos, _TTF_Font* font, int spacing,  uint r, uint g, uint b);
+	void Set(iPoint pos, _TTF_Font* font, int spacing,  uint r = 255, uint g = 255, uint b = 255);
 	void SetText(p2SString text);
 
 public:
@@ -321,8 +321,9 @@ public:
 
 	void Set(iPoint pos, int w, _TTF_Font* font, uint r, uint g, uint b);
 
-
 	char* Enter();
+
+	void Clear();
 
 private:
 	void SetIsActive();
@@ -341,12 +342,13 @@ public:
 	bool		 pasword = false;
 	UI_Text*	 text = nullptr;
 
+	bool		 active = false;
+
 private:
 	SDL_Rect	 bar;
 	uint		 bar_pos = 0;
 	uint		 bar_x = 0;
 
-	bool		 active = false;
 	p2List<int>	 words_lenght;
 };
 
@@ -392,7 +394,7 @@ public:
 	int        min_bar_h = 0;
 	int        max_bar_h = 0;
 
-	SDL_Rect moving_rect;
+	SDL_Rect   moving_rect;
 
 private:
 	p2List<scroll_element> elements;
