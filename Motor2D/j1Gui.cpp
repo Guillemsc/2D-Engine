@@ -1234,6 +1234,9 @@ void UI_Text_Input::Set(iPoint pos, int w, _TTF_Font* font, uint r, uint g, uint
 	bar.w = 1;
 	rect.h = bar.h;
 
+	camera_before.x = App->render->camera.x;
+	camera_before.y = App->render->camera.y;
+
 	color.r = color.g = color.b = color.a = 255;
 }
 
@@ -1286,6 +1289,18 @@ bool UI_Text_Input::update()
 
 		App->render->ResetViewPort();
 		// --------------------
+
+		if (camera_before.x != App->render->camera.x)
+		{
+			text->rect.x += camera_before.x - App->render->camera.x;
+			camera_before.x = App->render->camera.x;
+		}
+		if (camera_before.y != App->render->camera.y)
+		{
+			text->rect.y += camera_before.y - App->render->camera.y;
+			camera_before.y = App->render->camera.y;
+		}
+
 
 	}
 

@@ -349,6 +349,8 @@ private:
 	uint		 bar_pos = 0;
 	uint		 bar_x = 0;
 
+	SDL_Rect     camera_before;
+
 	p2List<int>	 words_lenght;
 };
 
