@@ -57,6 +57,7 @@ bool j1Render::Start()
 	LOG("render start");
 	// back background
 	SDL_RenderGetViewport(renderer, &viewport);
+
 	return true;
 }
 

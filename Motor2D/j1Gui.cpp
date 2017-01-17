@@ -1280,7 +1280,7 @@ bool UI_Text_Input::update()
 		}
 
 		// Viewport -----------
-		App->render->SetViewPort(rect);
+		App->render->SetViewPort({ rect.x + App->render->camera.x, rect.y + App->render->camera.y, rect.x + rect.w + App->render->camera.x, rect.h });
 
 			text->update();
 

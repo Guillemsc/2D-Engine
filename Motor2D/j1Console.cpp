@@ -8,6 +8,7 @@
 #include "j1Input.h"
 #include "j1Gui.h"
 #include "p2Point.h"
+#include "j1FileSystem.h"
 #include <iostream>
 
 using namespace std;
@@ -20,6 +21,7 @@ using namespace std;
 
 j1Console::j1Console()
 {
+	name.create("Console");
 }
 
 j1Console::~j1Console()
@@ -64,6 +66,8 @@ bool j1Console::Start()
 	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w - FRAMES_SIZE, App->font->default_15);
 
 	Log("Welcome to the console :-D");
+
+	App->LoadGame("console.xml");
 	return true;
 }
 
@@ -108,6 +112,22 @@ bool j1Console::Update(float dt)
 	if (stay_bottom)
 		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
 	
+	if(fps > 0)
+		App->capped_ms = 1000 / fps;
+
+	return true;
+}
+
+bool j1Console::Load(pugi::xml_node &node)
+{
+	fps = node.child("general").attribute("framerate_cap").as_int(-1);
+	return false;
+}
+
+bool j1Console::Save(pugi::xml_node &node) const
+{
+	node.append_child("general").append_attribute("framerate_cap") = fps;
+
 	return true;
 }
 
@@ -115,6 +135,7 @@ bool j1Console::CleanUp()
 {
 	return true;
 }
+
 
 void j1Console::Log(p2SString string, uint r, uint g, uint b)
 {
@@ -137,14 +158,15 @@ void j1Console::Tokenize(p2SString s)
 	p2List<float> ints;
 
 	p2SString current;
-
 	p2SString number;
+
+	// Separate text and numbers ----------------
 
 	for (int i = 0; i < s.Length(); i++)
 	{
 		if (cs[i] != ' ')
 		{
-			if (isdigit(cs[i]))
+			if (isdigit(cs[i]) || (isdigit(cs[i+1]) && cs[i] == '-'))
 			{
 				if (current.Length() > 0)
 				{
@@ -187,7 +209,9 @@ void j1Console::Tokenize(p2SString s)
 		ints.add(atoi(number.GetString()));
 		number.Clear();
 	}
-	
+
+	// ----------------------------------------
+
 	if (strcmp(strings[0].GetString(), "help") == 0)
 	{
 		LOG("\nBasic commands:");
@@ -197,10 +221,8 @@ void j1Console::Tokenize(p2SString s)
 	{
 		if (ints.count() > 0)
 		{
-			if (ints[0] == 100)
-			{
-				LOG("Works");
-			}
+			fps = ints[0];
+			App->SaveGame("console.xml");
 		}
 
 	}

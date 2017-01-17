@@ -26,6 +26,9 @@ public:
 
 	bool PreUpdate();
 	bool Update(float dt);
+	
+	bool Load(pugi::xml_node& node);
+	bool Save(pugi::xml_node& node) const;
 
 	// Called before quitting
 	bool CleanUp();
@@ -63,6 +66,9 @@ private:
 	UI_Text_Input* text_input = nullptr;
 
 	bool stay_bottom = true;
+
+	// Save
+	int fps = -1;
 };
 
 #endif // __j1CONSOLE_H__
