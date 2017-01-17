@@ -214,8 +214,11 @@ void j1Console::Tokenize(p2SString s)
 
 	if (strcmp(strings[0].GetString(), "help") == 0)
 	{
+		LOG(" ");
 		LOG("\nBasic commands:");
-		LOG("   - 'help' xD");
+		LOG("   - 'help': sends help :v");
+		LOG("   - 'fps x': limits fps to the number 'x'");
+		LOG(" ");
 	}
 	else if (strcmp(strings[0].GetString(), "fps") == 0)
 	{
@@ -223,13 +226,13 @@ void j1Console::Tokenize(p2SString s)
 		{
 			fps = ints[0];
 			App->SaveGame("console.xml");
-			LOG("Fps capped to %0.1f", ints[0]);
+			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
 		}
 
 	}
 	else
 	{
-		Log("> Could not understand this command", 255, 67, 67);
+		Log(p2SString("> Could not understand the command: '%s'.", s.GetString()), error.r, error.g, error.b);
 	}
 
 	text_input->Clear();
