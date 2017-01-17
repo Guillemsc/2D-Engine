@@ -134,7 +134,7 @@ void j1Console::Tokenize(p2SString s)
 	string cs = s.GetString();
 
 	p2List<p2SString> strings;
-	p2List<int> ints;
+	p2List<float> ints;
 
 	p2SString current;
 
