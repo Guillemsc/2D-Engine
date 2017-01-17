@@ -68,7 +68,7 @@ private:
 	bool stay_bottom = true;
 
 	// Save
-	int fps = -1;
+	float fps = -1;
 };
 
 #endif // __j1CONSOLE_H__

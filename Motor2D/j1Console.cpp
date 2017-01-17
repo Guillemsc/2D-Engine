@@ -166,7 +166,7 @@ void j1Console::Tokenize(p2SString s)
 	{
 		if (cs[i] != ' ')
 		{
-			if (isdigit(cs[i]) || (isdigit(cs[i+1]) && cs[i] == '-'))
+			if (isdigit(cs[i]) || (isdigit(cs[i+1]) && cs[i] == '-') || (isdigit(cs[i + 1]) && cs[i] == '.'))
 			{
 				if (current.Length() > 0)
 				{
@@ -223,6 +223,7 @@ void j1Console::Tokenize(p2SString s)
 		{
 			fps = ints[0];
 			App->SaveGame("console.xml");
+			LOG("Fps capped to %0.1f", ints[0]);
 		}
 
 	}
