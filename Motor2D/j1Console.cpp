@@ -166,8 +166,13 @@ void j1Console::Tokenize(p2SString s)
 		LOG(" ");
 		LOG("\nBasic commands:");
 		LOG("   - 'help': sends help :v");
+		LOG("   - 'hide console': hides console");
 		LOG("   - 'fps x': limits fps to the number 'x'");
 		LOG(" ");
+	}
+	else if(strcmp(strings[0].GetString(), "hideconsole") == 0)
+	{
+		window->SetEnabledAndChilds(!window->enabled);
 	}
 	else if (strcmp(strings[0].GetString(), "fps") == 0)
 	{
