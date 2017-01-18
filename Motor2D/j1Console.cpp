@@ -152,10 +152,44 @@ void j1Console::Log(p2SString string, uint r, uint g, uint b)
 
 void j1Console::Tokenize(p2SString s)
 {
-	string cs = s.GetString();
-
 	p2List<p2SString> strings;
 	p2List<float> ints;
+
+	// Separate text and numbers ----------------
+
+	SeparateTextAndNumbers(s, strings, ints);
+
+	// ----------------------------------------
+
+	if (strcmp(strings[0].GetString(), "help") == 0)
+	{
+		LOG(" ");
+		LOG("\nBasic commands:");
+		LOG("   - 'help': sends help :v");
+		LOG("   - 'fps x': limits fps to the number 'x'");
+		LOG(" ");
+	}
+	else if (strcmp(strings[0].GetString(), "fps") == 0)
+	{
+		if (ints.count() > 0)
+		{
+			fps = ints[0];
+			App->SaveGame("console.xml");
+			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
+		}
+
+	}
+	else
+	{
+		Log(p2SString("> Could not understand the command: '%s'.", s.GetString()), error.r, error.g, error.b);
+	}
+
+	text_input->Clear();
+}
+
+void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
+{
+	string cs = s.GetString();
 
 	p2SString current;
 	p2SString number;
@@ -166,7 +200,7 @@ void j1Console::Tokenize(p2SString s)
 	{
 		if (cs[i] != ' ')
 		{
-			if (isdigit(cs[i]) || (isdigit(cs[i+1]) && cs[i] == '-') || (isdigit(cs[i + 1]) && cs[i] == '.'))
+			if (isdigit(cs[i]) || (isdigit(cs[i + 1]) && cs[i] == '-') || (isdigit(cs[i + 1]) && cs[i] == '.'))
 			{
 				if (current.Length() > 0)
 				{
@@ -211,31 +245,6 @@ void j1Console::Tokenize(p2SString s)
 	}
 
 	// ----------------------------------------
-
-	if (strcmp(strings[0].GetString(), "help") == 0)
-	{
-		LOG(" ");
-		LOG("\nBasic commands:");
-		LOG("   - 'help': sends help :v");
-		LOG("   - 'fps x': limits fps to the number 'x'");
-		LOG(" ");
-	}
-	else if (strcmp(strings[0].GetString(), "fps") == 0)
-	{
-		if (ints.count() > 0)
-		{
-			fps = ints[0];
-			App->SaveGame("console.xml");
-			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
-		}
-
-	}
-	else
-	{
-		Log(p2SString("> Could not understand the command: '%s'.", s.GetString()), error.r, error.g, error.b);
-	}
-
-	text_input->Clear();
 }
 
 void j1Console::LoadLogs()
