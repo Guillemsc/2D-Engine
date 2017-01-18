@@ -77,6 +77,7 @@ public:
 	void ReorderElements();
 	bool Move_Elements();
 	UI_Element* CheckClickMove(int x, int y);
+	void DeleteElement(UI_Element * element);
 
 private:
 
@@ -378,6 +379,8 @@ public:
 	bool update();
 
 	void AddElement(UI_Element* element);
+
+	void ClearElements();
 
 private:
 	void ChangeHeightMovingRect();

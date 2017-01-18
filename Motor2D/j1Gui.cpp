@@ -458,6 +458,22 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 	return higher_element;
 }
 
+void j1Gui::DeleteElement(UI_Element * element)
+{
+	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
+	{
+		if (elements->next->data == element)
+		{
+			if (elements->next->next != nullptr)
+				elements->next == elements->next->next;
+			else
+				elements->next = nullptr;
+
+			delete element;
+		}
+	}
+}
+
 // -----------------------------------
 // ------------------------- Class Gui
 
@@ -1660,6 +1676,11 @@ void UI_Scroll_Bar::AddElement(UI_Element * element)
 	el.starting_pos_x = element->rect.x;
 	el.starting_pos_y = element->rect.y;
 	elements.add(el);
+}
+
+void UI_Scroll_Bar::ClearElements()
+{
+
 }
 
 void UI_Scroll_Bar::ChangeHeightMovingRect()

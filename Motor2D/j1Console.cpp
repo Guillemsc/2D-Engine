@@ -165,9 +165,14 @@ void j1Console::Tokenize(p2SString s)
 		LOG(" ");
 		LOG("\nBasic commands:");
 		LOG("   - 'help': sends help :v");
+		LOG("   - 'clear': clears the console text");
 		LOG("   - 'hide console': hides console");
 		LOG("   - 'fps x': limits fps to the number 'x'");
 		LOG(" ");
+	}
+	else if (strcmp(strings[0].GetString(), "clear") == 0)
+	{
+
 	}
 	else if(strcmp(strings[0].GetString(), "hideconsole") == 0)
 	{
@@ -249,6 +254,12 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 	}
 
 	// ----------------------------------------
+}
+
+void j1Console::ClearConsole()
+{
+	last_text_pos = 1;
+	scroll->
 }
 
 void j1Console::LoadLogs()
