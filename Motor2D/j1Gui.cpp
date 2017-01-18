@@ -1809,19 +1809,6 @@ void UI_Scroll_Bar::MoveBarH()
 				button_h->rect.x -= button_h->rect.x - min_bar_h;
 			}
 
-	/*		if (((button_v->rect.y + button_v->rect.h) - (mouse_y - curr_y)) <= max_bar_v && (button_v->rect.y - (mouse_y - curr_y)) >= min_bar_v)
-			{
-				button_v->rect.y -= mouse_y - curr_y;
-			}
-			else if (((button_v->rect.y + button_v->rect.h) - (mouse_y - curr_y)) > max_bar_v)
-			{
-				button_v->rect.y += max_bar_v - (button_v->rect.y + button_v->rect.h);
-			}
-			else if ((button_v->rect.y - (mouse_y - curr_y)) < min_bar_v)
-			{
-				button_v->rect.y -= button_v->rect.y - min_bar_v;
-			}*/
-
 			mouse_x = curr_x;
 		}
 	}

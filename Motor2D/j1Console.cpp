@@ -98,7 +98,7 @@ bool j1Console::Update(float dt)
 	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
 	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
 
-	if (text_input->active)
+	if (text_input->active && text_input->intern_text.Length() > 0)
 	{
 		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
 		{
@@ -135,7 +135,6 @@ bool j1Console::CleanUp()
 {
 	return true;
 }
-
 
 void j1Console::Log(p2SString string, uint r, uint g, uint b)
 {
@@ -186,7 +185,7 @@ void j1Console::Tokenize(p2SString s)
 	}
 	else
 	{
-		Log(p2SString("> Could not understand the command: '%s'.", s.GetString()), error.r, error.g, error.b);
+		Log(p2SString("> The command '%s' does not exist. Type 'help' for some info.", s.GetString()), error.r, error.g, error.b);
 	}
 
 	text_input->Clear();
