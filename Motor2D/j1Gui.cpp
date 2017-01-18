@@ -1725,9 +1725,6 @@ void UI_Scroll_Bar::MoveBarV()
 		int curr_x; int curr_y;
 		App->input->GetMousePosition(curr_x, curr_y);
 
-		curr_x -= App->render->camera.x;
-		curr_y -= App->render->camera.y;
-
 		// ----------------------
 
 		if (curr_y != mouse_y)
@@ -1795,9 +1792,6 @@ void UI_Scroll_Bar::MoveBarH()
 		int curr_x; int curr_y;
 		App->input->GetMousePosition(curr_x, curr_y);
 
-		curr_x -= App->render->camera.x;
-		curr_y -= App->render->camera.y;
-
 		// ----------------------
 
 		if (curr_x != mouse_x)
@@ -1806,7 +1800,7 @@ void UI_Scroll_Bar::MoveBarH()
 			{
 				button_h->rect.x -= mouse_x - curr_x;
 			}
-			else if (((button_h->rect.x + button_h->rect.x) - (mouse_x - curr_x)) > max_bar_h)
+			else if (((button_h->rect.x + button_h->rect.w) - (mouse_x - curr_x)) > max_bar_h)
 			{
 				button_h->rect.x += max_bar_h - (button_h->rect.x + button_h->rect.w);
 			}
@@ -1814,6 +1808,19 @@ void UI_Scroll_Bar::MoveBarH()
 			{
 				button_h->rect.x -= button_h->rect.x - min_bar_h;
 			}
+
+	/*		if (((button_v->rect.y + button_v->rect.h) - (mouse_y - curr_y)) <= max_bar_v && (button_v->rect.y - (mouse_y - curr_y)) >= min_bar_v)
+			{
+				button_v->rect.y -= mouse_y - curr_y;
+			}
+			else if (((button_v->rect.y + button_v->rect.h) - (mouse_y - curr_y)) > max_bar_v)
+			{
+				button_v->rect.y += max_bar_v - (button_v->rect.y + button_v->rect.h);
+			}
+			else if ((button_v->rect.y - (mouse_y - curr_y)) < min_bar_v)
+			{
+				button_v->rect.y -= button_v->rect.y - min_bar_v;
+			}*/
 
 			mouse_x = curr_x;
 		}
