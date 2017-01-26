@@ -372,6 +372,20 @@ void j1App::GetSaveGames(p2List<p2SString>& list_to_fill) const
 	// need to add functionality to file_system module for this to work
 }
 
+void j1App::LoadXML(const char * path, pugi::xml_document & doc)
+{
+	char* buf = NULL;
+	int size = App->fs->Load(path, &buf);
+	pugi::xml_parse_result result = doc.load_buffer(buf, size);
+	
+	if (buf == NULL)
+		LOG("Error loading '%s', probably wrong XML file name", path);
+	else
+		LOG("Succes loading '%s'", path);
+
+	RELEASE(buf);
+}
+
 bool j1App::LoadGameNow()
 {
 	bool ret = false;

@@ -167,6 +167,7 @@ void j1Console::Tokenize(p2SString s)
 		LOG("   - 'help': sends help :v");
 		LOG("   - 'clear(still not working)': clears the console text");
 		LOG("   - 'hide console': hides console");
+		LOG("   - 'exit': exits program");
 		LOG("   - 'fps x': limits fps to the number 'x'");
 		LOG(" ");
 	}
@@ -177,6 +178,10 @@ void j1Console::Tokenize(p2SString s)
 	else if(strcmp(strings[0].GetString(), "hideconsole") == 0)
 	{
 		window->SetEnabledAndChilds(!window->enabled);
+	}
+	else if (strcmp(strings[0].GetString(), "exit") == 0)
+	{
+		
 	}
 	else if (strcmp(strings[0].GetString(), "fps") == 0)
 	{

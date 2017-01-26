@@ -1,8 +1,7 @@
 #ifndef _SCENE_
 #define _SCENE_
 
-#include "p2SString.h"
-#include "p2List.h"
+#include "j1App.h"
 #include "j1Render.h"
 #include "PugiXml\src\pugixml.hpp"
 
