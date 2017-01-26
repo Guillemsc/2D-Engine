@@ -3,10 +3,10 @@
 
 #include "j1Module.h"
 #include "j1Gui.h"
+#include "Scene.h"
 
 struct SDL_Texture;
-class GuiImage;
-class GuiText;
+class MainScene;
 
 class j1Scene : public j1Module
 {
@@ -35,13 +35,16 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
-	UI_Window* window1 = nullptr;
-		UI_Image* background = nullptr;
-	UI_Window* window2 = nullptr;
-
+	// Change scene
+	void ChangeScene(Scene* new_scene);
 
 private:
+	// Current scene
+	Scene*      current_scene = nullptr;
 
+	MainScene*  main_scene = nullptr;
+
+	
 };
 
 #endif // __j1SCENE_H__
