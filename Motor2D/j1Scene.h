@@ -11,11 +11,11 @@ class MainScene;
 struct layer_blit
 {
 	layer_blit() {};
-	layer_blit(SDL_Texture* _texture, iPoint _pos, const SDL_Rect* _section = NULL, float _speed = 1.0f, double _angle = 0, int _pivot_x = INT_MAX, int _pivot_y = INT_MAX) 
+	layer_blit(SDL_Texture* _texture, iPoint _pos, const SDL_Rect _section, float _speed, double _angle, int _pivot_x, int _pivot_y) 
 	{
 		texture = _texture; 
 		pos = _pos; 
-		section->x = _section->x;  section->y = _section->y; section->w = _section->w; section->h = _section->h;
+		section.x = _section.x;  section.y = _section.y; section.w = _section.w; section.h = _section.h;
 		speed = _speed;
 		angle = _angle;
 		pivot_x = _pivot_x;
@@ -24,7 +24,7 @@ struct layer_blit
 
 	SDL_Texture* texture = nullptr;
 	iPoint pos; 
-	SDL_Rect* section = NULL;
+	SDL_Rect section = NULLRECT;
 	float speed = 0.0f; 
 	double angle = 0; 
 	int pivot_x = 0;
@@ -62,16 +62,17 @@ public:
 	void ChangeScene(Scene* new_scene);
 
 	// Blit choosing the layer
-	void LayerBlit(int layer, SDL_Texture* texture, iPoint pos, const SDL_Rect* section = NULL, float speed = 1.0f, double angle = 0, int pivot_x = INT_MAX, int pivot_y = INT_MAX);
+	void LayerBlit(int layer, SDL_Texture* texture, iPoint pos, const SDL_Rect section = NULLRECT, float speed = 1.0f, double angle = 0, int pivot_x = INT_MAX, int pivot_y = INT_MAX);
 	
 private:
 	void DoLayerBlit();
 
 public:
+
+private:
 	// Layer Blit list
 	p2PQueue<layer_blit> layer_list;
 
-private:
 	// Current scene
 	Scene*      current_scene = nullptr;
 

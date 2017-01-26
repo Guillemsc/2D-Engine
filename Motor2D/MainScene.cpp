@@ -1,4 +1,5 @@
 #include "MainScene.h"
+#include "j1Scene.h"
 
 
 MainScene::MainScene()
@@ -13,8 +14,7 @@ bool MainScene::Start()
 {
 	bool ret = true;
 
-	pugi::xml_document doc;
-	App->LoadXML("confi.xml", doc);
+	//pugi::xml_document doc;
 
 	return ret;
 }
