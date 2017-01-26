@@ -388,6 +388,20 @@ void j1App::LoadXML(const char * path, pugi::xml_document & doc)
 	RELEASE(buf);
 }
 
+void j1App::SaveLoadedXML(pugi::xml_document& data, const char * path)
+{
+	std::stringstream stream;
+	data.save(stream);
+
+	// Write data to disk
+	App->fs->ChangeWriteDir(App->fs->base_path);
+	fs->Save(path, stream.str().c_str(), stream.str().length());
+	LOG("Succes saving '%s'", path);
+	App->fs->ChangeWriteDir(App->fs->write_path);
+
+	data.reset();
+}
+
 bool j1App::LoadGameNow()
 {
 	bool ret = false;
