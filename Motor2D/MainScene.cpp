@@ -17,7 +17,7 @@ bool MainScene::Start()
 	pugi::xml_document doc;
 	App->LoadXML("test.xml", doc);
 	pugi::xml_node node = doc.child("test");
-	node.append_child("child").append_attribute("fuck");
+	node.append_child("child").append_attribute("fuck").as_int(30);
 	App->SaveLoadedXML(doc, "test.xml");
 
 	return ret;

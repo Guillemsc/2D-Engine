@@ -87,8 +87,16 @@ bool j1FileSystem::IsDirectory(const char* file) const
 
 bool j1FileSystem::ChangeWriteDir(const char * file) const
 {
-	LOG("FileSystem write directory changed to %s", file);
-	return PHYSFS_setWriteDir(file);
+	bool ret = false;
+
+	if (PHYSFS_setWriteDir(file) == 0)
+		LOG("File System error while creating write dir: %s\n", PHYSFS_getLastError());
+	else
+	{
+		LOG("FileSystem write directory changed to %s", file);
+		ret = true;
+	}
+	return ret;
 }
 
 // Read a whole file and put it in a new buffer
