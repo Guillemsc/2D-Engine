@@ -460,17 +460,26 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 
 void j1Gui::DeleteElement(UI_Element * element)
 {
-	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
-	{
-		if (elements->next->data == element)
-		{
-			if (elements->next->next != nullptr)
-				elements->next == elements->next->next;
-			else
-				elements->next = nullptr;
+	p2List<UI_Element*> childs;
+	App->gui->GetChilds(element, childs);
 
-			delete element;
+	for (int i = 0; i < childs.count(); i++)
+	{
+		if (childs[i]->parent != nullptr && childs[i]->parent->childs.find(element))
+			childs[i]->parent->childs.del(childs[i]->parent->childs.At(childs[i]->parent->childs.find(childs[i])));
+
+		for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
+		{
+			if (elements->next != nullptr && elements->next->data == childs[i])
+			{
+				if (elements->next->next != nullptr)
+					elements->next == elements->next->next;
+				else
+					elements->next = nullptr;
+				break;
+			}
 		}
+		RELEASE(childs[i]);
 	}
 }
 
@@ -1680,7 +1689,11 @@ void UI_Scroll_Bar::AddElement(UI_Element * element)
 
 void UI_Scroll_Bar::ClearElements()
 {
-
+	for (int i = 0; i < elements.count();)
+	{
+		App->gui->DeleteElement(elements[i].element);
+		elements.del(elements.At(i));
+	}
 }
 
 void UI_Scroll_Bar::ChangeHeightMovingRect()
@@ -1694,16 +1707,21 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 	}
 	// ----------------
 
-	if (starting_v < lowest)
-	{
-		moving_rect.h = lowest;
+	moving_rect.h = lowest;
 
-		// Regla de tres inversa
+	// Regla de tres inversa
+	if (moving_rect.h > 0)
+	{
 		button_v->rect.h = (button_starting_v * starting_v) / moving_rect.h;
 		if (button_v->rect.h < 20)
 			button_v->rect.h = 20;
 	}
-
+	else
+	{
+		button_v->rect.y = min_bar_v;
+		button_v->rect.h = button_starting_v;
+	}
+	
 	min_bar_v = rect.y;
 	max_bar_v = rect.y + rect.h;
 }

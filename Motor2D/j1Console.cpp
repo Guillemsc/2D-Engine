@@ -172,7 +172,7 @@ void j1Console::Tokenize(p2SString s)
 	}
 	else if (strcmp(strings[0].GetString(), "clear") == 0)
 	{
-
+		ClearConsole();
 	}
 	else if(strcmp(strings[0].GetString(), "hideconsole") == 0)
 	{
@@ -259,6 +259,7 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 void j1Console::ClearConsole()
 {
 	last_text_pos = 1;
+	scroll->ClearElements();
 }
 
 void j1Console::LoadLogs()
