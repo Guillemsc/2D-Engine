@@ -65,6 +65,7 @@ public:
 	void LayerBlit(int layer, SDL_Texture* texture, iPoint pos, const SDL_Rect section = NULLRECT, float speed = 1.0f, double angle = 0, int pivot_x = INT_MAX, int pivot_y = INT_MAX);
 	
 private:
+	// Blit in the layer order
 	void DoLayerBlit();
 
 public:

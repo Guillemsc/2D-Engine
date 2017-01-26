@@ -35,6 +35,7 @@ bool j1Gui::Start()
 {
 	bool ret = false;
 
+	LOG("Start module gui");
 	// Load atlas
 	if (atlas == nullptr)
 		atlas = App->tex->Load(atlas_file_name.GetString());

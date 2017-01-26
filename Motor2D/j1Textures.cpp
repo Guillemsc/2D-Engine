@@ -38,7 +38,7 @@ bool j1Textures::Awake(pugi::xml_node& config)
 // Called before the first frame
 bool j1Textures::Start()
 {
-	LOG("start textures");
+	LOG("Start module textures");
 	bool ret = true;
 	return ret;
 }

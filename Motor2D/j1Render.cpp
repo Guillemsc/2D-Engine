@@ -54,7 +54,7 @@ bool j1Render::Awake(pugi::xml_node& config)
 // Called before the first frame
 bool j1Render::Start()
 {
-	LOG("render start");
+	LOG("Start module render");
 	// back background
 	SDL_RenderGetViewport(renderer, &viewport);
 
