@@ -59,6 +59,7 @@ public:
 
 	// Load an XML file
 	void LoadXML(const char* path, pugi::xml_document& doc);
+	void SaveLoadedXML(pugi::xml_document& doc, const char* path);
 
 private:
 
