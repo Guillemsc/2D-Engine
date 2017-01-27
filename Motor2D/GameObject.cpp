@@ -33,7 +33,7 @@ void GameObject::SetPos(iPoint new_pos)
 	pos = new_pos;
 }
 
-void GameObject::AddAnimation(Animation * animation)
+void GameObject::AddAnimation(Animation* animation)
 {
 	if (animator != nullptr)
 		animator->AddAnimation(animation);

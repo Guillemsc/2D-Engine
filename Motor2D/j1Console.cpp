@@ -241,14 +241,15 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 {
 	if (strcmp(strings[0].GetString(), "help") == 0)
 	{
-		LOG(" ");
-		LOG("\nBasic commands:");
-		LOG("   - 'help': sends help :v");
-		LOG("   - 'clear(still not working)': clears the console text");
-		LOG("   - 'hide': hides console");
-		LOG("   - 'exit': exits program");
-		LOG("   - 'fps x': limits fps to the number 'x'");
-		LOG(" ");
+		Log(" ");
+		Log("\nBasic commands:");
+		Log("   - 'help': sends help :v.");
+		Log("   - 'clear': clears the console text.");
+		Log("   - 'hide': hides console.");
+		Log("   - 'exit': exits program.");
+		Log("   - 'set title x': changes the window title.");
+		Log("   - 'fps x': limits fps to the number 'x'.");
+		Log(" ");
 	}
 	else if (strcmp(strings[0].GetString(), "clear") == 0)
 	{
@@ -260,12 +261,12 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 	}
 	else if (strcmp(strings[0].GetString(), "exit") == 0)
 	{
-		LOG("Exiting program");
+		Log("Exiting program");
 		App->EndSDL();
 	}
 	else if (strcmp(strings[0].GetString(), "set") == 0 && strcmp(strings[1].GetString(), "title") == 0)
 	{
-		LOG("Title changed to %s", strings[2].GetString());
+		Log(p2SString("Title changed to '%s'.", strings[2].GetString()), succes.r, succes.g, succes.b);
 		App->win->SetTitle(strings[2].GetString());
 	}
 	else if (strcmp(strings[0].GetString(), "fps") == 0)
@@ -273,9 +274,13 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		if (ints.count() > 0)
 		{
 			App->CapFps(ints[0]);
-			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
+			Log(p2SString("> Fps limited to %0f.", ints[0]), succes.r, succes.g, succes.b);
 		}
 
+	}
+	else if (strcmp(strings[0].GetString(), "hi") == 0)
+	{
+		Log("Hi! :D");
 	}
 	else
 	{

@@ -6,6 +6,8 @@
 
 class Animator;
 class PhysBody;
+class Animation;
+enum body_type;
 class GameObject
 {
 public:

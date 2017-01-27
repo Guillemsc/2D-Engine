@@ -520,9 +520,7 @@ void j1Physics::DeleteJoint(b2MouseJoint* joint)
 // 
 bool j1Physics::PostUpdate()
 {
-	
-	if(App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-		debug = !debug;
+	debug = App->debug_mode;
 
 	if(!debug)
 		return true;
@@ -602,6 +600,9 @@ bool j1Physics::PostUpdate()
 			{
 				int mouse_x, mouse_y;
 				App->input->GetMousePosition(mouse_x, mouse_y);
+				mouse_x -= App->render->camera.x;
+				mouse_y -= App->render->camera.y;
+
 				b2Vec2 mouse(PIXEL_TO_METERS(mouse_x), PIXEL_TO_METERS(mouse_y));
 				if (f->TestPoint(mouse)) 
 				{
@@ -621,6 +622,9 @@ bool j1Physics::PostUpdate()
 	{
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
+		mouse_x -= App->render->camera.x;
+		mouse_y -= App->render->camera.y;
+
 		b2Vec2 mouse(PIXEL_TO_METERS(mouse_x), PIXEL_TO_METERS(mouse_y));
 
 		b2MouseJointDef def;
@@ -640,6 +644,9 @@ bool j1Physics::PostUpdate()
 	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_REPEAT && selected != nullptr) {
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
+		mouse_x -= App->render->camera.x;
+		mouse_y -= App->render->camera.y;
+
 		b2Vec2 mouse(PIXEL_TO_METERS(mouse_x), PIXEL_TO_METERS(mouse_y));
 		b2Vec2 mouse_pix(mouse_x, mouse_y);
 

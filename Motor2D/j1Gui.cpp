@@ -75,7 +75,10 @@ bool j1Gui::Update(float dt)
 	// -------------------------------------------------------
 
 	// Debug
-	debug = App->debug_mode;
+	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN && App->debug_mode)
+		debug = !debug;
+	else if (!App->debug_mode)
+		debug = false;
 	
 	// Update all elements in order
 	p2List<UI_Element*> to_top;

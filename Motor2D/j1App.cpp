@@ -142,7 +142,10 @@ bool j1App::Start()
 	}
 	startup_time.Start();
 
+	debug_mode = true;
+
 	debug_window = (UI_Window*)App->gui->UI_CreateWin(iPoint(0, 0), 200, 115, false, true);
+	debug_window->always_top = true;
 	debug_colored_rect = (UI_ColoredRect*)debug_window->CreateColoredRect(iPoint(0, 0), 200, 115, { 20, 20, 20, 255 }, true);
 	debug_text = (UI_Text*)debug_window->CreateText(iPoint(5, 5), App->font->default_15, 15);
 
@@ -489,7 +492,7 @@ void j1App::FrameRateCalculations()
 	uint32 frames_on_last_update = prev_last_sec_frame_count;
 
 	static char title[256];
-	debug_text->SetText(p2SString("Av.FPS: %.2f \nLast Frame Ms: %u \nLast sec frames: %i \nLast dt: %.3f \nTime since startup: %.3f \nFrame Count: %lu", avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count));
+	debug_text->SetText(p2SString("FPS: %i \nAv.FPS: %.2f \nLast Frame Ms: %u \nLast dt: %.3f \nTime since startup: %.3f \nFrame Count: %lu", frames_on_last_update, avg_fps, last_frame_ms, dt, seconds_since_startup, frame_count));
 	//sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
 	//	avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
 	//App->win->SetTitle(title);
