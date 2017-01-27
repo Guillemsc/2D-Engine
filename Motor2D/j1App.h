@@ -7,6 +7,10 @@
 #include "j1Timer.h"
 #include "PugiXml\src\pugixml.hpp"
 
+class UI_Window;
+class UI_Text;
+class UI_ColoredRect;
+
 // Modules
 class j1Window;
 class j1Input;
@@ -63,6 +67,7 @@ public:
 	void SaveLoadedXML(pugi::xml_document& doc, const char* path);
 
 	void CapFps(float fps);
+	void EndSDL();
 
 private:
 
@@ -88,6 +93,7 @@ private:
 	bool LoadGameNow();
 	bool SavegameNow() const;
 
+	// Frame rate calculations uptade
 	void FrameRateCalculations();
 
 public:
@@ -108,11 +114,13 @@ public:
 	j1Physics*			physics = NULL;
 
 	// Console logs
-	p2List<p2SString> logs;
+	p2List<p2SString>   logs;
 
-	bool debug_mode = false;
+	bool			    debug_mode = false;
 
 private:
+
+	bool                end_program = false;
 
 	p2List<j1Module*>	modules;
 	int					argc;
@@ -135,6 +143,12 @@ private:
 	uint32				last_sec_frame_count = 0;
 	uint32				prev_last_sec_frame_count = 0;
 	float				dt = 0.0f;
+
+	// Debug ui
+	UI_Window*			debug_window = nullptr;
+	UI_ColoredRect*		debug_colored_rect = nullptr;
+	UI_Text*			debug_text = nullptr;
+
 };
 
 extern j1App* App; // No student is asking me about that ... odd :-S

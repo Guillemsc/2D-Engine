@@ -142,6 +142,10 @@ bool j1App::Start()
 	}
 	startup_time.Start();
 
+	debug_window = (UI_Window*)App->gui->UI_CreateWin(iPoint(0, 0), 200, 115, false, true);
+	debug_colored_rect = (UI_ColoredRect*)debug_window->CreateColoredRect(iPoint(0, 0), 200, 115, { 20, 20, 20, 255 }, true);
+	debug_text = (UI_Text*)debug_window->CreateText(iPoint(5, 5), App->font->default_15, 15);
+
 	PERF_PEEK(ptimer);
 
 	return ret;
@@ -156,7 +160,7 @@ bool j1App::Update()
 	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
 		debug_mode = !debug_mode;
 
-	if(input->GetWindowEvent(WE_QUIT) == true)
+	if(input->GetWindowEvent(WE_QUIT) == true || end_program)
 		ret = false;
 
 	if(ret == true)
@@ -485,9 +489,10 @@ void j1App::FrameRateCalculations()
 	uint32 frames_on_last_update = prev_last_sec_frame_count;
 
 	static char title[256];
-	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
-		avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
-	App->win->SetTitle(title);
+	debug_text->SetText(p2SString("Av.FPS: %.2f \nLast Frame Ms: %u \nLast sec frames: %i \nLast dt: %.3f \nTime since startup: %.3f \nFrame Count: %lu", avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count));
+	//sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
+	//	avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
+	//App->win->SetTitle(title);
 
 	if (capped_ms > 0 && last_frame_ms < capped_ms)
 	{
@@ -495,4 +500,14 @@ void j1App::FrameRateCalculations()
 		SDL_Delay(capped_ms - last_frame_ms);
 		//LOG("We waited for %d milliseconds and got back in %f", capped_ms - last_frame_ms, t.ReadMs());
 	}
+
+	if (debug_mode && !debug_window->enabled)
+		debug_window->SetEnabledAndChilds(true);
+	if(!debug_mode && debug_window->enabled)
+		debug_window->SetEnabledAndChilds(false);
+}
+
+void j1App::EndSDL()
+{
+	end_program = true;
 }

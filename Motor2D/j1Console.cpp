@@ -9,6 +9,7 @@
 #include "j1Gui.h"
 #include "p2Point.h"
 #include "j1FileSystem.h"
+#include "j1Window.h"
 #include <iostream>
 
 using namespace std;
@@ -177,7 +178,13 @@ void j1Console::Tokenize(p2SString s)
 	}
 	else if (strcmp(strings[0].GetString(), "exit") == 0)
 	{
-	
+		LOG("Exiting program");
+		App->EndSDL();
+	}
+	else if (strcmp(strings[0].GetString(), "set") == 0 && strcmp(strings[1].GetString(), "title") == 0)
+	{
+		LOG("Title changed to %s", strings[2].GetString());
+		App->win->SetTitle(strings[2].GetString());
 	}
 	else if (strcmp(strings[0].GetString(), "fps") == 0)
 	{
@@ -237,6 +244,20 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 					current.create("%s%c", current.GetString(), cs[i]);
 				else
 					current.create("%c", cs[i]);
+			}
+		}
+		else
+		{
+			if (current.Length() > 0)
+			{
+				strings.add(current);
+				current.Clear();
+			}
+
+			if (number.Length() > 0)
+			{
+				ints.add(atoi(number.GetString()));
+				number.Clear();
 			}
 		}
 	}
