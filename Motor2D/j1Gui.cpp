@@ -74,10 +74,7 @@ bool j1Gui::Update(float dt)
 	// -------------------------------------------------------
 
 	// Debug
-	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
-	{
-		debug = !debug;
-	}
+	debug = App->debug_mode;
 	
 	// Update all elements in order
 	p2List<UI_Element*> to_top;
@@ -174,6 +171,7 @@ UI_Element* j1Gui::UI_CreateWin(iPoint pos, int w, int h, bool _dinamic, bool _i
 	{
 		ret->Set(pos, w, h);
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layer
@@ -207,6 +205,7 @@ void j1Gui::UI_CreateWinManager(iPoint pos, int w, int h, bool _dinamic)
 	{
 		ret->Set(pos, w, h);
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 
 		// Layer
 
@@ -719,6 +718,7 @@ UI_Element* UI_Window::CreateButton(iPoint pos, int w, int h, bool _dinamic, boo
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layers --
@@ -749,6 +749,7 @@ UI_Element* UI_Window::CreateText(iPoint pos, _TTF_Font * font, int spacing, boo
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layers --
@@ -778,6 +779,7 @@ UI_Element* UI_Window::CreateImage(iPoint pos, SDL_Rect image, bool _dinamic, bo
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layers --
@@ -807,6 +809,7 @@ UI_Element* UI_Window::CreateTextInput(iPoint pos, int w, _TTF_Font* font, bool 
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layers --
@@ -833,6 +836,7 @@ UI_Element * UI_Window::CreateScrollBar(iPoint pos, int view_w, int view_h, int 
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layers --
@@ -860,6 +864,7 @@ UI_Element * UI_Window::CreateColoredRect(iPoint pos, int w, int h, SDL_Color co
 		ret->parent = this;
 		ret->parent_element = this;
 		ret->dinamic = _dinamic;
+		ret->started_dinamic = _dinamic;
 		ret->is_ui = _is_ui;
 
 		// Layers --
@@ -1669,11 +1674,14 @@ bool UI_Scroll_Bar::update()
 
 	MoveBarV();
 	MoveBarH();
-
-	if (button_v->MouseClickEnterLeft() || button_h->MouseClickEnterLeft())
-		parent->dinamic = false;
-	if(button_v->MouseClickOutLeft() || button_h->MouseClickOutLeft())
-		parent->dinamic = true;
+	
+	if (parent->started_dinamic)
+	{
+		if (button_v->MouseClickEnterLeft() || button_h->MouseClickEnterLeft())
+			parent->dinamic = false;
+		if (button_v->MouseClickOutLeft() || button_h->MouseClickOutLeft())
+			parent->dinamic = true;
+	}
 
 	//LOG("%d %d %d", moving_rect.x, rect.x, min_bar_h);
 }

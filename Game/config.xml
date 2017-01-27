@@ -2,12 +2,12 @@
 
 <config>
   <app framerate_cap="">
-    <title>Pathfinding Test</title>
+    <title>2D Engine</title>
     <organization>UPC</organization>
   </app>
 	
   <renderer>
-    <vsync value="true"/>
+    <vsync value="false"/>
   </renderer>
 
   <fonts>
@@ -19,7 +19,7 @@
   </gui>
     
   <window>
-    <resolution width="800" height="579" scale="1"/>
+    <resolution width="1280" height="720" scale="1"/>
     <fullscreen value="false"/>
     <borderless value="false"/>
     <resizable value="false"/>

@@ -159,6 +159,7 @@ public:
 
 	bool                print = true;
 	bool				dinamic = false;
+	bool				started_dinamic = false;
 	bool				enabled = true;
 	bool				click_through = false;
 	bool				always_top = false;

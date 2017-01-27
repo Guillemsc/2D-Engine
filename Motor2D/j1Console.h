@@ -72,8 +72,6 @@ private:
 	SDL_Color error = { 255, 67, 67, 255 };
 	SDL_Color succes = { 0, 178, 255, 255 };
 
-	// Save
-	float fps = -1;
 };
 
 #endif // __j1CONSOLE_H__

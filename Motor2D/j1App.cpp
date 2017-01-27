@@ -107,10 +107,7 @@ bool j1App::Awake()
 
 		int cap = app_config.attribute("framerate_cap").as_int(-1);
 
-		if(cap > 0)
-		{
-			capped_ms = 1000 / cap;
-		}
+		CapFps(cap);
 	}
 
 	if(ret == true)
@@ -155,6 +152,9 @@ bool j1App::Update()
 {
 	bool ret = true;
 	PrepareUpdate();
+
+	if (App->input->GetKey(SDL_SCANCODE_F1) == KEY_DOWN)
+		debug_mode = !debug_mode;
 
 	if(input->GetWindowEvent(WE_QUIT) == true)
 		ret = false;
@@ -209,31 +209,7 @@ void j1App::FinishUpdate()
 	if(want_to_load == true)
 		LoadGameNow();
 
-	// Framerate calculations --
-
-	if(last_sec_frame_time.Read() > 1000)
-	{
-		last_sec_frame_time.Start();
-		prev_last_sec_frame_count = last_sec_frame_count;
-		last_sec_frame_count = 0;
-	}
-
-	float avg_fps = float(frame_count) / startup_time.ReadSec();
-	float seconds_since_startup = startup_time.ReadSec();
-	uint32 last_frame_ms = frame_time.Read();
-	uint32 frames_on_last_update = prev_last_sec_frame_count;
-
-	static char title[256];
-	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
-			  avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
-	App->win->SetTitle(title);
-
-	if(capped_ms > 0 && last_frame_ms < capped_ms)
-	{
-		j1PerfTimer t;
-		SDL_Delay(capped_ms - last_frame_ms);
-		//LOG("We waited for %d milliseconds and got back in %f", capped_ms - last_frame_ms, t.ReadMs());
-	}
+	FrameRateCalculations();
 }
 
 // Call modules before each loop iteration
@@ -405,6 +381,12 @@ void j1App::SaveLoadedXML(pugi::xml_document& data, const char * path)
 	data.reset();
 }
 
+void j1App::CapFps(float fps)
+{
+	if(fps > 0)
+		capped_ms = (1000 / fps);
+}
+
 bool j1App::LoadGameNow()
 {
 	bool ret = false;
@@ -486,4 +468,31 @@ bool j1App::SavegameNow() const
 	data.reset();
 	want_to_save = false;
 	return ret;
+}
+
+void j1App::FrameRateCalculations()
+{
+	if (last_sec_frame_time.Read() > 1000)
+	{
+		last_sec_frame_time.Start();
+		prev_last_sec_frame_count = last_sec_frame_count;
+		last_sec_frame_count = 0;
+	}
+
+	float avg_fps = float(frame_count) / startup_time.ReadSec();
+	float seconds_since_startup = startup_time.ReadSec();
+	uint32 last_frame_ms = frame_time.Read();
+	uint32 frames_on_last_update = prev_last_sec_frame_count;
+
+	static char title[256];
+	sprintf_s(title, 256, "Av.FPS: %.2f Last Frame Ms: %u Last sec frames: %i Last dt: %.3f Time since startup: %.3f Frame Count: %lu ",
+		avg_fps, last_frame_ms, frames_on_last_update, dt, seconds_since_startup, frame_count);
+	App->win->SetTitle(title);
+
+	if (capped_ms > 0 && last_frame_ms < capped_ms)
+	{
+		j1PerfTimer t;
+		SDL_Delay(capped_ms - last_frame_ms);
+		//LOG("We waited for %d milliseconds and got back in %f", capped_ms - last_frame_ms, t.ReadMs());
+	}
 }

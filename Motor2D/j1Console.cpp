@@ -38,7 +38,7 @@ bool j1Console::Start()
 	console_color = { 32, 32, 32, 200 };
 
 	window = (UI_Window*)App->gui->UI_CreateWin(iPoint(App->render->camera.x, App->render->camera.y), 
-			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, true);
+			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, false);
 	window->always_top = true;
 
 	colored_rect1 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, console_color);
@@ -111,22 +111,18 @@ bool j1Console::Update(float dt)
 
 	if (stay_bottom)
 		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
-	
-	if(fps > 0)
-		App->capped_ms = 1000 / fps;
+
 
 	return true;
 }
 
 bool j1Console::Load(pugi::xml_node &node)
 {
-	fps = node.child("general").attribute("framerate_cap").as_int(-1);
 	return false;
 }
 
 bool j1Console::Save(pugi::xml_node &node) const
 {
-	node.append_child("general").append_attribute("framerate_cap") = fps;
 
 	return true;
 }
@@ -187,8 +183,7 @@ void j1Console::Tokenize(p2SString s)
 	{
 		if (ints.count() > 0)
 		{
-			fps = ints[0];
-			App->SaveGame("console.xml");
+			App->CapFps(ints[0]);
 			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
 		}
 

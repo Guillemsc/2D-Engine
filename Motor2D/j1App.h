@@ -58,9 +58,11 @@ public:
 	void SaveGame(const char* file) const;
 	void GetSaveGames(p2List<p2SString>& list_to_fill) const;
 
-	// Load an XML file
+	// Load and save an XML file
 	void LoadXML(const char* path, pugi::xml_document& doc);
 	void SaveLoadedXML(pugi::xml_document& doc, const char* path);
+
+	void CapFps(float fps);
 
 private:
 
@@ -86,6 +88,8 @@ private:
 	bool LoadGameNow();
 	bool SavegameNow() const;
 
+	void FrameRateCalculations();
+
 public:
 
 	// Modules
@@ -103,9 +107,10 @@ public:
 	j1Console*			console = NULL;
 	j1Physics*			physics = NULL;
 
+	// Console logs
 	p2List<p2SString> logs;
 
-	int					capped_ms = -1;
+	bool debug_mode = false;
 
 private:
 
@@ -121,6 +126,7 @@ private:
 	p2SString			load_game;
 	mutable p2SString	save_game;
 
+	int					capped_ms = -1;
 	j1PerfTimer			ptimer;
 	uint64				frame_count = 0;
 	j1Timer				startup_time;
