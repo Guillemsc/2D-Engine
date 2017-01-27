@@ -59,16 +59,16 @@ public:
 	bool PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius, float rest = 0.0f, int cat = WORLD, int mask = PLAYER);
-	PhysBody* CreateStaticCircle(int x, int y, int radius, float rest = 0.0f, int cat = WORLD, int mask = PLAYER);
-	PhysBody* CreateCircleSensor(int x, int y, int radius, float rest = 0.0f, int cat = WORLD, int mask = PLAYER);
-	PhysBody* CreateRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
-	PhysBody* CreateStaticRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
-	PhysBody* CreatePolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
-	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
-	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
-	PhysBody* CreateChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
-	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
+	PhysBody* CreateCircle(int x, int y, int radius, float rest = 0.0f, int cat = 0, int mask = 0);
+	PhysBody* CreateStaticCircle(int x, int y, int radius, float rest = 0.0f, int cat = 0, int mask = 0);
+	PhysBody* CreateCircleSensor(int x, int y, int radius, float rest = 0.0f, int cat = 0, int mask = 0);
+	PhysBody* CreateRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
+	PhysBody* CreateStaticRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
+	PhysBody* CreatePolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
+	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
+	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
+	PhysBody* CreateChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
+	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
 
 	PhysBody* CreateWeldJoint(PhysBody* body1, PhysBody* body2);
 
