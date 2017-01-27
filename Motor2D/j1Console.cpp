@@ -177,7 +177,7 @@ void j1Console::Tokenize(p2SString s)
 	}
 	else if (strcmp(strings[0].GetString(), "exit") == 0)
 	{
-		
+	
 	}
 	else if (strcmp(strings[0].GetString(), "fps") == 0)
 	{

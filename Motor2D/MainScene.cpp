@@ -2,6 +2,7 @@
 #include "j1Scene.h"
 #include "p2Log.h"
 #include "j1Input.h"
+#include "Functions.h"
 
 
 MainScene::MainScene()
@@ -23,6 +24,7 @@ bool MainScene::Start()
 	//pugi::xml_node node = doc.child("test");
 	//node.append_child("child").append_attribute("fuck");
 	//App->SaveLoadedXML(doc, "test.xml");
+
 
 	return ret;
 }

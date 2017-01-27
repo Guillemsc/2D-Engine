@@ -61,6 +61,9 @@
     <ClCompile Include="p2Log.cpp">
       <Filter>Engine\Tools ===========</Filter>
     </ClCompile>
+    <ClCompile Include="Functions.cpp">
+      <Filter>Engine\Tools ===========</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="j1Window.h">
@@ -145,6 +148,9 @@
       <Filter>Engine\Tools ===========</Filter>
     </ClInclude>
     <ClInclude Include="p2SString.h">
+      <Filter>Engine\Tools ===========</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
       <Filter>Engine\Tools ===========</Filter>
     </ClInclude>
   </ItemGroup>
