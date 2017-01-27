@@ -56,6 +56,7 @@ bool j1Gui::Start()
 bool j1Gui::Update(float dt)
 {
 	// Start -------------------------------------------------
+
 	if (start)
 	{
 		// Put all always top elements to top ----
@@ -89,6 +90,7 @@ bool j1Gui::Update(float dt)
 			elements->data->rect.y += camera_y - App->render->camera.y;
 		}
 
+		// To update if enabled
 		if (elements->data->enabled)
 		{
 			to_update.add(elements->data);
