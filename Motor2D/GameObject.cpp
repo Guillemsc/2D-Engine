@@ -6,6 +6,7 @@
 
 GameObject::GameObject(iPoint _pos) : pos(_pos)
 {
+	animator = new Animator();
 }
 
 GameObject::~GameObject()
@@ -32,38 +33,48 @@ void GameObject::SetPos(iPoint new_pos)
 	pos = new_pos;
 }
 
+void GameObject::AddAnimation(Animation * animation)
+{
+	if (animator != nullptr)
+		animator->AddAnimation(animation);
+}
+
 void GameObject::SetAnimation(const char * animation)
 {
 	if (animator != nullptr)
 		animator->SetAnimation(animation);
 }
 
-void GameObject::CreateCollision(int width, int height, int cat, int mask)
+void GameObject::CreateCollision(body_type type, int width, int height, int cat, int mask)
 {
 	pbody = App->physics->CreateRectangle(pos.x, pos.y, width, height, 0.0f, cat, mask);
+	pbody->type = type;
 }
 
-void GameObject::CreateCollision(int radius, int cat, int mask)
+void GameObject::CreateCollision(body_type type, int radius, int cat, int mask)
 {
 	pbody = App->physics->CreateCircle(pos.x, pos.y, radius, 0.0f, cat, mask);
+	pbody->type = type;
 }
 
-void GameObject::CreateStaticCollision(int width, int height, int cat, int mask)
+void GameObject::CreateStaticCollision(body_type type, int width, int height, int cat, int mask)
 {
 	pbody = App->physics->CreateStaticRectangle(pos.x, pos.y, width, height, 0.0f, cat, mask);
+	pbody->type = type;
 }
 
-void GameObject::CreateStaticCollision(int radius, int cat, int mask)
+void GameObject::CreateStaticCollision(body_type type, int radius, int cat, int mask)
 {
 	pbody = App->physics->CreateStaticCircle(pos.x, pos.y, radius, 0.0f, cat, mask);
+	pbody->type = type;
 }
 
-void GameObject::CreateSensorCollision(int width, int height, int cat, int mask)
+void GameObject::CreateSensorCollision(body_type type, int width, int height, int cat, int mask)
 {
 	pbody = App->physics->CreateRectangleSensor(pos.x, pos.y, width, height, 0.0f, cat, mask);
 }
 
-void GameObject::CreateSensorCollision(int radius, int cat, int mask)
+void GameObject::CreateSensorCollision(body_type type, int radius, int cat, int mask)
 {
 	pbody = App->physics->CreateCircleSensor(pos.x, pos.y, radius, 0.0f, cat, mask);
 }

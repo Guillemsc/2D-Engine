@@ -70,7 +70,7 @@ public:
 	PhysBody* CreateChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
 	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
 
-	PhysBody* CreateWeldJoint(PhysBody* body1, PhysBody* body2);
+	b2WeldJoint* CreateWeldJoint(PhysBody* body1, PhysBody* body2, int distance_between_x, int distance_between_y);
 
 	void CleanBodies();
 

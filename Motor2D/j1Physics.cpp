@@ -378,12 +378,12 @@ PhysBody * j1Physics::CreateStaticChain(int x, int y, int * points, int size, fl
 	return pbody;
 }
 
-PhysBody* j1Physics::CreateWeldJoint(PhysBody * body1, PhysBody * body2)
+b2WeldJoint* j1Physics::CreateWeldJoint(PhysBody * body1, PhysBody * body2, int distance_between_x, int distance_between_y)
 {
 	b2WeldJointDef def;
 	def.bodyA = body1->body;
 	def.bodyB = body2->body;
-	def.collideConnected = true;
+	def.collideConnected = false;
 
 	int x1; int y1;
 	body1->GetPosition(x1, y1);
@@ -391,12 +391,12 @@ PhysBody* j1Physics::CreateWeldJoint(PhysBody * body1, PhysBody * body2)
 	body2->GetPosition(x2, y2);
 	int distance_x = x2 - x1;
 	int distance_y = y2 - y1;
-	def.localAnchorA = b2Vec2(PIXEL_TO_METERS(distance_x), PIXEL_TO_METERS(distance_y));
+	def.localAnchorA = b2Vec2(distance_between_x, distance_between_y);
 	def.localAnchorB = b2Vec2(0, 0);
 	
 	b2WeldJoint* weld_joint = (b2WeldJoint*)world->CreateJoint(&def);
 
-	return body1;
+	return weld_joint;
 }
 
 
@@ -506,8 +506,8 @@ path_joint * j1Physics::CreatePathJoint(b2Body * body, int * path, int path_size
 	def.frequencyHz = 2.0f;
 	def.maxForce = 100.0f * body->GetMass();
 
-	b2MouseJoint* test = (b2MouseJoint*)world->CreateJoint(&def);
-	aux->joint = test;
+	b2MouseJoint* mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
+	aux->joint = mouse_joint;
 
 	return aux;
 }

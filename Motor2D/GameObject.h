@@ -14,14 +14,15 @@ public:
 
 	iPoint GetPos();
 	void SetPos(iPoint pos);
+	void AddAnimation(Animation* animation);
 	void SetAnimation(const char* animation);
 
-	void CreateCollision(int width, int height, int cat, int mask);
-	void CreateCollision(int radius, int cat, int mask);
-	void CreateStaticCollision(int width, int height, int cat, int mask);
-	void CreateStaticCollision(int radius, int cat, int mask);
-	void CreateSensorCollision(int width, int height, int cat, int mask);
-	void CreateSensorCollision(int radius, int cat, int mask);
+	void CreateCollision(body_type type, int width, int height, int cat, int mask);
+	void CreateCollision(body_type type,int radius, int cat, int mask);
+	void CreateStaticCollision(body_type type,int width, int height, int cat, int mask);
+	void CreateStaticCollision(body_type type, int radius, int cat, int mask);
+	void CreateSensorCollision(body_type type,int width, int height, int cat, int mask);
+	void CreateSensorCollision(body_type type, int radius, int cat, int mask);
 
 public:
 	Animator*	    animator = nullptr;
