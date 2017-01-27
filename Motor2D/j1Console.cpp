@@ -157,50 +157,10 @@ void j1Console::Tokenize(p2SString s)
 
 	// ----------------------------------------
 
-	if (strcmp(strings[0].GetString(), "help") == 0)
-	{
-		LOG(" ");
-		LOG("\nBasic commands:");
-		LOG("   - 'help': sends help :v");
-		LOG("   - 'clear(still not working)': clears the console text");
-		LOG("   - 'hide': hides console");
-		LOG("   - 'exit': exits program");
-		LOG("   - 'fps x': limits fps to the number 'x'");
-		LOG(" ");
-	}
-	else if (strcmp(strings[0].GetString(), "clear") == 0)
-	{
-		ClearConsole();
-	}
-	else if(strcmp(strings[0].GetString(), "hide") == 0)
-	{
-		window->SetEnabledAndChilds(!window->enabled);
-	}
-	else if (strcmp(strings[0].GetString(), "exit") == 0)
-	{
-		LOG("Exiting program");
-		App->EndSDL();
-	}
-	else if (strcmp(strings[0].GetString(), "set") == 0 && strcmp(strings[1].GetString(), "title") == 0)
-	{
-		LOG("Title changed to %s", strings[2].GetString());
-		App->win->SetTitle(strings[2].GetString());
-	}
-	else if (strcmp(strings[0].GetString(), "fps") == 0)
-	{
-		if (ints.count() > 0)
-		{
-			App->CapFps(ints[0]);
-			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
-		}
-
-	}
-	else
-	{
-		Log(p2SString("> The command '%s' does not exist. Type 'help' for some info.", s.GetString()), error.r, error.g, error.b);
-	}
+	Commands(s, strings, ints);
 
 	text_input->Clear();
+
 }
 
 void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
@@ -275,6 +235,52 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 	}
 
 	// ----------------------------------------
+}
+
+void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
+{
+	if (strcmp(strings[0].GetString(), "help") == 0)
+	{
+		LOG(" ");
+		LOG("\nBasic commands:");
+		LOG("   - 'help': sends help :v");
+		LOG("   - 'clear(still not working)': clears the console text");
+		LOG("   - 'hide': hides console");
+		LOG("   - 'exit': exits program");
+		LOG("   - 'fps x': limits fps to the number 'x'");
+		LOG(" ");
+	}
+	else if (strcmp(strings[0].GetString(), "clear") == 0)
+	{
+		ClearConsole();
+	}
+	else if (strcmp(strings[0].GetString(), "hide") == 0)
+	{
+		window->SetEnabledAndChilds(!window->enabled);
+	}
+	else if (strcmp(strings[0].GetString(), "exit") == 0)
+	{
+		LOG("Exiting program");
+		App->EndSDL();
+	}
+	else if (strcmp(strings[0].GetString(), "set") == 0 && strcmp(strings[1].GetString(), "title") == 0)
+	{
+		LOG("Title changed to %s", strings[2].GetString());
+		App->win->SetTitle(strings[2].GetString());
+	}
+	else if (strcmp(strings[0].GetString(), "fps") == 0)
+	{
+		if (ints.count() > 0)
+		{
+			App->CapFps(ints[0]);
+			Log(p2SString("> Fps limited to %0.1f.", ints[0]), succes.r, succes.g, succes.b);
+		}
+
+	}
+	else
+	{
+		Log(p2SString("> The command '%s' does not exist. Type 'help' for some info.", s.GetString()), error.r, error.g, error.b);
+	}
 }
 
 void j1Console::ClearConsole()

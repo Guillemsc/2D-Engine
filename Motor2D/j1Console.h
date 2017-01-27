@@ -36,6 +36,7 @@ public:
 	void Log(p2SString string, uint r = 245, uint g = 245, uint b = 245);
 	void Tokenize(p2SString string);
 	void SeparateTextAndNumbers(p2SString text, p2List<p2SString> &strings, p2List<float> &ints);
+	void Commands(p2SString text, p2List<p2SString> &strings, p2List<float> &ints);
 	void ClearConsole();
 
 	void LoadLogs();
