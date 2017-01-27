@@ -11,7 +11,7 @@ struct SDL_Texture;
 class Animation
 {
 public:
-	Animation(p2List<SDL_Rect>& rects, float speed, bool loop = true);
+	Animation(const char* name, p2List<SDL_Rect>& rects, float speed, bool loop = true);
 	~Animation();
 
 	SDL_Rect& GetAnimationFrame();
@@ -25,19 +25,30 @@ public:
 	bool Finished() const;
 	void Reset();
 
+public:
+	p2SString			name;
+
 private:
 	float			    speed = 0.0f;
 	bool			    loop = false;
 	int				    loops = 0;
 	p2List<SDL_Rect>    frames;
 	float			    curr_frame = 0.0f;
-	p2SString			name;
 };
 
 class Animator
 {
+public:
 	Animator();
 	~Animator();
+
+	void AddAnimation(Animation* animation);
+	void SetAnimation(const char* name);
+
+private:  
+	Animation*           current_animation = nullptr;
+	p2List<Animation*>   animations;
+
 };
 
 #endif // !_ANIMATION__H__

@@ -1,9 +1,11 @@
 #include "Animation.h"
 
-Animation::Animation(p2List<SDL_Rect>& rects, float speed, bool loop) : speed(speed), loop(loop)
+Animation::Animation(const char* _name, p2List<SDL_Rect>& rects, float speed, bool loop) : speed(speed), loop(loop)
 {
 	for (p2List_item<SDL_Rect>* rect = rects.start; rect != nullptr; rect = rect->next)
 		frames.add(rect->data);
+
+	name.create("%s", _name);
 }
 
 Animation::~Animation()
@@ -71,4 +73,28 @@ void Animation::Reset()
 {
 	curr_frame = 0.0f;
 	loops = 0;
+}
+
+Animator::Animator()
+{
+	for (int i = 0; i < animations.count(); i++)
+		delete animations[i];
+}
+
+Animator::~Animator()
+{
+}
+
+void Animator::AddAnimation(Animation* animation)
+{
+	animations.add(animation);
+}
+
+void Animator::SetAnimation(const char* name)
+{
+	for (int i = 0; i < animations.count(); i++)
+	{
+		if (strcmp(name, animations[i]->name.GetString()) == 0)
+			current_animation = animations[i];
+	}
 }

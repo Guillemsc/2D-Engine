@@ -3,34 +3,27 @@
 #include "p2Point.h"
 #include "Box2D/Box2D/Box2D.h"
 
-#define GRAVITY_X 0.0f
-#define GRAVITY_Y -20.0f
-
 #define PIXELS_PER_METER 50.0f // if touched change METER_PER_PIXEL too
 #define METER_PER_PIXEL 0.02f // this is 1 / PIXELS_PER_METER !
 
 #define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
 
-enum BodyType
+enum body_type
 {
-	null,
-	platform,
-	wall,
-	fireb,
-	player,
-	death_detec
+	body_type_null,
 };
 
 struct path_joint 
 {
 	b2MouseJoint* joint;
-	b2Vec2* path;
-	int points = 0;
-	int cur_point = 0;
+	b2Vec2*       path;
+	int           points = 0;
+	int			  cur_point = 0;
 };
 
-enum Layers {
+enum Layers 
+{
 	PLAYER = 1, WORLD = 2, BOSS = 4  //CHANGE FOR LAYERS NEEDED AND REPLACE THE METHODS!!!!
 };
 
@@ -47,10 +40,11 @@ public:
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
 public:
-	int width, height;
-	b2Body* body;
-	j1Module* listener;
-	BodyType type = BodyType::null;
+	int        width = 0;
+	int        height = 0;
+	b2Body*    body = nullptr;
+	j1Module*  listener = nullptr;
+	body_type  type = body_type_null;
 };
 
 // Module --------------------------------------
@@ -75,6 +69,8 @@ public:
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
 	PhysBody* CreateChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
 	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = WORLD, int mask = PLAYER, int angle = 0);
+
+	PhysBody* CreateWeldJoint(PhysBody* body1, PhysBody* body2);
 
 	void CleanBodies();
 

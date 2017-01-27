@@ -24,7 +24,7 @@ int SmoothMovement(int value, int destination, float speed, float dt)
 		//int to_add = floor((speed * dt) * distance);
 		float to_add = (speed * (distance ^ 2));
 		ret = value + ceil(to_add * dt);
-		LOG("%f %f", to_add * dt, dt);
+		//LOG("%f %f", to_add * dt, dt);
 	}
 
 	return ret;

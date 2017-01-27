@@ -3,6 +3,7 @@
 #include "p2Log.h"
 #include "j1Input.h"
 #include "Functions.h"
+#include "j1Physics.h"
 
 
 MainScene::MainScene()
@@ -19,12 +20,10 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	//pugi::xml_document doc;
-	//App->LoadXML("test.xml", doc);
-	//pugi::xml_node node = doc.child("test");
-	//node.append_child("child").append_attribute("fuck");
-	//App->SaveLoadedXML(doc, "test.xml");
-
+	PhysBody* b1 = App->physics->CreateRectangle(300, 300, 50, 50, 0, 0, 0);
+	PhysBody* b2 = App->physics->CreateRectangle(400, 300, 50, 50, 0, 0, 0);
+	App->physics->CreateWeldJoint(b1, b2);
+	PhysBody* g = App->physics->CreateStaticRectangle(400, 600, 400, 50, 0, 0, 0);
 
 	return ret;
 }

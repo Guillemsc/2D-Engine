@@ -36,6 +36,8 @@
 #define MAX( a, b ) ( ((a) > (b)) ? (a) : (b) )
 #define TO_BOOL( a )  ( (a != 0) ? true : false )
 #define NULLRECT {0,0,0,0}
+#define NULLCOLOR {0,0,0,0}
+#define NULLPOINT {0,0}
 
 typedef unsigned int uint;
 typedef unsigned __int32 uint32;

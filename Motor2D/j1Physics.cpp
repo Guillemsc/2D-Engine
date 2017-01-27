@@ -13,6 +13,9 @@
 #pragma comment( lib, "Box2D/libx86/Release/Box2D.lib" )
 #endif
 
+#define GRAVITY_X 0.0f
+#define GRAVITY_Y -0.0f
+
 j1Physics::j1Physics()
 {
 	world = NULL;
@@ -35,8 +38,6 @@ bool j1Physics::Start()
 	// needed to create joints like mouse joint
 	b2BodyDef bd;
 	ground = world->CreateBody(&bd);
-
-	// creating staic shape for ground
 
 	return true;
 }
@@ -377,6 +378,28 @@ PhysBody * j1Physics::CreateStaticChain(int x, int y, int * points, int size, fl
 	return pbody;
 }
 
+PhysBody* j1Physics::CreateWeldJoint(PhysBody * body1, PhysBody * body2)
+{
+	b2WeldJointDef def;
+	def.bodyA = body1->body;
+	def.bodyB = body2->body;
+	def.collideConnected = true;
+
+	int x1; int y1;
+	body1->GetPosition(x1, y1);
+	int x2; int y2;
+	body2->GetPosition(x2, y2);
+	int distance_x = x2 - x1;
+	int distance_y = y2 - y1;
+	def.localAnchorA = b2Vec2(PIXEL_TO_METERS(distance_x), PIXEL_TO_METERS(distance_y));
+	def.localAnchorB = b2Vec2(0, 0);
+	
+	b2WeldJoint* weld_joint = (b2WeldJoint*)world->CreateJoint(&def);
+
+	return body1;
+}
+
+
 void j1Physics::CleanBodies()
 {
 	while (world->GetBodyList() != nullptr) 
@@ -575,11 +598,13 @@ bool j1Physics::PostUpdate()
 			}
 
 			//If mouse button 1 is pressed ...
-			if (App->input->GetKey(SDL_SCANCODE_F12) == KEY_DOWN) {
+			if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN)
+			{
 				int mouse_x, mouse_y;
 				App->input->GetMousePosition(mouse_x, mouse_y);
 				b2Vec2 mouse(PIXEL_TO_METERS(mouse_x), PIXEL_TO_METERS(mouse_y));
-				if (f->TestPoint(mouse)) {
+				if (f->TestPoint(mouse)) 
+				{
 					selected = f->GetBody();
 					break;
 				}
@@ -592,7 +617,8 @@ bool j1Physics::PostUpdate()
 	// so we can pull it around
 	//If a body was selected, create a mouse joint
 	// using mouse_joint class property
-	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN && selected != nullptr) {
+	if (App->input->GetMouseButtonDown(SDL_BUTTON_LEFT) == KEY_DOWN && selected != nullptr) 
+	{
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
 		b2Vec2 mouse(PIXEL_TO_METERS(mouse_x), PIXEL_TO_METERS(mouse_y));
@@ -608,7 +634,6 @@ bool j1Physics::PostUpdate()
 		mouse_joint = (b2MouseJoint*)world->CreateJoint(&def);
 
 	}
-
 
 	//If the player keeps pressing the mouse button, update
 	// target position and draw a red line between both anchor points

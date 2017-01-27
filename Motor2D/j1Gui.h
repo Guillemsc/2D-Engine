@@ -16,7 +16,7 @@ enum ui_element
 	ui_window,
 	ui_scroll_bar,
 	ui_colored_rect,
-	ui_undefined
+	ui_element_null
 };
 
 // -----------------------------------------
@@ -113,8 +113,8 @@ private:
 	UI_Element*			   to_move = nullptr;
 	//
 
-	int camera_x = 0;
-	int camera_y = 0;
+	int					   camera_x = 0;
+	int					   camera_y = 0;
 };
 
 // -------------------------
@@ -154,8 +154,8 @@ protected:
 	bool CheckClickRect(int x, int y);
 
 public:
-	ui_element          type = ui_undefined;
-	SDL_Rect            rect;
+	ui_element          type = ui_element_null;
+	SDL_Rect            rect = NULLRECT;
 
 	bool                print = true;
 	bool				dinamic = false;
@@ -178,7 +178,7 @@ public:
 	int					mouse_y = 0;
 
 protected:
-	SDL_Color			color;
+	SDL_Color			color = NULLCOLOR;
 
 private:
 
@@ -249,7 +249,7 @@ public:
 
 private:
 	p2List<SDL_Rect>  rect_list;
-	SDL_Rect		  curr;
+	SDL_Rect		  curr = NULLRECT;
 
 	bool			  to_enter = false;
 	bool			  enter = false;
@@ -280,7 +280,7 @@ public:
 
 public:
 	p2List<p2SString>   texts;
-	SDL_Color	        color;
+	SDL_Color	        color = NULLCOLOR;
 	_TTF_Font*	        font = nullptr;
 	int                 spacing = 0;
 };
@@ -304,7 +304,7 @@ public:
 	void ChangeImage(SDL_Rect rect);
 
 public:
-	SDL_Rect image;
+	SDL_Rect image = NULLRECT;
 };
 
 // -----------------------------
@@ -347,11 +347,11 @@ public:
 	bool		 active = false;
 
 private:
-	SDL_Rect	 bar;
+	SDL_Rect	 bar = NULLRECT;
 	uint		 bar_pos = 0;
 	uint		 bar_x = 0;
 
-	SDL_Rect     camera_before;
+	SDL_Rect     camera_before = NULLRECT;
 
 	p2List<int>	 words_lenght;
 };
@@ -400,14 +400,14 @@ public:
 	int        min_bar_h = 0;
 	int        max_bar_h = 0;
 
-	SDL_Rect   moving_rect;
+	SDL_Rect   moving_rect = NULLRECT;
 
 private:
 	p2List<scroll_element> elements;
 
 	// Movement
-	int mouse_x;
-	int mouse_y;
+	int mouse_x = 0;
+	int mouse_y = 0;
 	bool is_scrolling_v = false;
 	bool is_scrolling_h = false;
 	int scroll_v = 0;
@@ -457,7 +457,7 @@ private:
 	p2List<WindowManagerObject> windows_rects;
 
 private:
-	int max_w = 0;
+	int  max_w = 0;
 	bool one_time = false;
 
 };
@@ -477,7 +477,7 @@ public:
 public:
 	
 private:
-	SDL_Color color;
+	SDL_Color color = NULLCOLOR;
 	bool filled = true;
 };
 
