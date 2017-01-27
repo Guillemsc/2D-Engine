@@ -82,16 +82,16 @@ bool j1Gui::Update(float dt)
 
 	for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
 	{
+		// Move elements if the camera si moving
+		if (elements->data->is_ui && (camera_x != App->render->camera.x || camera_y != App->render->camera.y))
+		{
+			elements->data->rect.x += camera_x - App->render->camera.x;
+			elements->data->rect.y += camera_y - App->render->camera.y;
+		}
+
 		if (elements->data->enabled)
 		{
 			to_update.add(elements->data);
-
-			// Move elements if the camera si moving
-			if (elements->data->is_ui && (camera_x != App->render->camera.x || camera_y != App->render->camera.y))
-			{
-				elements->data->rect.x += camera_x - App->render->camera.x;
-				elements->data->rect.y += camera_y - App->render->camera.y;
-			}
 
 			// Debug lines ------------------------------------
 			if (debug)

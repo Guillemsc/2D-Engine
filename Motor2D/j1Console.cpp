@@ -68,7 +68,7 @@ bool j1Console::Start()
 
 	Log("Welcome to the console :-D");
 
-	App->LoadGame("console.xml");
+	window->SetEnabledAndChilds(false);
 	return true;
 }
 
