@@ -408,7 +408,7 @@ void j1Physics::CleanBodies()
 	}
 }
 
-void j1Physics::DeleteObject(PhysBody * object)
+void j1Physics::DeleteBody(PhysBody * object)
 {
 	world->DestroyBody(object->body);
 }

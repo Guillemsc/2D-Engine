@@ -69,6 +69,8 @@ private:
 	void DoLayerBlit();
 
 public:
+	// Scenes
+	MainScene*  main_scene = nullptr;
 
 private:
 	// Layer Blit list
@@ -76,8 +78,6 @@ private:
 
 	// Current scene
 	Scene*      current_scene = nullptr;
-
-	MainScene*  main_scene = nullptr;
 
 
 

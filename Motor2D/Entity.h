@@ -1,17 +1,16 @@
-#ifndef _SCENE_
-#define _SCENE_
+#ifndef _ENTITY_
+#define _ENTITY_
 
 #include "j1App.h"
 #include "j1Render.h"
 #include "PugiXml\src\pugixml.hpp"
 
-//class PhysBody;
-class Scene
+class Entity
 {
 public:
-	Scene() {};
+	Entity() {};
 
-	virtual ~Scene() {};
+	virtual ~Entity() {};
 
 	virtual bool Start() { return true; };
 	virtual bool PreUpdate() { return true; };

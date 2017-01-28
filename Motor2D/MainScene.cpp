@@ -20,10 +20,6 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	PhysBody* b1 = App->physics->CreateRectangle(300, 300, 50, 50, 0, 1, 1);
-	PhysBody* b2 = App->physics->CreateRectangle(400, 300, 50, 50, 0, 1, 1);
-	PhysBody* g = App->physics->CreateStaticRectangle(400, 600, 400, 50, 0, 1, 1);
-
 	return ret;
 }
 

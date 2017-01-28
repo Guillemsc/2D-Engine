@@ -59,27 +59,25 @@ public:
 	bool PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius, float rest = 0.0f, int cat = 0, int mask = 0);
-	PhysBody* CreateStaticCircle(int x, int y, int radius, float rest = 0.0f, int cat = 0, int mask = 0);
-	PhysBody* CreateCircleSensor(int x, int y, int radius, float rest = 0.0f, int cat = 0, int mask = 0);
-	PhysBody* CreateRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-	PhysBody* CreateStaticRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-	PhysBody* CreatePolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-	PhysBody* CreateChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 0, int mask = 0, int angle = 0);
-
-	b2WeldJoint* CreateWeldJoint(PhysBody* body1, PhysBody* body2, int distance_between_x, int distance_between_y);
+	PhysBody* CreateCircle(int x, int y, int radius, float rest = 0.0f, int cat = 1, int mask = 1);
+	PhysBody* CreateStaticCircle(int x, int y, int radius, float rest = 0.0f, int cat = 1, int mask = 1);
+	PhysBody* CreateCircleSensor(int x, int y, int radius, float rest = 0.0f, int cat = 1, int mask = 1);
+	PhysBody* CreateRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreateStaticRectangle(int x, int y, int width, int height, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreatePolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreateChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 
 	void CleanBodies();
 
-	void DeleteObject(PhysBody* object);
+	void DeleteBody(PhysBody* object);
 
+	b2WeldJoint* CreateWeldJoint(PhysBody* body1, PhysBody* body2, int distance_between_x, int distance_between_y);
 	b2RevoluteJoint* CreateRevoluteJoint(PhysBody* anchor, PhysBody* body, iPoint anchor_offset, iPoint body_offset, bool enable_limit, float max_angle, float min_angle, bool enable_motor, int motor_speed, int max_torque);
 	b2PrismaticJoint* CreatePrismaticJoint(PhysBody* anchor,PhysBody* body, iPoint anchor_offset, iPoint body_offset, bool enable_limit, float max_trans, float min_trans, bool enable_motor, int motor_speed, int max_force);
 	b2MotorJoint* CreateMotorJoint(b2Body* body, b2Vec2 target);
-
 	path_joint* CreatePathJoint(b2Body* body, int *path, int path_size, int x_offset = 0, int y_offset = 0);
 
 	void DeleteJoint(b2MouseJoint* joint);
@@ -94,10 +92,10 @@ public:
 
 private:
 
-	bool debug;
-	b2World* world;
-	b2MouseJoint* mouse_joint = nullptr;
-	b2Body* ground;
-	b2Body* selected = nullptr;
+	bool			debug = false;
+	b2World*	    world = nullptr;
+	b2MouseJoint*   mouse_joint = nullptr;
+	b2Body*			ground = nullptr;
+	b2Body*			selected = nullptr;
 
 };

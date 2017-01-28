@@ -25,6 +25,7 @@ class j1Fonts;
 class j1Gui;
 class j1Console;
 class j1Physics;
+class j1Entity;
 
 class j1App
 {
@@ -112,6 +113,7 @@ public:
 	j1Gui*				gui = NULL;
 	j1Console*			console = NULL;
 	j1Physics*			physics = NULL;
+	j1Entity*			entity = NULL;
 
 	// Console logs
 	p2List<p2SString>   logs;
