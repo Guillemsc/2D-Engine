@@ -98,8 +98,13 @@ bool j1Window::CleanUp()
 // Set new window title
 void j1Window::SetTitle(const char* new_title)
 {
-	//title.create(new_title);
 	SDL_SetWindowTitle(window, new_title);
+}
+
+// Set a 32x32 window icon
+void j1Window::SetWindowIcon(SDL_Surface* sur)
+{
+	SDL_SetWindowIcon(window, sur);
 }
 
 void j1Window::GetWindowSize(uint& width, uint& height) const

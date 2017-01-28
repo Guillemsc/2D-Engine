@@ -24,6 +24,8 @@ public:
 	// Changae title
 	void SetTitle(const char* new_title);
 
+	void SetWindowIcon(SDL_Surface * sur);
+
 	// Retrive window size
 	void GetWindowSize(uint& width, uint& height) const;
 
