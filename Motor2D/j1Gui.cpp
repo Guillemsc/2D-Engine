@@ -1123,7 +1123,11 @@ void UI_Text::Set(iPoint _pos, _TTF_Font* _font, int _spacing, uint r, uint g, u
 
 void UI_Text::SetText(p2SString _text)
 {
-	texts.clear();
+	// Clean last texts
+	for (int i = 0; i < texts_tex.count(); i++)
+		App->tex->UnLoadTexture(texts_tex[i]);
+	texts_tex.clear();
+	texts_str.clear();
 
 	char* tmp = new char[_text.Length() + 1];
 	strcpy_s(tmp, _text.Length() + 1, _text.GetString());
@@ -1149,8 +1153,9 @@ void UI_Text::SetText(p2SString _text)
 			tmp2++;
 
 		string.create("%s\0", string.GetString());
-		texts.add(string);
 
+		texts_str.add(string);
+		texts_tex.add(App->font->Print(string.GetString(), color, font));
 	}
 }
 
@@ -1160,9 +1165,9 @@ bool UI_Text::update()
 		return false;
 	
 	int w = 0, h = 0;
-	for(int i = 0; i < texts.count(); i++)
+	for(int i = 0; i < texts_str.count(); i++)
 	{
-		App->font->CalcSize(texts[i].GetString(), rect.w, rect.h, font);
+		App->font->CalcSize(texts_str[i].GetString(), rect.w, rect.h, font);
 		h += rect.h;
 		if (rect.w > w)
 			w = rect.w;
@@ -1176,16 +1181,13 @@ bool UI_Text::update()
 	
 	if (print)
 	{
-		SDL_Texture* texture = nullptr;
 		int space = 0;
-		for (int i = 0; i < texts.count(); i++)
+		for (int i = 0; i < texts_str.count(); i++)
 		{
-			if (strcmp(texts[i].GetString(), "") == 1)
+			if (strcmp(texts_str[i].GetString(), "") == 1)
 			{
-				texture = App->font->Print(texts[i].GetString(), color, font);
-				App->render->Blit(texture, rect.x, rect.y + space, NULL);
+				App->render->Blit(texts_tex[i], rect.x, rect.y + space, NULL);
 				space += spacing;
-				App->tex->UnLoadTexture(texture);
 			}
 		}
 	}

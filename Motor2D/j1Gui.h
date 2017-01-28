@@ -279,10 +279,11 @@ public:
 	void SetText(p2SString text);
 
 public:
-	p2List<p2SString>   texts;
-	SDL_Color	        color = NULLCOLOR;
-	_TTF_Font*	        font = nullptr;
-	int                 spacing = 0;
+	p2List<SDL_Texture*>   texts_tex;
+	p2List<p2SString>     texts_str;
+	SDL_Color	           color = NULLCOLOR;
+	_TTF_Font*	           font = nullptr;
+	int                    spacing = 0;
 };
 
 // ------------------------------
