@@ -20,8 +20,8 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	p2List<SDL_Rect> rects;
-	LoadAnimationFromXML(rects, "player.xml", "idle");
+	PhysBody* b = App->physics->CreateRectangle(300, 300, 50, 50);
+	App->physics->CreateStaticRectangle(300, 600, 400, 50);
 
 	return ret;
 }
@@ -46,7 +46,6 @@ bool MainScene::Update(float dt)
 		App->render->camera.y++;
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		App->render->camera.y--;
-
 
 	return ret;
 }

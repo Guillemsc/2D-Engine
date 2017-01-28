@@ -14,7 +14,7 @@
 #endif
 
 #define GRAVITY_X 0.0f
-#define GRAVITY_Y -0.0f
+#define GRAVITY_Y -5.0f
 
 j1Physics::j1Physics()
 {
@@ -61,11 +61,12 @@ bool j1Physics::PreUpdate()
 	return true;
 }
 
-PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float rest, int cat, int mask)
+PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float density, float gravity_scale, float rest, int cat, int mask)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -73,7 +74,7 @@ PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float rest, int cat,
 	shape.m_radius = PIXEL_TO_METERS(radius);
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	fixture.density = 1.0f;
+	fixture.density = density;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
@@ -88,11 +89,12 @@ PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float rest, int cat,
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateStaticCircle(int x, int y, int radius, float rest, int cat, int mask)
+PhysBody * j1Physics::CreateStaticCircle(int x, int y, int radius, float density, float gravity_scale, float rest, int cat, int mask)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -100,7 +102,7 @@ PhysBody * j1Physics::CreateStaticCircle(int x, int y, int radius, float rest, i
 	shape.m_radius = PIXEL_TO_METERS(radius);
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	fixture.density = 1.0f;
+	fixture.density = density;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
@@ -115,11 +117,12 @@ PhysBody * j1Physics::CreateStaticCircle(int x, int y, int radius, float rest, i
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float rest, int cat, int mask)
+PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float density, float gravity_scale, float rest, int cat, int mask)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -127,7 +130,7 @@ PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float rest, i
 	shape.m_radius = PIXEL_TO_METERS(radius);
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	fixture.density = 1.0f;
+	fixture.density = density;
 	fixture.isSensor = true;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
@@ -143,12 +146,13 @@ PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float rest, i
 	return pbody;
 }
 
-PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float rest, int cat, int mask, int angle)
+PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 	b2PolygonShape box;
@@ -156,7 +160,7 @@ PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float 
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 1.0f;
+	fixture.density = density;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
@@ -172,12 +176,13 @@ PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float 
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateStaticRectangle(int x, int y, int width, int height, float rest, int cat, int mask, int angle)
+PhysBody * j1Physics::CreateStaticRectangle(int x, int y, int width, int height, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 	b2PolygonShape box;
@@ -185,7 +190,7 @@ PhysBody * j1Physics::CreateStaticRectangle(int x, int y, int width, int height,
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 1.0f;
+	fixture.density = density;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
@@ -201,10 +206,46 @@ PhysBody * j1Physics::CreateStaticRectangle(int x, int y, int width, int height,
 	return pbody;
 }
 
-PhysBody * j1Physics::CreatePolygon(int x, int y, int* points, int size, float rest, int cat, int mask, int angle)
+PhysBody * j1Physics::CreatePolygon(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
+
+	b2Body* b = world->CreateBody(&body);
+	b2PolygonShape box;
+	b2Vec2* p = new b2Vec2[size / 2];
+
+	for (uint i = 0; i < size / 2; ++i)
+	{
+		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
+		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
+	}
+	box.Set(p, size / 2);
+
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = density;
+	fixture.filter.categoryBits = cat;
+	fixture.filter.maskBits = mask;
+	fixture.restitution = rest;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->SetUserData(pbody);
+	pbody->height = pbody->width = 0;
+
+	return pbody;
+}
+
+PhysBody * j1Physics::CreateStaticPolygon(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+{
+	b2BodyDef body;
+	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angle = DEGTORAD*angle;
 
@@ -236,47 +277,13 @@ PhysBody * j1Physics::CreatePolygon(int x, int y, int* points, int size, float r
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateStaticPolygon(int x, int y, int* points, int size, float rest, int cat, int mask, int angle)
+PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angle = DEGTORAD*angle;
-
-	b2Body* b = world->CreateBody(&body);
-	b2PolygonShape box;
-	b2Vec2* p = new b2Vec2[size / 2];
-
-	for (uint i = 0; i < size / 2; ++i)
-	{
-		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
-		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
-	}
-	box.Set(p, size / 2);
-
-	b2FixtureDef fixture;
-	fixture.shape = &box;
-	fixture.density = 1.0f;
-	fixture.filter.categoryBits = cat;
-	fixture.filter.maskBits = mask;
-	fixture.restitution = rest;
-
-	b->CreateFixture(&fixture);
-
-	PhysBody* pbody = new PhysBody();
-	pbody->body = b;
-	b->SetUserData(pbody);
-	pbody->height = pbody->width = 0;
-
-	return pbody;
-}
-
-PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, float rest, int cat, int mask, int angle)
-{
-	b2BodyDef body;
-	body.type = b2_staticBody;
-	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -285,7 +292,7 @@ PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, 
 
 	b2FixtureDef fixture;
 	fixture.shape = &box;
-	fixture.density = 1.0f;
+	fixture.density = density;
 	fixture.isSensor = true;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
@@ -302,12 +309,13 @@ PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, 
 	return pbody;
 }
 
-PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float rest, int cat, int mask, int angle)
+PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -324,6 +332,7 @@ PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float rest
 
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
+	fixture.density = density;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
@@ -340,12 +349,13 @@ PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float rest
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateStaticChain(int x, int y, int * points, int size, float rest, int cat, int mask, int angle)
+PhysBody * j1Physics::CreateStaticChain(int x, int y, int * points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
 
 	b2Body* b = world->CreateBody(&body);
 
@@ -362,6 +372,7 @@ PhysBody * j1Physics::CreateStaticChain(int x, int y, int * points, int size, fl
 
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
+	fixture.density = density;
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;

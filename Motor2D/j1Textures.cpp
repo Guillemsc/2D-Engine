@@ -80,7 +80,8 @@ SDL_Texture* const j1Textures::LoadTexture(const char* path)
 
 SDL_Surface * const j1Textures::LoadSurface(const char * path)
 {
-	SDL_Surface* surface = IMG_Load_RW(App->fs->Load(path), 1);
+	SDL_Surface* surface = NULL;
+	surface = IMG_Load_RW(App->fs->Load(path), 1);
 
 	if (surface == NULL)
 	{
