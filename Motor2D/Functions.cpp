@@ -1,4 +1,5 @@
 #include "Functions.h"
+#include "j1App.h"
 #include <stdio.h>
 #include <cmath>
 #include "p2Defs.h"
@@ -28,4 +29,24 @@ int SmoothMovement(int value, int destination, float speed, float dt)
 	}
 
 	return ret;
+}
+
+void LoadAnimationFromXML(p2List<SDL_Rect>& rects, const char * file, const char* animation_name)
+{
+	pugi::xml_document doc;
+	pugi::xml_node node;
+
+	App->LoadXML(file, doc);
+
+	node = doc.child("file").child("animations").child(animation_name);
+
+	for (pugi::xml_node curr = node.child("rect"); curr != nullptr; curr = curr.next_sibling("rect"))
+	{
+		SDL_Rect rect;
+		rect.x = curr.attribute("x").as_int();
+		rect.y = curr.attribute("y").as_int();
+		rect.w = curr.attribute("w").as_int();
+		rect.h = curr.attribute("h").as_int();
+		rects.add(rect);
+	}
 }

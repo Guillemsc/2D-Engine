@@ -20,6 +20,9 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
+	p2List<SDL_Rect> rects;
+	LoadAnimationFromXML(rects, "player.xml", "idle");
+
 	return ret;
 }
 
