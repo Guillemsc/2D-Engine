@@ -60,7 +60,7 @@ bool j1Textures::CleanUp()
 }
 
 // Load new texture from file path
-SDL_Texture* const j1Textures::Load(const char* path)
+SDL_Texture* const j1Textures::LoadTexture(const char* path)
 {
 	SDL_Texture* texture = NULL;
 	SDL_Surface* surface = IMG_Load_RW(App->fs->Load(path), 1);
@@ -71,15 +71,27 @@ SDL_Texture* const j1Textures::Load(const char* path)
 	}
 	else
 	{
-		texture = LoadSurface(surface);
+		texture = SurfaceToTexture(surface);
 		SDL_FreeSurface(surface);
 	}
 
 	return texture;
 }
 
+SDL_Surface * const j1Textures::LoadSurface(const char * path)
+{
+	SDL_Surface* surface = IMG_Load_RW(App->fs->Load(path), 1);
+
+	if (surface == NULL)
+	{
+		LOG("Could not load surface with path: %s. IMG_Load: %s", path, IMG_GetError());
+	}
+
+	return surface;
+}
+
 // Unload texture
-bool j1Textures::UnLoad(SDL_Texture* texture)
+bool j1Textures::UnLoadTexture(SDL_Texture* texture)
 {
 	p2List_item<SDL_Texture*>* item;
 
@@ -97,7 +109,7 @@ bool j1Textures::UnLoad(SDL_Texture* texture)
 }
 
 // Translate a surface into a texture
-SDL_Texture* const j1Textures::LoadSurface(SDL_Surface* surface)
+SDL_Texture* const j1Textures::SurfaceToTexture(SDL_Surface* surface)
 {
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(App->render->renderer, surface);
 

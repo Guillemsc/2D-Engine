@@ -38,7 +38,7 @@ bool j1Gui::Start()
 	LOG("Start module gui");
 	// Load atlas
 	if (atlas == nullptr)
-		atlas = App->tex->Load(atlas_file_name.GetString());
+		atlas = App->tex->LoadTexture(atlas_file_name.GetString());
 
 	// Starting intern camera position
 	camera_x = App->render->camera.x;
@@ -154,14 +154,14 @@ bool j1Gui::CleanUp()
 {
 	LOG("Freeing GUI");
 
-	App->tex->UnLoad(atlas);
+	App->tex->UnLoadTexture(atlas);
 
 	return true;
 }
 
 const void j1Gui::GetAtlas() const
 {
-	App->gui->atlas = App->tex->Load(atlas_file_name.GetString());
+	App->gui->atlas = App->tex->LoadTexture(atlas_file_name.GetString());
 }
 
 // ---------------------------------------------------------------------
@@ -1185,7 +1185,7 @@ bool UI_Text::update()
 				texture = App->font->Print(texts[i].GetString(), color, font);
 				App->render->Blit(texture, rect.x, rect.y + space, NULL);
 				space += spacing;
-				App->tex->UnLoad(texture);
+				App->tex->UnLoadTexture(texture);
 			}
 		}
 	}
