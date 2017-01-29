@@ -4,6 +4,7 @@
 #include "j1Input.h"
 #include "Functions.h"
 #include "j1Physics.h"
+#include "GameObject.h"
 
 
 MainScene::MainScene()
@@ -20,8 +21,12 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	PhysBody* b = App->physics->CreateRectangle(300, 300, 50, 50);
 	App->physics->CreateStaticRectangle(300, 600, 400, 50);
+
+	GameObject* go = new GameObject(iPoint(300, 300), 0.1f);
+	go->AddCollision(body_type_null, App->physics->CreateRectangle(go->GetPos().x + 100, go->GetPos().y, 50, 50, 1, 1));
+	go->AddCollision(body_type_null, App->physics->CreateRectangle(go->GetPos().x - 100, go->GetPos().y, 50, 50, 1, 1));
+
 
 	return ret;
 }

@@ -80,7 +80,7 @@ public:
 	b2MotorJoint* CreateMotorJoint(b2Body* body, b2Vec2 target);
 	path_joint* CreatePathJoint(b2Body* body, int *path, int path_size, int x_offset = 0, int y_offset = 0);
 
-	void DeleteJoint(b2MouseJoint* joint);
+	void DeleteJoint(b2Joint* joint);
 
 	void SetGround(b2Body* body) 
 	{

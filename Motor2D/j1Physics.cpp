@@ -349,7 +349,7 @@ PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float dens
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateStaticChain(int x, int y, int * points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+PhysBody * j1Physics::CreateStaticChain(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
@@ -523,7 +523,7 @@ path_joint * j1Physics::CreatePathJoint(b2Body * body, int * path, int path_size
 	return aux;
 }
 
-void j1Physics::DeleteJoint(b2MouseJoint* joint)
+void j1Physics::DeleteJoint(b2Joint* joint)
 {
 	world->DestroyJoint(joint);
 }
