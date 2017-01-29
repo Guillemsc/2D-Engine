@@ -180,6 +180,9 @@
     <ClInclude Include="Player.h">
       <Filter>Engine\Entities ==========\Player</Filter>
     </ClInclude>
+    <ClInclude Include="CollisionFilters.h">
+      <Filter>Engine\Tools ===========</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Engine">
@@ -197,14 +200,14 @@
     <Filter Include="Engine\Scenes ==========\MainScene">
       <UniqueIdentifier>{11114207-2dc8-4d4e-8574-9953eccbdbc7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Modules =========">
-      <UniqueIdentifier>{244722d1-90ce-423d-8e7a-556211865a32}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Engine\Entities ==========">
       <UniqueIdentifier>{1fe24bf0-1db6-45b2-aa68-fef0607a5a12}</UniqueIdentifier>
     </Filter>
     <Filter Include="Engine\Entities ==========\Player">
       <UniqueIdentifier>{649f33ab-cba0-4e3f-9d04-df22ae53d381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Modules =========">
+      <UniqueIdentifier>{244722d1-90ce-423d-8e7a-556211865a32}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

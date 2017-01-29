@@ -5,6 +5,7 @@
 #include "Functions.h"
 #include "j1Physics.h"
 #include "GameObject.h"
+#include "CollisionFilters.h"
 
 
 MainScene::MainScene()
@@ -21,12 +22,11 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	App->physics->CreateStaticRectangle(300, 600, 400, 50);
+	App->physics->CreateStaticRectangle(300, 600, 400, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
 
-	GameObject* go = new GameObject(iPoint(300, 300), 0.1f);
-	go->AddCollision(body_type_null, App->physics->CreateRectangle(go->GetPos().x + 100, go->GetPos().y, 50, 50, 1, 1));
-	go->AddCollision(body_type_null, App->physics->CreateRectangle(go->GetPos().x - 100, go->GetPos().y, 50, 50, 1, 1));
-
+	GameObject* go = new GameObject(iPoint(300, 300), 1.0f, CATEGORY_PLAYER, MASK_PLAYER);
+	go->CreateCollision(body_type_null, 50, 50, 0, 0);
+	go->CreateCollision(body_type_null, 50, 50, 50, 0);
 
 	return ret;
 }
