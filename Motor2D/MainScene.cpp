@@ -26,11 +26,11 @@ bool MainScene::Start()
 
 	go = new GameObject(iPoint(300, 300), CATEGORY_PLAYER, MASK_PLAYER);
 	go->CreateCollision(iPoint(0, 0), 38, 80);
-	go->CreateCollision(iPoint(-80, 0), 20);
-	go->CreateCollision(iPoint(80, 50), 20);
+	go->CreateCollision(iPoint(0, -50), 20);
+	go->CreateCollision(iPoint(0, 50), 20);
 	//go->CreateCollision(iPoint(0, -40), 20);
 	//go->CreateCollision(iPoint(0, 40), 20);
-	//go->SetFixedRotation(true);
+	go->SetFixedRotation(true);
 
 
 
@@ -57,9 +57,6 @@ bool MainScene::Update(float dt)
 		App->render->camera.y++;
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		App->render->camera.y--;
-
-	//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-	//	go->SetPos(iPoint(60, 60));
 
 	return ret;
 }

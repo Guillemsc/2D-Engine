@@ -25,9 +25,36 @@ iPoint GameObject::GetPos()
 	return ret;
 }
 
+// Inputs a position in pixels and changes the position of the body
 void GameObject::SetPos(iPoint new_pos)
 {
 	pbody->body->SetTransform(b2Vec2(PIXEL_TO_METERS(new_pos.x), PIXEL_TO_METERS(new_pos.y)), pbody->body->GetAngle());
+}
+
+// Inputs rotation in degrees and rotates de body
+void GameObject::SetRotation(float angle)
+{
+	pbody->body->SetTransform(b2Vec2(pbody->body->GetPosition().x, pbody->body->GetPosition().y), DEGTORAD * angle);
+}
+
+void GameObject::SetMass(float mass)
+{
+	gravity_scale = mass;
+}
+
+void GameObject::SetFixedRotation(bool set)
+{
+	pbody->body->SetFixedRotation(set);
+}
+
+void GameObject::SetDynamic()
+{
+	pbody->body->SetType(b2_dynamicBody);
+}
+
+void GameObject::SetKinematic()
+{
+	pbody->body->SetType(b2_kinematicBody);
 }
 
 void GameObject::AddAnimation(Animation* animation)
@@ -38,21 +65,6 @@ void GameObject::AddAnimation(Animation* animation)
 void GameObject::SetAnimation(const char * animation)
 {
 	animator->SetAnimation(animation);
-}
-
-void GameObject::SetMass(float mass)
-{
-	gravity_scale = mass;
-}
-
-void GameObject::SetDynamic()
-{
-	pbody->body->SetType(b2_dynamicBody);
-}
-
-void GameObject::SetFixedRotation(bool set)
-{
-	pbody->body->SetFixedRotation(set);
 }
 
 void GameObject::CreateCollision(iPoint offset, int width, int height)

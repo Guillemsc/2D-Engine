@@ -61,12 +61,6 @@
     <ClCompile Include="Functions.cpp">
       <Filter>Engine\Tools ===========</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Engine\Tools ===========</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Engine\Tools ===========</Filter>
-    </ClCompile>
     <ClCompile Include="j1Entity.cpp">
       <Filter>Engine\Entities ==========</Filter>
     </ClCompile>
@@ -75,6 +69,12 @@
     </ClCompile>
     <ClCompile Include="j1Scene.cpp">
       <Filter>Engine\Scenes ==========</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Engine\Components ======</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Engine\Components ======</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,12 +165,6 @@
     <ClInclude Include="Functions.h">
       <Filter>Engine\Tools ===========</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Engine\Tools ===========</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Engine\Tools ===========</Filter>
-    </ClInclude>
     <ClInclude Include="j1Entity.h">
       <Filter>Engine\Entities ==========</Filter>
     </ClInclude>
@@ -180,8 +174,14 @@
     <ClInclude Include="Player.h">
       <Filter>Engine\Entities ==========\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Engine\Components ======</Filter>
+    </ClInclude>
     <ClInclude Include="CollisionFilters.h">
-      <Filter>Engine\Tools ===========</Filter>
+      <Filter>Engine\Components ======</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Engine\Components ======</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -208,6 +208,9 @@
     </Filter>
     <Filter Include="Engine\Modules =========">
       <UniqueIdentifier>{244722d1-90ce-423d-8e7a-556211865a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Components ======">
+      <UniqueIdentifier>{1f876cd5-245d-4ca8-a70a-e144dbbc8c53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
