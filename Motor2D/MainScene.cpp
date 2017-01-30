@@ -27,10 +27,9 @@ bool MainScene::Start()
 	b->listener = App->scene;
 
 	go = new GameObject(iPoint(300, 300), CATEGORY_PLAYER, MASK_PLAYER);
-	go->CreateCollision(iPoint(0, 0), 38, 80, fixture_type::fixuture_type_down_ball);
+	go->CreateCollision(iPoint(0, 0), 38, 80, fixture_type::fixuture_type_null);
 	go->CreateCollision(iPoint(0, -50), 20, fixture_type::fixuture_type_down_ball);
-	go->CreateCollision(iPoint(0, 50), 20, fixture_type::fixuture_type_down_ball);
-	go->SetFixedRotation(true);
+	go->CreateCollision(iPoint(0, 50), 20, fixture_type::fixuture_type_null);
 	go->SetListener(App->scene);
 
 
@@ -80,12 +79,5 @@ bool MainScene::CleanUp()
 
 void MainScene::OnColl(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
 {
-	if (bodyA->type == pbody_type::pbody_type_world)
-	{
-		if (bodyB->body->GetFixtureList()->GetFixtureType() == fixture_type::fixuture_type_down_ball)
-		{
-			LOG("hi");
-		}
-	}
 }
 

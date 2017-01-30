@@ -52,3 +52,7 @@ bool Player::CleanUp()
 
 	return ret;
 }
+
+void Player::OnColl(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
+{
+}

@@ -67,6 +67,12 @@ bool j1Entity::CleanUp()
 	return ret;
 }
 
+void j1Entity::OnCollision(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
+{
+	for (int i = 0; i < entity_list.count(); i++)
+		entity_list[i]->OnColl(bodyA, bodyB, fixtureA, fixtureB);
+}
+
 Entity* j1Entity::CreateEntity(entity_name entity)
 {
 	Entity* ret = nullptr;

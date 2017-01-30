@@ -69,6 +69,7 @@ public:
 private:
 	// Blit in the layer order
 	void DoLayerBlit();
+	p2List<Scene*> scenes;
 
 public:
 	// Scenes

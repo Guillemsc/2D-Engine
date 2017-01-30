@@ -40,6 +40,7 @@ bool j1Scene::Start()
 
 	// Create scenes
 	main_scene = new MainScene();
+	scenes.add(main_scene);
 	// -------------
 
 	// Starting scene
@@ -121,7 +122,8 @@ void j1Scene::LayerBlit(int layer, SDL_Texture * texture, iPoint pos, const SDL_
 
 void j1Scene::OnCollision(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
 {
-	main_scene->OnColl(bodyA, bodyB, fixtureA, fixtureB);
+	for(int i = 0; i<scenes.count(); i++)
+		scenes[i]->OnColl(bodyA, bodyB, fixtureA, fixtureB);
 }
 
 void j1Scene::DoLayerBlit()

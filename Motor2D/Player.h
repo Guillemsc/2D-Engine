@@ -14,6 +14,8 @@ public:
 	bool Update(float dt);
 	bool PostUpdate();
 	bool CleanUp();
+
+	void OnColl(PhysBody* bodyA, PhysBody* bodyB, b2Fixture* fixtureA, b2Fixture* fixtureB);
 };
 
 #endif

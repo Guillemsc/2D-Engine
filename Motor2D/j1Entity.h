@@ -5,6 +5,9 @@
 #include "p2Defs.h"
 #include "p2List.h"
 
+class b2Fixture;
+class PhysBody;
+
 enum entity_name
 {
 	player
@@ -38,6 +41,8 @@ public:
 
 	// Called before quitting
 	bool CleanUp();
+
+	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Fixture* fixtureA, b2Fixture* fixtureB);
 
 	Entity* CreateEntity(entity_name entity);
 

@@ -4,6 +4,10 @@
 #include "j1App.h"
 #include "j1Render.h"
 #include "PugiXml\src\pugixml.hpp"
+#include "j1Physics.h"
+
+class b2Fixture;
+class PhysBody;
 
 class Entity
 {
@@ -28,7 +32,7 @@ public:
 		return true;
 	}
 
-	virtual void OnCollision(PhysBody* bodyA, PhysBody* bodyB) {};
+	virtual void OnColl(PhysBody* bodyA, PhysBody* bodyB, b2Fixture* fixtureA, b2Fixture* fixtureB) {};
 
 public:
 
