@@ -26,6 +26,16 @@ float DistanceFromTwoPoints(float x1, float y1, float x2, float y2)
 		return -sqrt(dist);
 }
 
+bool TextCmp(const char * text1, const char * text2)
+{
+	bool ret = false;
+
+	if (strcmp(text1, text2) == 0)
+		ret = true;
+
+	return ret;
+}
+
 int SmoothMovement(int value, int destination, float speed, float dt)
 {
 	int ret = value;

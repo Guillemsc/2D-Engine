@@ -10,6 +10,7 @@
 #include "p2Point.h"
 #include "j1FileSystem.h"
 #include "j1Window.h"
+#include "Functions.h"
 #include <iostream>
 
 using namespace std;
@@ -239,7 +240,7 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 
 void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
 {
-	if (strcmp(strings[0].GetString(), "help") == 0)
+	if (TextCmp(strings[0].GetString(), "help"))
 	{
 		Log(" ");
 		Log("\nBasic commands:");
@@ -251,15 +252,15 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		Log("   - 'fps (float)': limits fps to the number 'x'.");
 		Log(" ");
 	}
-	else if (strcmp(strings[0].GetString(), "clear") == 0)
+	else if (TextCmp(strings[0].GetString(), "clear"))
 	{
 		ClearConsole();
 	}
-	else if (strcmp(strings[0].GetString(), "hide") == 0)
+	else if (TextCmp(strings[0].GetString(), "hide"))
 	{
 		window->SetEnabledAndChilds(!window->enabled);
 	}
-	else if (strcmp(strings[0].GetString(), "debug") == 0)
+	else if (TextCmp(strings[0].GetString(), "debug"))
 	{
 		if (ints[0] == 1)
 		{
@@ -272,17 +273,17 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 			Log("> Debug mode OFF", succes.r, succes.g, succes.b);
 		}
 	}
-	else if (strcmp(strings[0].GetString(), "exit") == 0)
+	else if (TextCmp(strings[0].GetString(), "exit"))
 	{
 		Log("Exiting program");
 		App->EndSDL();
 	}
-	else if (strcmp(strings[0].GetString(), "set") == 0 && strcmp(strings[1].GetString(), "title") == 0)
+	else if (TextCmp(strings[0].GetString(), "set") && strcmp(strings[1].GetString(), "title") == 0)
 	{
 		Log(p2SString("Title changed to '%s'.", strings[2].GetString()), succes.r, succes.g, succes.b);
 		App->win->SetTitle(strings[2].GetString());
 	}
-	else if (strcmp(strings[0].GetString(), "fps") == 0)
+	else if (TextCmp(strings[0].GetString(), "fps"))
 	{
 		if (ints.count() > 0)
 		{
@@ -291,7 +292,7 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		}
 
 	}
-	else if (strcmp(strings[0].GetString(), "hi") == 0)
+	else if (TextCmp(strings[0].GetString(), "hi"))
 	{
 		Log("Hi! :D");
 	}
