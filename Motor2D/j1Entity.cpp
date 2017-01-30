@@ -22,9 +22,6 @@ bool j1Entity::Start()
 {
 	bool ret = true;
 
-	for (int i = 0; i < entity_list.count(); i++)
-		ret = entity_list[i]->Start();
-
 	return ret;
 }
 
@@ -43,7 +40,10 @@ bool j1Entity::Update(float dt)
 	bool ret = true;
 
 	for (int i = 0; i < entity_list.count(); i++)
+	{
 		ret = entity_list[i]->Update(dt);
+		entity_list[i]->Draw();
+	}
 
 	return ret;
 }
@@ -88,7 +88,11 @@ Entity* j1Entity::CreateEntity(entity_name entity)
 	}
 
 	if (ret != nullptr)
+	{
+		ret->Draw();
+		ret->Start();
 		entity_list.add(ret);
+	}
 	else
 		LOG("Entity creation returned nullptr");
 
@@ -97,6 +101,7 @@ Entity* j1Entity::CreateEntity(entity_name entity)
 
 void j1Entity::DeleteEntity(Entity* entity)
 {
+	entity->CleanUp();
 	entity_list.del(entity_list.At(entity_list.find(entity)));
 	RELEASE(entity);
 }

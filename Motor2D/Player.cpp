@@ -8,6 +8,15 @@ Player::~Player()
 {
 }
 
+bool Player::LoadEntity()
+{
+	bool ret = true;
+
+
+
+	return ret;
+}
+
 bool Player::Start()
 {
 	bool ret = true;
@@ -27,6 +36,15 @@ bool Player::PreUpdate()
 }
 
 bool Player::Update(float dt)
+{
+	bool ret = true;
+
+
+
+	return ret;
+}
+
+bool Player::Draw()
 {
 	bool ret = true;
 

@@ -9,9 +9,11 @@ public:
 	Player();
 	~Player();
 
+	bool LoadEntity();
 	bool Start();
 	bool PreUpdate();
 	bool Update(float dt);
+	bool Draw();
 	bool PostUpdate();
 	bool CleanUp();
 
