@@ -32,8 +32,6 @@ bool MainScene::Start()
 	go->CreateCollision(iPoint(0, 50), 20, fixture_type::f_t_null);
 	go->SetListener(App->scene);
 
-
-
 	return ret;
 }
 
@@ -79,5 +77,6 @@ bool MainScene::CleanUp()
 
 void MainScene::OnColl(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
 {
+
 }
 

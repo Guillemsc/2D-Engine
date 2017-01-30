@@ -19,13 +19,16 @@ public:
 	~GameObject();
 
 	iPoint GetPos();
+	float GetRotation();
 	void SetPos(iPoint pos);
 	void SetRotation(float angle);
 	void SetMass(float mass);
 	void SetFixedRotation(bool set);
 	void SetDynamic();
 	void SetKinematic();
+	void SetGravityScale(float gravity_scale);
 	void SetListener(j1Module* scene);
+	void SetCatMask(int cat, int mask);
 
 	void AddAnimation(Animation* animation);
 	void SetAnimation(const char* animation);
@@ -36,14 +39,12 @@ public:
 	void CreateCollisionSensor(iPoint offset, int width, int height, fixture_type type);
 	void CreateCollisionSensor(iPoint offset, int rad, fixture_type type);
 
-	//void CreateCollision(int radius, int offset_x, int offset_y);
-
 private:
-
 
 public:
 	Animator*	        animator = nullptr;
 	SDL_Texture*        texture = nullptr;
+	PhysBody*           pbody = nullptr;
 
 private:
 	float				gravity_scale = 0.0f;
@@ -52,8 +53,6 @@ private:
 	float               restitution = 0.0f;
 	int					cat = 0;
 	int					mask = 0;
-
-	PhysBody*           pbody = nullptr;
 };
 
 #endif
