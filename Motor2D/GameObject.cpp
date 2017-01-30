@@ -5,7 +5,7 @@
 #include "j1Physics.h"
 #include "Functions.h"
 
-GameObject::GameObject(iPoint pos, float _gravity_scale, float _density, int _cat, int _mask) : gravity_scale(_gravity_scale), cat(_cat), mask(_mask)
+GameObject::GameObject(iPoint pos, int _cat, int _mask, float _gravity_scale, float _density, float _friction) : gravity_scale(_gravity_scale), density(_density), friction(_friction), cat(_cat), mask(_mask)
 {
 	animator = new Animator();
 	pbody = App->physics->CreateCircleSensor(pos.x, pos.y, 5, _density, _gravity_scale, 0, cat, mask);
@@ -27,7 +27,7 @@ iPoint GameObject::GetPos()
 
 void GameObject::SetPos(iPoint new_pos)
 {
-	pbody->body->SetTransform(b2Vec2(new_pos.x, new_pos.y), pbody->body->GetAngle());
+	pbodies.end->data->body->SetTransform(b2Vec2(PIXEL_TO_METERS(new_pos.x), PIXEL_TO_METERS(new_pos.y)), pbodies.end->data->body->GetAngle());
 }
 
 void GameObject::AddAnimation(Animation* animation)
@@ -53,33 +53,41 @@ void GameObject::SetDynamic()
 		pbodies[i]->body->SetType(b2_dynamicBody);
 }
 
-void GameObject::CreateCollision(body_type type, int width, int height, int offset_x, int offset_y, float density)
+void GameObject::CreateCollision(body_type type, iPoint offset, int width, int height)
 {
-	PhysBody* pb = App->physics->CreateRectangle(GetPos().x + (width/2) + offset_x, GetPos().y + (height/2) + offset_y, width, height, density, gravity_scale, 0, cat, mask);
-	pb->type = type;
-	AddCollision(pb);
+	/*PhysBody* pb = App->physics->CreateRectangle(GetPos().x + (width/2) + offset.x, GetPos().y + (height/2) + offset.y, width, height, density, gravity_scale, 0, friction, cat, mask);
+	pb->type = type;*/
+	//AddCollision(pb);
+
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f, b2Vec2(offset.x, offset.y), 0);
+
+	b2FixtureDef fd;
+	fd.shape = &box;
+	
+	pbody->body->CreateFixture(&fd);
 }
 
 void GameObject::AddCollision(PhysBody* _pbody)
 {
-	PhysBody* to_atach = nullptr;
+	//PhysBody* to_atach = nullptr;
 
-	if (pbodies.count() == 0)
-		to_atach = pbody;
-	else
-		to_atach = pbodies.end->data;
+	//if (pbodies.count() == 0)
+	//	to_atach = pbody;
+	//else
+	//	to_atach = pbodies.end->data;
 
-	int x1, y1, x2, y2;
-	_pbody->GetPosition(x1, y1);
-	to_atach->GetPosition(x2, y2);
+	//int x1, y1, x2, y2;
+	//_pbody->GetPosition(x1, y1);
+	//to_atach->GetPosition(x2, y2);
 
-	int distance_x = x2 - x1;
-	int distance_y = y2 - y1;
-	int angle = AngleFromTwoPoints(x1, y1, x2, y2);
-	
-	_pbody->body->SetGravityScale(gravity_scale);
-	pbodies.add(_pbody);
+	//int distance_x = x2 - x1;
+	//int distance_y = y2 - y1;
+	//int angle = AngleFromTwoPoints(x1, y1, x2, y2);
+	//
+	//_pbody->body->SetGravityScale(gravity_scale);
+	//pbodies.add(_pbody);
 
-	joints.add(App->physics->CreateAtachJoint(_pbody, to_atach, distance_x, distance_y, angle));
+	//joints.add(App->physics->CreateAtachJoint(_pbody, to_atach, distance_x, distance_y, angle));
 }
 

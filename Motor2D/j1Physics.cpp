@@ -61,7 +61,7 @@ bool j1Physics::PreUpdate()
 	return true;
 }
 
-PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float density, float gravity_scale, float rest, int cat, int mask)
+PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float density, float gravity_scale, float rest, float friction, int cat, int mask)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
@@ -78,6 +78,7 @@ PhysBody* j1Physics::CreateCircle(int x, int y, int radius, float density, float
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
+	fixture.friction = friction;
 
 	b->CreateFixture(&fixture);
 
@@ -146,7 +147,7 @@ PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float density
 	return pbody;
 }
 
-PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float density, float gravity_scale, float rest, float friction, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
@@ -164,6 +165,7 @@ PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float 
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
+	fixture.friction = friction;
 
 	b->CreateFixture(&fixture);
 
@@ -206,7 +208,7 @@ PhysBody * j1Physics::CreateStaticRectangle(int x, int y, int width, int height,
 	return pbody;
 }
 
-PhysBody * j1Physics::CreatePolygon(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+PhysBody * j1Physics::CreatePolygon(int x, int y, int* points, int size, float density, float gravity_scale, float rest, float friction, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
@@ -231,6 +233,7 @@ PhysBody * j1Physics::CreatePolygon(int x, int y, int* points, int size, float d
 	fixture.filter.categoryBits = cat;
 	fixture.filter.maskBits = mask;
 	fixture.restitution = rest;
+	fixture.friction = friction;
 
 	b->CreateFixture(&fixture);
 

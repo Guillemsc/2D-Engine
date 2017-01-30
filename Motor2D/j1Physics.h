@@ -59,14 +59,17 @@ public:
 	bool PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1);
+	PhysBody* CreateCircle(int x, int y, int radius, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, float friction = 1.0f, int cat = 1, int mask = 1);
 	PhysBody* CreateStaticCircle(int x, int y, int radius, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1);
 	PhysBody* CreateCircleSensor(int x, int y, int radius, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1);
-	PhysBody* CreateRectangle(int x, int y, int width, int height,  float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+
+	PhysBody* CreateRectangle(int x, int y, int width, int height,  float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, float friction = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 	PhysBody* CreateStaticRectangle(int x, int y, int width, int height, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
-	PhysBody* CreatePolygon(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
-	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+
+	PhysBody* CreatePolygon(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, float friction = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
+
 	PhysBody* CreateChain(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 
