@@ -10,7 +10,8 @@ class PhysBody;
 class b2Joint;
 class Animation;
 
-enum body_type;
+enum class body_type;
+enum class fixture_type;
 class GameObject
 {
 public:
@@ -24,12 +25,13 @@ public:
 	void SetFixedRotation(bool set);
 	void SetDynamic();
 	void SetKinematic();
+	void SetListener(j1Module* scene);
 
 	void AddAnimation(Animation* animation);
 	void SetAnimation(const char* animation);
 
-	void CreateCollision(iPoint offset, int width, int height);
-	void CreateCollision(iPoint offset, int rad);
+	void CreateCollision(iPoint offset, int width, int height, fixture_type type);
+	void CreateCollision(iPoint offset, int rad, fixture_type type);
 
 	void CreateCollisionSensor(iPoint offset, int width, int height);
 	//void CreateCollision(int radius, int offset_x, int offset_y);

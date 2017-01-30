@@ -57,6 +57,13 @@ void GameObject::SetKinematic()
 	pbody->body->SetType(b2_kinematicBody);
 }
 
+void GameObject::SetListener(j1Module * scene)
+{
+	pbody->listener = scene;
+}
+
+
+
 void GameObject::AddAnimation(Animation* animation)
 {
 	animator->AddAnimation(animation);
@@ -67,14 +74,14 @@ void GameObject::SetAnimation(const char * animation)
 	animator->SetAnimation(animation);
 }
 
-void GameObject::CreateCollision(iPoint offset, int width, int height)
+void GameObject::CreateCollision(iPoint offset, int width, int height, fixture_type type)
 {
-	App->physics->AddRectangleToBody(pbody, offset.x, offset.y, width, height, density, 0, friction);
+	App->physics->AddRectangleToBody(pbody, offset.x, offset.y, width, height, type, density, 0, friction);
 }
 
-void GameObject::CreateCollision(iPoint offset, int rad)
+void GameObject::CreateCollision(iPoint offset, int rad, fixture_type type)
 {
-	App->physics->AddCircleToBody(pbody, offset.x, offset.y, rad, density, 0, friction);
+	App->physics->AddCircleToBody(pbody, offset.x, offset.y, rad, type, density, 0, friction);
 }
 
 void GameObject::CreateCollisionSensor(iPoint offset, int width, int height)

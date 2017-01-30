@@ -17,6 +17,8 @@
 #define GRAVITY_X 0.0f
 #define GRAVITY_Y -5.0f
 
+enum class fixture_type;
+
 j1Physics::j1Physics()
 {
 	world = NULL;
@@ -54,8 +56,12 @@ bool j1Physics::PreUpdate()
 		{
 			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			PhysBody* pb2 = (PhysBody*)c->GetFixtureB()->GetBody()->GetUserData();
+
+			b2Fixture* fA = c->GetFixtureA();
+			b2Fixture* fB = c->GetFixtureB();
+
 			if(pb1 && pb2 && pb1->listener)
-				pb1->listener->OnCollision(pb1, pb2);
+				pb1->listener->OnCollision(pb1, pb2, fA, fB);
 		}
 	}
 
@@ -148,7 +154,7 @@ PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float density
 	return pbody;
 }
 
-void j1Physics::AddCircleToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, float density, float rest, float friction)
+void j1Physics::AddCircleToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, fixture_type type, float density, float rest, float friction)
 {
 	b2CircleShape circle;
 	circle.m_radius = PIXEL_TO_METERS(radius);
@@ -160,7 +166,7 @@ void j1Physics::AddCircleToBody(PhysBody * pbody, int offset_x, int offset_y, in
 	fd.friction = friction;
 	fd.isSensor = false;
 
-	pbody->body->CreateFixture(&fd);
+	pbody->body->CreateFixture(&fd)->SetFixtureType(type);
 }
 
 void j1Physics::AddCircleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, float density, float rest, float friction)
@@ -343,7 +349,7 @@ PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, 
 	return pbody;
 }
 
-void j1Physics::AddRectangleToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, float density, float rest, float friction)
+void j1Physics::AddRectangleToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, fixture_type type, float density, float rest, float friction)
 {
 	b2PolygonShape box;
 	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f, b2Vec2(PIXEL_TO_METERS(offset_x), PIXEL_TO_METERS(offset_y)), 0);
@@ -354,7 +360,7 @@ void j1Physics::AddRectangleToBody(PhysBody * pbody, int offset_x, int offset_y,
 	fd.friction = friction;
 	fd.isSensor = false;
 
-	pbody->body->CreateFixture(&fd);
+	pbody->body->CreateFixture(&fd)->SetFixtureType(type);
 }
 
 void j1Physics::AddRectangleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, float density, float rest, float friction)
@@ -830,9 +836,12 @@ void j1Physics::BeginContact(b2Contact* contact)
 	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData();
 	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData();
 
+	b2Fixture* fixtureA = contact->GetFixtureA();
+	b2Fixture* fixtureB = contact->GetFixtureB();
+
 	if(physA && physA->listener != NULL)
-		physA->listener->OnCollision(physA, physB);
+		physA->listener->OnCollision(physA, physB, fixtureA, fixtureB);
 
 	if(physB && physB->listener != NULL)
-		physB->listener->OnCollision(physB, physA);
+		physB->listener->OnCollision(physB, physA, fixtureB, fixtureA);
 }

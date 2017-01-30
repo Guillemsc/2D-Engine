@@ -4,6 +4,8 @@
 #include "Scene.h"
 
 class GameObject;
+class b2Fixture;
+
 class MainScene : public Scene {
 public:
 	MainScene();
@@ -15,7 +17,8 @@ public:
 	bool PostUpdate();
 	bool CleanUp();
 
-	//void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void OnColl(PhysBody* bodyA, PhysBody* bodyB, b2Fixture* fixtureA, b2Fixture* fixtureB);
+
 	GameObject* go = nullptr;
 
 private:

@@ -119,6 +119,11 @@ void j1Scene::LayerBlit(int layer, SDL_Texture * texture, iPoint pos, const SDL_
 	layer_list.Push(lblit, layer);
 }
 
+void j1Scene::OnCollision(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
+{
+	main_scene->OnColl(bodyA, bodyB, fixtureA, fixtureB);
+}
+
 void j1Scene::DoLayerBlit()
 {
 	while(layer_list.Count() > 0)

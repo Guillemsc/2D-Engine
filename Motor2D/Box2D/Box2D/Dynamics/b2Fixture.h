@@ -27,6 +27,7 @@ class b2BlockAllocator;
 class b2Body;
 class b2BroadPhase;
 class b2Fixture;
+enum class fixture_type;
 
 /// This holds contact filtering data.
 struct b2Filter
@@ -88,6 +89,9 @@ struct b2FixtureDef
 
 	/// Contact filtering data.
 	b2Filter filter;
+
+	// Type
+	fixture_type type;
 };
 
 /// This proxy is used internally to connect fixtures to the broad-phase.
@@ -195,6 +199,9 @@ public:
 	/// Dump this fixture to the log file.
 	void Dump(int32 bodyIndex);
 
+	void SetFixtureType(fixture_type _type) { type = _type; };
+	fixture_type GetFixtureType() { return type; };
+
 protected:
 
 	friend class b2Body;
@@ -233,6 +240,8 @@ protected:
 	bool m_isSensor;
 
 	void* m_userData;
+
+	fixture_type type;
 };
 
 inline b2Shape::Type b2Fixture::GetType() const
