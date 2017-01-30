@@ -54,8 +54,8 @@ bool MainScene::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		App->render->camera.y--;
 
-	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
-		go->SetPos(iPoint(60, 60));
+	//if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	//	go->SetPos(iPoint(60, 60));
 
 	return ret;
 }

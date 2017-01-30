@@ -247,8 +247,8 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		Log("   - 'clear': clears the console text.");
 		Log("   - 'hide': hides console.");
 		Log("   - 'exit': exits program.");
-		Log("   - 'set title x': changes the window title.");
-		Log("   - 'fps x': limits fps to the number 'x'.");
+		Log("   - 'set title (string)': changes the window title.");
+		Log("   - 'fps (float)': limits fps to the number 'x'.");
 		Log(" ");
 	}
 	else if (strcmp(strings[0].GetString(), "clear") == 0)
@@ -258,6 +258,19 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 	else if (strcmp(strings[0].GetString(), "hide") == 0)
 	{
 		window->SetEnabledAndChilds(!window->enabled);
+	}
+	else if (strcmp(strings[0].GetString(), "debug") == 0)
+	{
+		if (ints[0] == 1)
+		{
+			App->debug_mode = true;
+			Log("> Debug mode ON", succes.r, succes.g, succes.b);
+		}
+		if (ints[0] == 0)
+		{
+			App->debug_mode = false;
+			Log("> Debug mode OFF", succes.r, succes.g, succes.b);
+		}
 	}
 	else if (strcmp(strings[0].GetString(), "exit") == 0)
 	{
