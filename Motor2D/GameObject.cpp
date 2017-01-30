@@ -29,6 +29,7 @@ GameObject::GameObject(iPoint pos, int _cat, int _mask, pbody_type pb_type, floa
 
 GameObject::~GameObject()
 {
+	App->physics->DeleteBody(pbody);
 }
 
 // Gets position of the pbody in pixels

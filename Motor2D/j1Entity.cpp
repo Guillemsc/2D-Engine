@@ -1,5 +1,6 @@
 #include "j1Entity.h"
 #include "Player.h"
+#include "p2Log.h"
 
 j1Entity::j1Entity()
 {
@@ -88,7 +89,17 @@ Entity* j1Entity::CreateEntity(entity_name entity)
 
 	if (ret != nullptr)
 		entity_list.add(ret);
+	else
+		LOG("Entity creation returned nullptr");
 
 	return ret;
 }
+
+void j1Entity::DeleteEntity(Entity* entity)
+{
+	entity_list.del(entity_list.At(entity_list.find(entity)));
+	RELEASE(entity);
+}
+
+
 
