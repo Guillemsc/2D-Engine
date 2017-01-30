@@ -22,7 +22,6 @@ public:
 	float GetRotation();
 	void SetPos(iPoint pos);
 	void SetRotation(float angle);
-	void SetMass(float mass);
 	void SetFixedRotation(bool set);
 	void SetDynamic();
 	void SetKinematic();
