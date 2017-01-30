@@ -23,13 +23,13 @@ bool MainScene::Start()
 	LOG("Start MainScene");
 
 	PhysBody* b = App->physics->CreateStaticRectangle(0, 600, 1000, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
-	b->type = pbody_type::pbody_type_world;
+	b->type = pbody_type::p_t_world;
 	b->listener = App->scene;
 
-	go = new GameObject(iPoint(300, 300), CATEGORY_PLAYER, MASK_PLAYER);
-	go->CreateCollision(iPoint(0, 0), 38, 80, fixture_type::fixuture_type_null);
-	go->CreateCollision(iPoint(0, -50), 20, fixture_type::fixuture_type_down_ball);
-	go->CreateCollision(iPoint(0, 50), 20, fixture_type::fixuture_type_null);
+	go = new GameObject(iPoint(300, 300), CATEGORY_PLAYER, MASK_PLAYER, pbody_type::p_t_null);
+	go->CreateCollision(iPoint(0, 0), 38, 80, fixture_type::f_t_null);
+	go->CreateCollision(iPoint(0, -50), 20, fixture_type::f_t_down_ball);
+	go->CreateCollision(iPoint(0, 50), 20, fixture_type::f_t_null);
 	go->SetListener(App->scene);
 
 

@@ -5,11 +5,12 @@
 #include "j1Physics.h"
 #include "Functions.h"
 
-GameObject::GameObject(iPoint pos, int _cat, int _mask, float _gravity_scale, float _density, float _friction) : gravity_scale(_gravity_scale), density(_density), friction(_friction), cat(_cat), mask(_mask)
+GameObject::GameObject(iPoint pos, int _cat, int _mask, pbody_type pb_type, float _gravity_scale,  float _density, float _friction) : gravity_scale(_gravity_scale), density(_density), friction(_friction), cat(_cat), mask(_mask)
 {
 	animator = new Animator();
 	pbody = App->physics->CreateCircleSensor(pos.x, pos.y, 5, _density, _gravity_scale, 0, cat, mask);
 	pbody->body->SetType(b2_dynamicBody);
+	pbody->type = pb_type;
 }
 
 GameObject::~GameObject()

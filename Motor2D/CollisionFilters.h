@@ -14,15 +14,15 @@ int MASK_SCENERY = -1;
 // PhysBody enum
 enum class pbody_type
 {
-	pbody_type_null,
-	pbody_type_world
+	p_t_null,
+	p_t_world
 };
 
 // Fixture enum
 enum class fixture_type
 {
-	fixuture_type_null,
-	fixuture_type_down_ball
+	f_t_null,
+	f_t_down_ball
 };
 
 #endif // !_COLLISIONFILTERS__H__

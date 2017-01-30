@@ -10,12 +10,12 @@ class PhysBody;
 class b2Joint;
 class Animation;
 
-enum class body_type;
+enum class pbody_type;
 enum class fixture_type;
 class GameObject
 {
 public:
-	GameObject(iPoint pos, int cat, int mask, float gravity_scale = 1.0f, float density = 1.0f, float friction = 1.0f);
+	GameObject(iPoint pos, int cat, int mask, pbody_type pb_type, float gravity_scale = 1.0f, float density = 1.0f, float friction = 1.0f);
 	~GameObject();
 
 	iPoint GetPos();
