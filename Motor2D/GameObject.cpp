@@ -85,9 +85,15 @@ void GameObject::CreateCollision(iPoint offset, int rad, fixture_type type)
 	App->physics->AddCircleToBody(pbody, offset.x, offset.y, rad, type, density, 0, friction);
 }
 
-void GameObject::CreateCollisionSensor(iPoint offset, int width, int height)
+void GameObject::CreateCollisionSensor(iPoint offset, int width, int height, fixture_type type)
 {
-	App->physics->AddRectangleSensorToBody(pbody, offset.x, offset.y, width, height, density, 0, friction);
+	App->physics->AddRectangleSensorToBody(pbody, offset.x, offset.y, width, height, type, density, 0, friction);
 }
+
+void GameObject::CreateCollisionSensor(iPoint offset, int rad, fixture_type type)
+{
+	App->physics->AddCircleSensorToBody(pbody, offset.x, offset.y, rad, type, density, 0, friction);
+}
+
 
 

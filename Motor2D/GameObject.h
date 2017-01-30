@@ -33,7 +33,9 @@ public:
 	void CreateCollision(iPoint offset, int width, int height, fixture_type type);
 	void CreateCollision(iPoint offset, int rad, fixture_type type);
 
-	void CreateCollisionSensor(iPoint offset, int width, int height);
+	void CreateCollisionSensor(iPoint offset, int width, int height, fixture_type type);
+	void CreateCollisionSensor(iPoint offset, int rad, fixture_type type);
+
 	//void CreateCollision(int radius, int offset_x, int offset_y);
 
 private:

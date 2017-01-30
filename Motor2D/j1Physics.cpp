@@ -166,10 +166,11 @@ void j1Physics::AddCircleToBody(PhysBody * pbody, int offset_x, int offset_y, in
 	fd.friction = friction;
 	fd.isSensor = false;
 
-	pbody->body->CreateFixture(&fd)->SetFixtureType(type);
+	b2Fixture* fixture = pbody->body->CreateFixture(&fd);
+	fixture->SetFixtureType(type);
 }
 
-void j1Physics::AddCircleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, float density, float rest, float friction)
+void j1Physics::AddCircleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, fixture_type type, float density, float rest, float friction)
 {
 	b2CircleShape circle;
 	circle.m_radius = radius;
@@ -181,7 +182,8 @@ void j1Physics::AddCircleSensorToBody(PhysBody * pbody, int offset_x, int offset
 	fd.friction = friction;
 	fd.isSensor = true;
 
-	pbody->body->CreateFixture(&fd);
+	b2Fixture* fixture = pbody->body->CreateFixture(&fd);
+	fixture->SetFixtureType(type);
 }
 
 PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float density, float gravity_scale, float rest, float friction, int cat, int mask, int angle)
@@ -360,10 +362,11 @@ void j1Physics::AddRectangleToBody(PhysBody * pbody, int offset_x, int offset_y,
 	fd.friction = friction;
 	fd.isSensor = false;
 
-	pbody->body->CreateFixture(&fd)->SetFixtureType(type);
+	b2Fixture* fixture = pbody->body->CreateFixture(&fd);
+	fixture->SetFixtureType(type);
 }
 
-void j1Physics::AddRectangleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, float density, float rest, float friction)
+void j1Physics::AddRectangleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, fixture_type type, float density, float rest, float friction)
 {
 	b2PolygonShape box;
 	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f, b2Vec2(PIXEL_TO_METERS(offset_x), PIXEL_TO_METERS(offset_y)), 0);
@@ -374,7 +377,8 @@ void j1Physics::AddRectangleSensorToBody(PhysBody * pbody, int offset_x, int off
 	fd.friction = friction;
 	fd.isSensor = true;
 
-	pbody->body->CreateFixture(&fd);
+	b2Fixture* fixture = pbody->body->CreateFixture(&fd);
+	fixture->SetFixtureType(type);
 }
 
 PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
