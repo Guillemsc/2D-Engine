@@ -49,9 +49,6 @@
     <ClCompile Include="j1Console.cpp">
       <Filter>Engine\Modules =========</Filter>
     </ClCompile>
-    <ClCompile Include="j1Scene.cpp">
-      <Filter>Engine\Scenes ==========</Filter>
-    </ClCompile>
     <ClCompile Include="MainScene.cpp">
       <Filter>Engine\Scenes ==========\MainScene</Filter>
     </ClCompile>
@@ -75,6 +72,9 @@
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Engine\Entities ==========\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="j1Scene.cpp">
+      <Filter>Engine\Scenes ==========</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

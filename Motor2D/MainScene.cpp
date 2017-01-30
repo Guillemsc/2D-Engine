@@ -25,9 +25,13 @@ bool MainScene::Start()
 	App->physics->CreateStaticRectangle(0, 600, 1000, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
 
 	go = new GameObject(iPoint(300, 300), CATEGORY_PLAYER, MASK_PLAYER);
-	go->CreateCollision(body_type_null, iPoint(1, 0), 100, 100);
-	go->CreateCollision(body_type_null, iPoint(-1, 0), 100, 100);
-	//go->CreateCollision(body_type_null, iPoint(50, 0), 100, 100);
+	go->CreateCollision(iPoint(0, 0), 38, 80);
+	go->CreateCollision(iPoint(-80, 0), 20);
+	go->CreateCollision(iPoint(80, 50), 20);
+	//go->CreateCollision(iPoint(0, -40), 20);
+	//go->CreateCollision(iPoint(0, 40), 20);
+	//go->SetFixedRotation(true);
+
 
 
 	return ret;

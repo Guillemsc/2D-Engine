@@ -5,7 +5,8 @@
 #include "p2List.h"
 #include "j1Render.h"
 
-float AngleFromTwoPoints(int x1, int y1, int x2, int y2);
+float AngleFromTwoPoints(float x1, float y1, float x2, float y2);
+float DistanceFromTwoPoints(float x1, float y1, float x2, float y2);
 
 int SmoothMovement(int value, int destination, float speed, float dt = 1.0f);
 

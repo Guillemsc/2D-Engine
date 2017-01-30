@@ -6,6 +6,7 @@
 #include "j1Physics.h"
 #include "p2Point.h"
 #include "math.h"
+#include "Functions.h"
 
 #ifdef _DEBUG
 #pragma comment( lib, "Box2D/libx86/Debug/Box2D.lib" )
@@ -145,6 +146,36 @@ PhysBody * j1Physics::CreateCircleSensor(int x, int y, int radius, float density
 	pbody->width = pbody->height = radius;
 
 	return pbody;
+}
+
+void j1Physics::AddCircleToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, float density, float rest, float friction)
+{
+	b2CircleShape circle;
+	circle.m_radius = PIXEL_TO_METERS(radius);
+	circle.m_p = b2Vec2(PIXEL_TO_METERS(offset_x), PIXEL_TO_METERS(offset_y));
+
+	b2FixtureDef fd;
+	fd.shape = &circle;
+	fd.density = density;
+	fd.friction = friction;
+	fd.isSensor = false;
+
+	pbody->body->CreateFixture(&fd);
+}
+
+void j1Physics::AddCircleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int radius, float density, float rest, float friction)
+{
+	b2CircleShape circle;
+	circle.m_radius = radius;
+	circle.m_p = b2Vec2(offset_x, offset_y);
+
+	b2FixtureDef fd;
+	fd.shape = &circle;
+	fd.density = density;
+	fd.friction = friction;
+	fd.isSensor = true;
+
+	pbody->body->CreateFixture(&fd);
 }
 
 PhysBody* j1Physics::CreateRectangle(int x, int y, int width, int height, float density, float gravity_scale, float rest, float friction, int cat, int mask, int angle)
@@ -310,6 +341,34 @@ PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, 
 	pbody->height = height;
 
 	return pbody;
+}
+
+void j1Physics::AddRectangleToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, float density, float rest, float friction)
+{
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f, b2Vec2(PIXEL_TO_METERS(offset_x), PIXEL_TO_METERS(offset_y)), 0);
+
+	b2FixtureDef fd;
+	fd.shape = &box;
+	fd.density = density;
+	fd.friction = friction;
+	fd.isSensor = false;
+
+	pbody->body->CreateFixture(&fd);
+}
+
+void j1Physics::AddRectangleSensorToBody(PhysBody * pbody, int offset_x, int offset_y, int width, int height, float density, float rest, float friction)
+{
+	b2PolygonShape box;
+	box.SetAsBox(PIXEL_TO_METERS(width) * 0.5f, PIXEL_TO_METERS(height) * 0.5f, b2Vec2(PIXEL_TO_METERS(offset_x), PIXEL_TO_METERS(offset_y)), 0);
+
+	b2FixtureDef fd;
+	fd.shape = &box;
+	fd.density = density;
+	fd.friction = friction;
+	fd.isSensor = true;
+
+	pbody->body->CreateFixture(&fd);
 }
 
 PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
@@ -555,7 +614,19 @@ bool j1Physics::PostUpdate()
 				{
 					b2CircleShape* shape = (b2CircleShape*)f->GetShape();
 					b2Vec2 pos = f->GetBody()->GetPosition();
-					App->render->DrawCircle(METERS_TO_PIXELS(pos.x), METERS_TO_PIXELS(pos.y), METERS_TO_PIXELS(shape->m_radius), 255, 255, 255);
+
+					float dist = DistanceFromTwoPoints((PIXELS_PER_METER * pos.x), (PIXELS_PER_METER * pos.y), PIXELS_PER_METER * (pos.x + shape->m_p.x), PIXELS_PER_METER * (pos.y + shape->m_p.y));
+
+					float pos_x = 0;
+					float pos_y = 0;
+
+					float angle_between = AngleFromTwoPoints((PIXELS_PER_METER * pos.x), (PIXELS_PER_METER * pos.y), PIXELS_PER_METER * (pos.x + shape->m_p.x), PIXELS_PER_METER * (pos.y + shape->m_p.y));
+
+					pos_x = (PIXELS_PER_METER * pos.x) + sin(-b->GetAngle() - ((angle_between - 90) * DEGTORAD)) * (dist);
+					pos_y = (PIXELS_PER_METER * pos.y) + cos(-b->GetAngle() - ((angle_between - 90) * DEGTORAD)) * (dist);
+					
+					App->render->DrawCircle(pos_x, pos_y, METERS_TO_PIXELS(shape->m_radius), 255, 255, 255);
+
 				}
 				break;
 

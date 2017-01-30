@@ -6,12 +6,24 @@
 #include "p2Log.h"
 
 // Returns the angle between two points in degrees
-float AngleFromTwoPoints(int x1, int y1, int x2, int y2)
+float AngleFromTwoPoints(float x1, float y1, float x2, float y2)
 {
 	float deltaY = y2 - y1;
 	float deltaX = x2 - x1;
 
 	return (atan2(deltaY, deltaX) * RADTODEG);
+}
+
+float DistanceFromTwoPoints(float x1, float y1, float x2, float y2)
+{
+	int distance_x = x2 - x1;
+	int distance_y = y2 - y1;
+	float sign = ((distance_x * distance_x) + (distance_y * distance_y));
+	float dist = abs((distance_x * distance_x) + (distance_y * distance_y));
+	if(sign > 0)
+		return sqrt(dist);
+	else
+		return -sqrt(dist);
 }
 
 int SmoothMovement(int value, int destination, float speed, float dt)
