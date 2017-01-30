@@ -74,7 +74,7 @@ public:
 
 	void DeleteBody(PhysBody* object);
 
-	b2WeldJoint* CreateWeldJoint(PhysBody* body1, PhysBody* body2, int distance_between_x, int distance_between_y);
+	b2RevoluteJoint* CreateAtachJoint(PhysBody* body1, PhysBody* body2, int distance_between_x, int distance_between_y, float angle_between);
 	b2RevoluteJoint* CreateRevoluteJoint(PhysBody* anchor, PhysBody* body, iPoint anchor_offset, iPoint body_offset, bool enable_limit, float max_angle, float min_angle, bool enable_motor, int motor_speed, int max_torque);
 	b2PrismaticJoint* CreatePrismaticJoint(PhysBody* anchor,PhysBody* body, iPoint anchor_offset, iPoint body_offset, bool enable_limit, float max_trans, float min_trans, bool enable_motor, int motor_speed, int max_force);
 	b2MotorJoint* CreateMotorJoint(b2Body* body, b2Vec2 target);

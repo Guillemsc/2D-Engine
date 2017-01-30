@@ -389,25 +389,24 @@ PhysBody * j1Physics::CreateStaticChain(int x, int y, int* points, int size, flo
 	return pbody;
 }
 
-b2WeldJoint* j1Physics::CreateWeldJoint(PhysBody * body1, PhysBody * body2, int distance_between_x, int distance_between_y)
+b2RevoluteJoint* j1Physics::CreateAtachJoint(PhysBody * body1, PhysBody * body2, int distance_between_x, int distance_between_y, float angle_between)
 {
-	b2WeldJointDef def;
-	def.bodyA = body1->body;
-	def.bodyB = body2->body;
-	def.collideConnected = false;
+	b2RevoluteJointDef rev_joint;
+	rev_joint.bodyA = body1->body;
+	rev_joint.bodyB = body2->body;
+	rev_joint.collideConnected = false;
+	rev_joint.type = e_revoluteJoint;
+	rev_joint.localAnchorA = b2Vec2(PIXEL_TO_METERS(distance_between_x), PIXEL_TO_METERS(distance_between_y));
+	rev_joint.localAnchorB = b2Vec2(0, 0);
+	rev_joint.enableLimit = true;
 
-	int x1; int y1;
-	body1->GetPosition(x1, y1);
-	int x2; int y2;
-	body2->GetPosition(x2, y2);
-	int distance_x = x2 - x1;
-	int distance_y = y2 - y1;
-	def.localAnchorA = b2Vec2(distance_between_x, distance_between_y);
-	def.localAnchorB = b2Vec2(0, 0);
+	rev_joint.lowerAngle = DEGTORAD*angle_between;
+	rev_joint.upperAngle = DEGTORAD*angle_between;
 	
-	b2WeldJoint* weld_joint = (b2WeldJoint*)world->CreateJoint(&def);
 
-	return weld_joint;
+	b2RevoluteJoint* rev = (b2RevoluteJoint*)world->CreateJoint(&rev_joint);
+
+	return rev;
 }
 
 
@@ -434,15 +433,19 @@ b2RevoluteJoint* j1Physics::CreateRevoluteJoint(PhysBody * anchor, PhysBody * bo
 	rev_joint.type = e_revoluteJoint;
 	rev_joint.enableLimit = enable_limit;
 	rev_joint.enableMotor = enable_motor;
+
 	b2Vec2 anchor_center_diff(PIXEL_TO_METERS(anchor_offset.x), PIXEL_TO_METERS(anchor_offset.y));
 	rev_joint.localAnchorA = anchor_center_diff;
 	b2Vec2 body_center_diff(PIXEL_TO_METERS(body_offset.x), PIXEL_TO_METERS(body_offset.y));
 	rev_joint.localAnchorB = body_center_diff;
-	if (enable_limit) {
+
+	if (enable_limit) 
+	{
 		rev_joint.lowerAngle = DEGTORAD*min_angle;
 		rev_joint.upperAngle = DEGTORAD*max_angle;
 	}
-	if (enable_motor) {
+	if (enable_motor) 
+	{
 		rev_joint.motorSpeed = motor_speed;
 		rev_joint.maxMotorTorque = max_torque;
 	}

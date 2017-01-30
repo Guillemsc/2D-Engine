@@ -22,11 +22,13 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	App->physics->CreateStaticRectangle(300, 600, 400, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
+	App->physics->CreateStaticRectangle(0, 600, 1000, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
 
-	GameObject* go = new GameObject(iPoint(300, 300), 1.0f, CATEGORY_PLAYER, MASK_PLAYER);
-	go->CreateCollision(body_type_null, 50, 50, 0, 0);
-	go->CreateCollision(body_type_null, 50, 50, 50, 0);
+	go = new GameObject(iPoint(300, 300), 1.0f, CATEGORY_PLAYER, MASK_PLAYER);
+	go->CreateCollision(body_type_null, 100, 100, 50, 0);
+	go->CreateCollision(body_type_null, 100, 100, 0, 0);
+
+	//go->CreateCollision(body_type_null, 50, 50, -10, 0);
 
 	return ret;
 }
@@ -51,6 +53,9 @@ bool MainScene::Update(float dt)
 		App->render->camera.y++;
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		App->render->camera.y--;
+
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+		go->SetDynamic();
 
 	return ret;
 }

@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 
+class GameObject;
 class MainScene : public Scene {
 public:
 	MainScene();
@@ -15,6 +16,7 @@ public:
 	bool CleanUp();
 
 	//void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	GameObject* go = nullptr;
 
 private:
 

@@ -22,6 +22,7 @@ public:
 	void AddAnimation(Animation* animation);
 	void SetAnimation(const char* animation);
 	void SetMass(float mass);
+	void SetDynamic();
 
 	void CreateCollision(body_type type, int width, int height, int offset_x, int offset_y);
 	//void CreateCollision(int radius, int offset_x, int offset_y);
@@ -34,10 +35,9 @@ public:
 	SDL_Texture*        texture = nullptr;
 
 private:
-	iPoint              pos = NULLPOINT;
 	float				gravity_scale = 0.0f;
-	int					cat = 1;
-	int					mask = 2;
+	int					cat = 0;
+	int					mask = 0;
 
 	PhysBody*           pbody = nullptr;
 	p2List<PhysBody*>   pbodies;

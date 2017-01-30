@@ -3,11 +3,12 @@
 #include "Animation.h"
 #include "p2Defs.h"
 #include "j1Physics.h"
+#include "Functions.h"
 
-GameObject::GameObject(iPoint _pos, float mass, int _cat, int _mask) : pos(_pos), gravity_scale(mass), cat(_cat), mask(_mask)
+GameObject::GameObject(iPoint pos, float mass, int _cat, int _mask) : gravity_scale(mass), cat(_cat), mask(_mask)
 {
 	animator = new Animator();
-	pbody = App->physics->CreateCircleSensor(pos.x, pos.y, 5, 1, mass);
+	pbody = App->physics->CreateCircle(pos.x, pos.y, 5, 1, mass, 0, cat, mask);
 	pbody->body->SetType(b2_dynamicBody);
 }
 
@@ -27,7 +28,6 @@ iPoint GameObject::GetPos()
 void GameObject::SetPos(iPoint new_pos)
 {
 	pbody->body->SetTransform(b2Vec2(new_pos.x, new_pos.y), pbody->body->GetAngle());
-	pos = new_pos;
 }
 
 void GameObject::AddAnimation(Animation* animation)
@@ -47,14 +47,20 @@ void GameObject::SetMass(float mass)
 	gravity_scale = mass;
 }
 
+void GameObject::SetDynamic()
+{
+	for (int i = 0; i < pbodies.count(); i++)
+		pbodies[i]->body->SetType(b2_dynamicBody);
+}
+
 void GameObject::CreateCollision(body_type type, int width, int height, int offset_x, int offset_y)
 {
-	PhysBody* pb = App->physics->CreateRectangle(GetPos().x + offset_x, GetPos().y + offset_y, width, height, 1, gravity_scale, 0, cat, mask);
+	PhysBody* pb = App->physics->CreateRectangle(GetPos().x + (width/2) + offset_x, GetPos().y + (height/2) + offset_y, width, height, 1, gravity_scale, 0, cat, mask);
 	pb->type = type;
 	AddCollision(pb);
 }
 
-void GameObject::AddCollision(PhysBody * _pbody)
+void GameObject::AddCollision(PhysBody* _pbody)
 {
 	PhysBody* to_atach = nullptr;
 
@@ -64,14 +70,16 @@ void GameObject::AddCollision(PhysBody * _pbody)
 		to_atach = pbodies.end->data;
 
 	int x1, y1, x2, y2;
-	to_atach->GetPosition(x1, y1);
-	_pbody->GetPosition(x2, y2);
+	_pbody->GetPosition(x1, y1);
+	to_atach->GetPosition(x2, y2);
 
 	int distance_x = x2 - x1;
 	int distance_y = y2 - y1;
-
+	int angle = AngleFromTwoPoints(x1, y1, x2, y2);
+	
 	_pbody->body->SetGravityScale(gravity_scale);
 	pbodies.add(_pbody);
-	joints.add(App->physics->CreateWeldJoint(to_atach, _pbody, PIXEL_TO_METERS(distance_x), PIXEL_TO_METERS(distance_y)));
+
+	joints.add(App->physics->CreateAtachJoint(_pbody, to_atach, distance_x, distance_y, angle));
 }
 
