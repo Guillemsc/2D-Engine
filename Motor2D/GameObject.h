@@ -14,7 +14,7 @@ enum body_type;
 class GameObject
 {
 public:
-	GameObject(iPoint pos, float mass, int cat, int mask);
+	GameObject(iPoint pos, float gravity_scale, float density, int cat, int mask);
 	~GameObject();
 
 	iPoint GetPos();
@@ -24,7 +24,7 @@ public:
 	void SetMass(float mass);
 	void SetDynamic();
 
-	void CreateCollision(body_type type, int width, int height, int offset_x, int offset_y);
+	void CreateCollision(body_type type, int width, int height, int offset_x, int offset_y, float density = 0.0f);
 	//void CreateCollision(int radius, int offset_x, int offset_y);
 
 private:

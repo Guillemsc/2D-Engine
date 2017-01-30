@@ -5,10 +5,10 @@
 #include "j1Physics.h"
 #include "Functions.h"
 
-GameObject::GameObject(iPoint pos, float mass, int _cat, int _mask) : gravity_scale(mass), cat(_cat), mask(_mask)
+GameObject::GameObject(iPoint pos, float _gravity_scale, float _density, int _cat, int _mask) : gravity_scale(_gravity_scale), cat(_cat), mask(_mask)
 {
 	animator = new Animator();
-	pbody = App->physics->CreateCircle(pos.x, pos.y, 5, 1, mass, 0, cat, mask);
+	pbody = App->physics->CreateCircleSensor(pos.x, pos.y, 5, _density, _gravity_scale, 0, cat, mask);
 	pbody->body->SetType(b2_dynamicBody);
 }
 
@@ -53,9 +53,9 @@ void GameObject::SetDynamic()
 		pbodies[i]->body->SetType(b2_dynamicBody);
 }
 
-void GameObject::CreateCollision(body_type type, int width, int height, int offset_x, int offset_y)
+void GameObject::CreateCollision(body_type type, int width, int height, int offset_x, int offset_y, float density)
 {
-	PhysBody* pb = App->physics->CreateRectangle(GetPos().x + (width/2) + offset_x, GetPos().y + (height/2) + offset_y, width, height, 1, gravity_scale, 0, cat, mask);
+	PhysBody* pb = App->physics->CreateRectangle(GetPos().x + (width/2) + offset_x, GetPos().y + (height/2) + offset_y, width, height, density, gravity_scale, 0, cat, mask);
 	pb->type = type;
 	AddCollision(pb);
 }
