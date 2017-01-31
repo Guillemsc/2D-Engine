@@ -1,14 +1,16 @@
 #ifndef _COLLISIONFILTERS__H__
 #define _COLLISIONFILTERS__H__
 
-//2^x
+// -----------------------------
+//		Collision Control
+// -----------------------------
 
-// Category
+// Category 2^x
 int CATEGORY_PLAYER = 0x0001;  
 int CATEGORY_SCENERY = 0x0002;
 
 // Mask
-int MASK_PLAYER = CATEGORY_SCENERY;
+int MASK_PLAYER = CATEGORY_SCENERY; // | ...
 int MASK_SCENERY = -1;
 
 // PhysBody enum

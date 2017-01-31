@@ -18,31 +18,66 @@ public:
 	GameObject(iPoint pos, int cat, int mask, pbody_type pb_type, float gravity_scale = 1.0f, float density = 1.0f, float friction = 1.0f);
 	~GameObject();
 
+	// Return the position in pixels of the GameObject
 	iPoint GetPos();
+
+	// Return the rotation in degrees of the GameObject 
 	float GetRotation();
+
+	// Inputs a position in pixels and changes the position of the GameObject
 	void SetPos(iPoint pos);
+
+	// Inputs rotation in degrees and rotates de GameObject
 	void SetRotation(float angle);
+
+	// Enable or disalbe the ability to rotate of the GameObject
 	void SetFixedRotation(bool set);
+
+	// Set pbody to dynamic
 	void SetDynamic();
+
+	// Set pbody to kinematic
 	void SetKinematic();
+
+	// Sets how much the body is affected by gravity
 	void SetGravityScale(float gravity_scale);
+
+	// Sets listener module
 	void SetListener(j1Module* scene);
+
+	// Changes cateogry and mask of the body
 	void SetCatMask(int cat, int mask);
 
+	// Adds an animation
 	void AddAnimation(Animation* animation);
+
+	// Sets an animation
 	void SetAnimation(const char* animation);
 
+	// Returns the animation
+	Animation* GetAnimation(const char* animation);
+
+	// Adds a box shape to the current body
 	void CreateCollision(iPoint offset, int width, int height, fixture_type type);
+
+	// Adds a circle shape to the current body
 	void CreateCollision(iPoint offset, int rad, fixture_type type);
 
+	// Adds a box sensor shape to the current body
 	void CreateCollisionSensor(iPoint offset, int width, int height, fixture_type type);
+
+	// Adds a circle sensor shape to the current body
 	void CreateCollisionSensor(iPoint offset, int rad, fixture_type type);
+
+	// Set the texture to be using
+	void SetTexture(SDL_Texture* texture);
+
+	// Returns the texture
+	SDL_Texture* GetTexture();
 
 private:
 
 public:
-	Animator*	        animator = nullptr;
-	SDL_Texture*        texture = nullptr;
 	PhysBody*           pbody = nullptr;
 
 private:
@@ -52,6 +87,9 @@ private:
 	float               restitution = 0.0f;
 	int					cat = 0;
 	int					mask = 0;
+
+	Animator*	        animator = nullptr;
+	SDL_Texture*        texture = nullptr;
 };
 
 #endif

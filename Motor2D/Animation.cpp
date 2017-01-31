@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include "Functions.h"
 
 Animation::Animation(const char* _name, p2List<SDL_Rect>& rects, float speed, bool loop) : speed(speed), loop(loop)
 {
@@ -14,7 +15,7 @@ Animation::~Animation()
 
 SDL_Rect& Animation::GetAnimationFrame(float dt)
 {
-	curr_frame += speed * dt;
+	curr_frame += (speed * dt);
 
 	if (curr_frame >= frames.count())
 	{
@@ -75,6 +76,11 @@ void Animation::Reset()
 	loops = 0;
 }
 
+const char* Animation::GetName()
+{
+	return name.GetString();
+}
+
 Animator::Animator()
 {
 	for (int i = 0; i < animations.count(); i++)
@@ -94,7 +100,26 @@ void Animator::SetAnimation(const char* name)
 {
 	for (int i = 0; i < animations.count(); i++)
 	{
-		if (strcmp(name, animations[i]->name.GetString()) == 0)
+		if (TextCmp(name, animations[i]->GetName()))
+		{
 			current_animation = animations[i];
+			break;
+		}
 	}
+}
+
+Animation* Animator::GetAnimation(const char * name)
+{
+	Animation* ret = nullptr;
+
+	for (int i = 0; i < animations.count(); i++)
+	{
+		if (TextCmp(name, animations[i]->GetName()))
+		{
+			ret = animations[i];
+			break;
+		}
+	}
+
+	return ret;
 }
