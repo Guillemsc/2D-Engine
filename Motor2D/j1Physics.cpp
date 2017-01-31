@@ -355,7 +355,7 @@ PhysBody * j1Physics::CreatePolygonSensor(int x, int y, int * points, int size, 
 	return pbody;
 }
 
-void * j1Physics::AddPolygonToBody(PhysBody * pbody, int offset_x, int offset_y, int * points, int size, fixture_type type, float density, float gravity_scale, float rest, float friction)
+void j1Physics::AddPolygonToBody(PhysBody * pbody, int offset_x, int offset_y, int * points, int size, fixture_type type, float density, float gravity_scale, float rest, float friction)
 {
 	b2PolygonShape box;
 	b2Vec2* p = new b2Vec2[size / 2];

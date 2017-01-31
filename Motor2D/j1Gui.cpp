@@ -1186,7 +1186,7 @@ bool UI_Text::update()
 		{
 			if (strcmp(texts_str[i].GetString(), "") == 1)
 			{
-				App->render->Blit(texts_tex[i], rect.x, rect.y + space, NULL);
+				App->render->Blit(texts_tex[i], rect.x, rect.y + space);
 				space += spacing;
 			}
 		}

@@ -56,6 +56,8 @@ bool MainScene::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
 		App->render->camera.y--;
 
+	App->scene->LayerBlit(0, App->gui->atlas, iPoint(go->GetPos().x, go->GetPos().y), { 0 ,0, 300, 300 }, 1, go->GetRotation());
+
 	return ret;
 }
 

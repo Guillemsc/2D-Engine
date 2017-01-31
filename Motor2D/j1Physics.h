@@ -67,7 +67,7 @@ public:
 	PhysBody* CreatePolygon(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, float friction = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 	PhysBody* CreateStaticPolygon(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 	PhysBody* CreatePolygonSensor(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
-	void* AddPolygonToBody(PhysBody* pbody, int offset_x, int offset_y, int* points, int size, fixture_type type, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, float friction = 0.0f);
+	void AddPolygonToBody(PhysBody* pbody, int offset_x, int offset_y, int* points, int size, fixture_type type, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, float friction = 0.0f);
 
 	PhysBody* CreateChain(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
 	PhysBody* CreateStaticChain(int x, int y, int* points, int size, float density = 1.0f, float gravity_scale = 1.0f, float rest = 0.0f, int cat = 1, int mask = 1, int angle = 0);
