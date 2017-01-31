@@ -78,18 +78,18 @@ public:
 private:
 
 public:
-	PhysBody*           pbody = nullptr;
+	PhysBody*      pbody = nullptr;
 
 private:
-	float				gravity_scale = 0.0f;
-	float				density = 0.0f;
-	float				friction = 0.0f;
-	float               restitution = 0.0f;
-	int					cat = 0;
-	int					mask = 0;
+	float		   gravity_scale = 0.0f;
+	float		   density = 0.0f;
+	float		   friction = 0.0f;
+	float          restitution = 0.0f;
+	int			   cat = 0;
+	int		       mask = 0;
 
-	Animator*	        animator = nullptr;
-	SDL_Texture*        texture = nullptr;
+	Animator*	   animator = nullptr;
+	SDL_Texture*   texture = nullptr;
 };
 
 #endif
