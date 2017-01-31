@@ -6,6 +6,9 @@
 #include "j1Physics.h"
 #include "GameObject.h"
 #include "CollisionFilters.h"
+#include "j1App.h"
+#include "j1Gui.h"
+#include "Parallax.h"
 
 
 MainScene::MainScene()
@@ -31,6 +34,10 @@ bool MainScene::Start()
 	go->CreateCollision(iPoint(0, -50), 20, fixture_type::f_t_down_ball);
 	go->CreateCollision(iPoint(0, 50), 20, fixture_type::f_t_null);
 	go->SetListener(App->scene);
+	go->SetFixedRotation(true);
+
+	App->gui->GetAtlas();
+	p1 = new Parallax(2, fPoint(0, 0), App->gui->atlas, { 918 ,187, 200, 197 }, 70.0f);
 
 	return ret;
 }
@@ -39,7 +46,6 @@ bool MainScene::PreUpdate()
 {
 	bool ret = true;
 
-
 	return ret;
 }
 
@@ -47,14 +53,27 @@ bool MainScene::Update(float dt)
 {
 	bool ret = true;
 
-	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		App->render->camera.x++;
+	/*if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		App->render->camera.x;
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		App->render->camera.x--;
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		App->render->camera.y++;
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		App->render->camera.y--;
+		App->render->camera.y--;*/
+
+	App->render->camera.x = -go->GetPos().x + 400;
+
+	float speed = (100 * dt);
+
+	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+		go->SetPos({ go->fGetPos().x - speed, go->fGetPos().y });
+	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+		go->SetPos({ go->fGetPos().x + speed, go->fGetPos().y });
+
+	//LOG("%d %d", go->GetPos().x, go->GetPos().y);
+
+	p1->Update(dt, go->fGetPos());
 
 	return ret;
 }

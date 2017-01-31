@@ -6,14 +6,29 @@
 
 class Parallax
 {
-	Parallax(SDL_Texture* texture, SDL_Rect rect, float speed);
+public:
+	Parallax(int layer, fPoint pos, SDL_Texture* texture, SDL_Rect rect, float speed);
 	~Parallax();
 
-public:
-	void Update(float dt, iPoint target_pos);
+	void Update(float dt, fPoint target_pos);
 
 private:
+	int GetLeftChunk();
+	int GetRightChunk();
+
+private:
+	bool start = true;
+
 	float speed = 0.0f;
+	int layer = 0;
+
+	p2List<fPoint> chunks;
+
+	fPoint target = NULLPOINT;
+	int distance = 0;
+
+	SDL_Texture* texture = nullptr;
+	SDL_Rect rect = NULLRECT;
 };
 
 #endif !_PARALLAX_H__

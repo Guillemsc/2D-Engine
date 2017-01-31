@@ -20,12 +20,13 @@ public:
 
 	// Return the position in pixels of the GameObject
 	iPoint GetPos();
+	fPoint fGetPos();
 
 	// Return the rotation in degrees of the GameObject 
 	float GetRotation();
 
 	// Inputs a position in pixels and changes the position of the GameObject
-	void SetPos(iPoint pos);
+	void SetPos(fPoint pos);
 
 	// Inputs rotation in degrees and rotates de GameObject
 	void SetRotation(float angle);

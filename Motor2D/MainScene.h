@@ -2,9 +2,11 @@
 #define _MAINSCENE_H_
 
 #include "Scene.h"
+#include "j1Render.h"
 
 class GameObject;
 class b2Fixture;
+class Parallax;
 
 class MainScene : public Scene {
 public:
@@ -20,6 +22,9 @@ public:
 	void OnColl(PhysBody* bodyA, PhysBody* bodyB, b2Fixture* fixtureA, b2Fixture* fixtureB);
 
 	GameObject* go = nullptr;
+	Parallax* p1 = nullptr;
+
+	fPoint pos;
 
 private:
 

@@ -755,8 +755,8 @@ bool j1Physics::PostUpdate()
 
 					float angle_between = AngleFromTwoPoints((PIXELS_PER_METER * pos.x), (PIXELS_PER_METER * pos.y), PIXELS_PER_METER * (pos.x + shape->m_p.x), PIXELS_PER_METER * (pos.y + shape->m_p.y));
 
-					pos_x = (PIXELS_PER_METER * pos.x) + sin(-b->GetAngle() - ((angle_between - 90) * DEGTORAD)) * (dist);
-					pos_y = (PIXELS_PER_METER * pos.y) + cos(-b->GetAngle() - ((angle_between - 90) * DEGTORAD)) * (dist);
+					pos_x = (PIXELS_PER_METER * pos.x) + sin(-b->GetAngle() - ((angle_between - 90) * DEGTORAD)) * (dist) + App->render->camera.x;
+					pos_y = (PIXELS_PER_METER * pos.y) + cos(-b->GetAngle() - ((angle_between - 90) * DEGTORAD)) * (dist) + App->render->camera.y;
 					
 					App->render->DrawCircle(pos_x, pos_y, METERS_TO_PIXELS(shape->m_radius), 255, 255, 255);
 
@@ -899,8 +899,15 @@ bool j1Physics::CleanUp()
 void PhysBody::GetPosition(int& x, int &y) const
 {
 	b2Vec2 pos = body->GetPosition();
-	x = METERS_TO_PIXELS(pos.x) - (width);
-	y = METERS_TO_PIXELS(pos.y) - (height);
+	x = METERS_TO_PIXELS(pos.x);
+	y = METERS_TO_PIXELS(pos.y);
+}
+
+void PhysBody::fGetPosition(float& x, float& y) const
+{
+	b2Vec2 pos = body->GetPosition();
+	x = PIXELS_PER_METER*(pos.x);
+	y = PIXELS_PER_METER*(pos.y);
 }
 
 float PhysBody::GetRotation() const
