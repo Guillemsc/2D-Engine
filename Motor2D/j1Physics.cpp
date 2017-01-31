@@ -319,6 +319,65 @@ PhysBody * j1Physics::CreateStaticPolygon(int x, int y, int* points, int size, f
 	return pbody;
 }
 
+PhysBody * j1Physics::CreatePolygonSensor(int x, int y, int * points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+{
+	b2BodyDef body;
+	body.type = b2_staticBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.angle = DEGTORAD*angle;
+
+	b2Body* b = world->CreateBody(&body);
+	b2PolygonShape box;
+	b2Vec2* p = new b2Vec2[size / 2];
+
+	for (uint i = 0; i < size / 2; ++i)
+	{
+		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
+		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
+	}
+	box.Set(p, size / 2);
+
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = 1.0f;
+	fixture.filter.categoryBits = cat;
+	fixture.filter.maskBits = mask;
+	fixture.restitution = rest;
+	fixture.isSensor = true;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->SetUserData(pbody);
+	pbody->height = pbody->width = 0;
+
+	return pbody;
+}
+
+void * j1Physics::AddPolygonToBody(PhysBody * pbody, int offset_x, int offset_y, int * points, int size, fixture_type type, float density, float gravity_scale, float rest, float friction)
+{
+	b2PolygonShape box;
+	b2Vec2* p = new b2Vec2[size / 2];
+
+	for (uint i = 0; i < size / 2; ++i)
+	{
+		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0] + offset_x);
+		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1] + offset_y);
+	}
+
+	box.Set(p, size / 2);
+
+	b2FixtureDef fd;
+	fd.shape = &box;
+	fd.density = density;
+	fd.friction = friction;
+	fd.isSensor = false;
+
+	b2Fixture* fixture = pbody->body->CreateFixture(&fd);
+	fixture->SetFixtureType(type);
+}
+
 PhysBody* j1Physics::CreateRectangleSensor(int x, int y, int width, int height, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
@@ -459,6 +518,70 @@ PhysBody * j1Physics::CreateStaticChain(int x, int y, int* points, int size, flo
 	pbody->width = pbody->height = 0;
 
 	return pbody;
+}
+
+PhysBody * j1Physics::CreateChainSensor(int x, int y, int * points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+{
+	b2BodyDef body;
+	body.type = b2_staticBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+	body.angle = DEGTORAD*angle;
+	body.gravityScale = gravity_scale;
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2ChainShape shape;
+	b2Vec2* p = new b2Vec2[size / 2];
+
+	for (uint i = 0; i < size / 2; ++i)
+	{
+		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
+		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
+	}
+
+	shape.CreateLoop(p, size / 2);
+
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+	fixture.density = density;
+	fixture.filter.categoryBits = cat;
+	fixture.filter.maskBits = mask;
+	fixture.restitution = rest;
+	fixture.isSensor = true;
+
+	b->CreateFixture(&fixture);
+
+	delete p;
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->SetUserData(pbody);
+	pbody->width = pbody->height = 0;
+
+	return pbody;
+}
+
+void j1Physics::AddChainBody(PhysBody* pbody, int x, int y, int * points, int size, fixture_type type, float density, float gravity_scale, float rest, float friction)
+{
+	b2ChainShape shape;
+	b2Vec2* p = new b2Vec2[size / 2];
+
+	for (uint i = 0; i < size / 2; ++i)
+	{
+		p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
+		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
+	}
+
+	shape.CreateLoop(p, size / 2);
+
+	b2FixtureDef fd;
+	fd.shape = &shape;
+	fd.density = density;
+	fd.friction = friction;
+	fd.isSensor = false;
+
+	b2Fixture* fixture = pbody->body->CreateFixture(&fd);
+	fixture->SetFixtureType(type);
 }
 
 b2RevoluteJoint* j1Physics::CreateAtachJoint(PhysBody * body1, PhysBody * body2, int distance_between_x, int distance_between_y, float angle_between)
