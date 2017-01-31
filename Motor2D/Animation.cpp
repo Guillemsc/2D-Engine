@@ -12,9 +12,9 @@ Animation::~Animation()
 {
 }
 
-SDL_Rect& Animation::GetAnimationFrame()
+SDL_Rect& Animation::GetAnimationFrame(float dt)
 {
-	curr_frame += speed;
+	curr_frame += speed * dt;
 
 	if (curr_frame >= frames.count())
 	{

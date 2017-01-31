@@ -44,7 +44,7 @@ bool Player::Update(float dt)
 	return ret;
 }
 
-bool Player::Draw()
+bool Player::Draw(float dt)
 {
 	bool ret = true;
 

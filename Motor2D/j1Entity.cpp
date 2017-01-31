@@ -42,7 +42,7 @@ bool j1Entity::Update(float dt)
 	for (int i = 0; i < entity_list.count(); i++)
 	{
 		ret = entity_list[i]->Update(dt);
-		entity_list[i]->Draw();
+		entity_list[i]->Draw(dt);
 	}
 
 	return ret;

@@ -22,7 +22,7 @@ public:
 	bool Update(float dt);
 
 	// Draw and change animations
-	bool Draw();
+	bool Draw(float dt);
 
 	// Post Update
 	bool PostUpdate();

@@ -480,7 +480,7 @@ PhysBody* j1Physics::CreateChain(int x, int y, int* points, int size, float dens
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateStaticChain(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+PhysBody* j1Physics::CreateStaticChain(int x, int y, int* points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
@@ -520,7 +520,7 @@ PhysBody * j1Physics::CreateStaticChain(int x, int y, int* points, int size, flo
 	return pbody;
 }
 
-PhysBody * j1Physics::CreateChainSensor(int x, int y, int * points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
+PhysBody* j1Physics::CreateChainSensor(int x, int y, int * points, int size, float density, float gravity_scale, float rest, int cat, int mask, int angle)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;

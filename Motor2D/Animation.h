@@ -14,7 +14,7 @@ public:
 	Animation(const char* name, p2List<SDL_Rect>& rects, float speed, bool loop = true);
 	~Animation();
 
-	SDL_Rect& GetAnimationFrame();
+	SDL_Rect& GetAnimationFrame(float dt);
 	SDL_Rect& GetActualFrame();
 	float GetFrameIndex() const;
 	SDL_Rect& GetFrame(int frame);
