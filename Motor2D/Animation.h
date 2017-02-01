@@ -32,6 +32,8 @@ public:
 	// Returns the animation using the name
 	Animation* GetAnimation(const char* name);
 
+	Animation* GetCurrentAnimation();
+
 private:
 	Animation*           current_animation = nullptr;
 	p2List<Animation*>   animations;

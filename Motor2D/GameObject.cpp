@@ -96,6 +96,11 @@ void GameObject::SetAnimation(const char * animation)
 	animator->SetAnimation(animation);
 }
 
+SDL_Rect GameObject::GetCurrentAnimationRect(float dt)
+{
+	return animator->GetCurrentAnimation()->GetAnimationFrame(dt);
+}
+
 Animation * GameObject::GetAnimation(const char * animation)
 {
 	return nullptr;

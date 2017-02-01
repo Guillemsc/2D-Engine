@@ -248,8 +248,9 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		Log("   - 'clear': clears the console text.");
 		Log("   - 'hide': hides console.");
 		Log("   - 'exit': exits program.");
+		Log("   - 'debug (1 or 0)': sets debug mode.");
 		Log("   - 'set title (string)': changes the window title.");
-		Log("   - 'fps (float)': limits fps to the number 'x'.");
+		Log("   - 'fps (float)': limits fps.");
 		Log(" ");
 	}
 	else if (TextCmp(strings[0].GetString(), "clear"))

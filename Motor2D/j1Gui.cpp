@@ -1691,6 +1691,8 @@ bool UI_Scroll_Bar::update()
 	}
 
 	//LOG("%d %d %d", moving_rect.x, rect.x, min_bar_h);
+
+	return true;
 }
 
 void UI_Scroll_Bar::AddElement(UI_Element * element)

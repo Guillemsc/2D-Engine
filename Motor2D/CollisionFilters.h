@@ -9,13 +9,18 @@
 // -----------------------------------------
 // -----------------------------------------
 
-// Category 2^x
-int CATEGORY_PLAYER = 0x0001;  
-int CATEGORY_SCENERY = 0x0002;
+struct collision_filters
+{
+	collision_filters() {};
 
-// Mask
-int MASK_PLAYER = CATEGORY_SCENERY; // | ...
-int MASK_SCENERY = -1;
+	// Category 
+	int CATEGORY_PLAYER = 0x0001;
+	int CATEGORY_SCENERY = 0x0002;
+
+	// Mask
+	int MASK_PLAYER = CATEGORY_SCENERY;
+	int MASK_SCENERY = -1;
+};
 
 // PhysBody enum
 enum class pbody_type

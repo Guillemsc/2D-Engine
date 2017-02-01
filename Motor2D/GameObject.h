@@ -71,6 +71,8 @@ public:
 	// Sets an animation
 	void SetAnimation(const char* animation);
 
+	SDL_Rect GetCurrentAnimationRect(float dt);
+
 	// Returns the animation
 	Animation* GetAnimation(const char* animation);
 

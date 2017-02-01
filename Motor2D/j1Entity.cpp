@@ -89,6 +89,7 @@ Entity* j1Entity::CreateEntity(entity_name entity)
 
 	if (ret != nullptr)
 	{
+		ret->LoadEntity();
 		ret->Start();
 		entity_list.add(ret);
 	}

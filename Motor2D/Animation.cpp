@@ -1,5 +1,6 @@
 #include "Animation.h"
 #include "Functions.h"
+#include "p2Log.h"
 
 Animation::Animation(const char* _name, p2List<SDL_Rect>& rects, float speed, bool loop) : speed(speed), loop(loop)
 {
@@ -19,14 +20,14 @@ SDL_Rect& Animation::GetAnimationFrame(float dt)
 
 	if (curr_frame >= frames.count())
 	{
-		if (loop)
+		if (!loop)
 			curr_frame = frames.count() - 1;
 		else
 			curr_frame = 0.0f;
 
 		loops++;
 	}
-
+	LOG("%f", curr_frame);
 	return frames[(int)floor(curr_frame)];
 }
 
@@ -122,4 +123,9 @@ Animation* Animator::GetAnimation(const char * name)
 	}
 
 	return ret;
+}
+
+Animation * Animator::GetCurrentAnimation()
+{
+	return current_animation;
 }

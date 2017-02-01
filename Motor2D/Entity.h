@@ -5,6 +5,7 @@
 #include "j1Render.h"
 #include "PugiXml\src\pugixml.hpp"
 #include "j1Physics.h"
+#include "Animation.h"
 
 class b2Fixture;
 class PhysBody;

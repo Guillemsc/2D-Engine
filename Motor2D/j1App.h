@@ -6,6 +6,7 @@
 #include "j1PerfTimer.h"
 #include "j1Timer.h"
 #include "PugiXml\src\pugixml.hpp"
+#include "CollisionFilters.h"
 
 class UI_Window;
 class UI_Text;
@@ -119,6 +120,8 @@ public:
 	p2List<p2SString>   logs;
 
 	bool			    debug_mode = false;
+
+	collision_filters* cf;
 
 private:
 

@@ -64,6 +64,8 @@ j1App::j1App(int argc, char* args[]) : argc(argc), args(args)
 	AddModule(render);
 
 	PERF_PEEK(ptimer);
+
+	cf = new collision_filters();
 }
 
 // Destructor
@@ -294,6 +296,7 @@ bool j1App::CleanUp()
 	bool ret = true;
 	p2List_item<j1Module*>* item;
 	item = modules.end;
+	delete cf;
 
 	while(item != NULL && ret == true)
 	{
