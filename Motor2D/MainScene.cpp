@@ -37,7 +37,7 @@ bool MainScene::Start()
 	go->SetFixedRotation(true);
 
 	App->gui->GetAtlas();
-	p1 = new Parallax(2, 2, fPoint(0, 0), App->gui->atlas, { 988 ,187, 280, 197 }, 70.0f);
+	p1 = new Parallax(2, 2, fPoint(0, 0), App->gui->atlas, { 988 ,187, 280, 197 }, 180.0f);
 
 	return ret;
 }

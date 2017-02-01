@@ -7,14 +7,35 @@
 #include "SDL\include\SDL.h"
 
 struct SDL_Texture;
+class Animation;
 
 // -----------------------------------------
 // -----------------------------------------
 
-	    // ANIMATION / ANIMATOR //
+	    // ANIMATIOR / ANIMATION //
 
 // -----------------------------------------
 // -----------------------------------------
+
+class Animator
+{
+public:
+	Animator();
+	~Animator();
+
+	// Add an animation
+	void AddAnimation(Animation* animation);
+
+	// Set a current animation
+	void SetAnimation(const char* name);
+
+	// Returns the animation using the name
+	Animation* GetAnimation(const char* name);
+
+private:
+	Animation*           current_animation = nullptr;
+	p2List<Animation*>   animations;
+};
 
 class Animation
 {
@@ -64,27 +85,6 @@ private:
 	int				    loops = 0;
 	p2List<SDL_Rect>    frames;
 	float			    curr_frame = 0.0f;
-};
-
-class Animator
-{
-public:
-	Animator();
-	~Animator();
-
-	// Add an animation
-	void AddAnimation(Animation* animation);
-
-	// Set a current animation
-	void SetAnimation(const char* name);
-
-	// Returns the animation using the name
-	Animation* GetAnimation(const char* name);
-
-private:  
-	Animation*           current_animation = nullptr;
-	p2List<Animation*>   animations;
-
 };
 
 #endif // !_ANIMATION__H__

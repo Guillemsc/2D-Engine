@@ -24,6 +24,13 @@ enum class fixture_type;
 class GameObject
 {
 public:
+
+	// TO KEEP IN MIND:
+	// - The CATEGORY and the MASK are defined on CollisionFilters.h.  
+	// - pbody_type it's an enum that refeers to the PhysBodys.
+	// - fixture_type it's an enum that refeers to a b2Fixture from a PhysBody.
+	// - Both pbody and fixture _type are used to know what collides with what on the OnCollision method.
+	// - Both pbody and fixture _type are defined on CollisionFilters.h. 
 	GameObject(iPoint pos, int cat, int mask, pbody_type pb_type, float gravity_scale = 1.0f, float density = 1.0f, float friction = 1.0f);
 	~GameObject();
 
@@ -37,10 +44,10 @@ public:
 	// Inputs a position in pixels and changes the position of the GameObject
 	void SetPos(fPoint pos);
 
-	// Inputs rotation in degrees and rotates de GameObject
+	// Inputs rotation in degrees and rotates the GameObject
 	void SetRotation(float angle);
 
-	// Enable or disalbe the ability to rotate of the GameObject
+	// Enable or disable the ability to rotate of the GameObject
 	void SetFixedRotation(bool set);
 
 	// Set pbody to dynamic

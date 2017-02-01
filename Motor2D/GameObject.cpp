@@ -3,21 +3,7 @@
 #include "Animation.h"
 #include "p2Defs.h"
 #include "j1Physics.h"
-#include "Functions.h"
-
-// --------------------------------
-// --------------------------------
-//			Game Object
-// --------------------------------
-// --------------------------------
-
-// TO KEEP IN MIND:
-// - The CATEGORY and the MASK are defined on CollisionFilters.h.  
-// - pbody_type it's an enum that refeers to the PhysBodys.
-// - fixture_type it's an enum that refeers to a b2Fixture from a PhysBody.
-// - Both pbody and fixture _type are used to know what collides with what on the OnCollision method.
-// - Both pbody and fixture _type are defined on CollisionFilters.h.  
-
+#include "Functions.h" 
 
 GameObject::GameObject(iPoint _pos, int _cat, int _mask, pbody_type pb_type, float _gravity_scale,  float _density, float _friction) : gravity_scale(_gravity_scale), density(_density), friction(_friction), cat(_cat), mask(_mask)
 {

@@ -5,6 +5,14 @@
 #include "p2List.h"
 #include "j1Render.h"
 
+// -----------------------------------------
+// -----------------------------------------
+
+		  // USEFULL FUNCTIONS //
+
+// -----------------------------------------
+// -----------------------------------------
+
 // Returns the angle from two points
 float AngleFromTwoPoints(float x1, float y1, float x2, float y2);
 

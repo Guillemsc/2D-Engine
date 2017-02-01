@@ -15,6 +15,8 @@
 class Parallax
 {
 public:
+
+	// TO KEEP IN MIND:
 	// - Layer refeers to the LayerBlit on the j1Scene
 	// - Chunks is the amount of simultanious copies, one next to the other
 	// - Pos is the starting position of the image/s
