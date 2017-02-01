@@ -29,8 +29,8 @@ bool j1Entity::PreUpdate()
 {
 	bool ret = true;
 
-	for (int i = 0; i < entity_list.count(); i++)
-		ret = entity_list[i]->PreUpdate();
+	for (p2List_item<Entity*>* current = entity_list.start; current != nullptr; current = current->next)
+		ret = current->data->PreUpdate();
 
 	return ret;
 }
@@ -39,10 +39,10 @@ bool j1Entity::Update(float dt)
 {
 	bool ret = true;
 
-	for (int i = 0; i < entity_list.count(); i++)
+	for (p2List_item<Entity*>* current = entity_list.start; current != nullptr; current = current->next)
 	{
-		ret = entity_list[i]->Update(dt);
-		entity_list[i]->Draw(dt);
+		ret = current->data->Update(dt);
+		current->data->Draw(dt);
 	}
 
 	return ret;
@@ -52,8 +52,8 @@ bool j1Entity::PostUpdate()
 {
 	bool ret = true;
 
-	for (int i = 0; i < entity_list.count(); i++)
-		ret = entity_list[i]->PostUpdate();
+	for (p2List_item<Entity*>* current = entity_list.start; current != nullptr; current = current->next)
+		ret = current->data->PostUpdate();
 
 	return ret;
 }
@@ -62,16 +62,16 @@ bool j1Entity::CleanUp()
 {
 	bool ret = true;
 
-	for (int i = 0; i < entity_list.count(); i++)
-		ret = entity_list[i]->CleanUp();
+	for (p2List_item<Entity*>* current = entity_list.start; current != nullptr; current = current->next)
+		ret = current->data->CleanUp();
 
 	return ret;
 }
 
 void j1Entity::OnCollision(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
 {
-	for (int i = 0; i < entity_list.count(); i++)
-		entity_list[i]->OnColl(bodyA, bodyB, fixtureA, fixtureB);
+	for (p2List_item<Entity*>* current = entity_list.start; current != nullptr; current = current->next)
+		current->data->OnColl(bodyA, bodyB, fixtureA, fixtureB);
 }
 
 Entity* j1Entity::CreateEntity(entity_name entity)

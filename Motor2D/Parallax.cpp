@@ -49,12 +49,12 @@ void Parallax::Update(float dt, fPoint target_pos)
 	// Move
 	if (target_pos.x != target.x)
 	{
-		for (int i = 0; i < chunks.count(); i++)
+		for (p2List_item<fPoint>* current = chunks.start; current != nullptr; current = current->next)
 		{
-			if(target_pos.x - target.x > 0)
-				chunks[i].x += ((target_pos.x - target.x + speed) * dt);
+			if (target_pos.x - target.x > 0)
+				current->data.x += ((target_pos.x - target.x + speed) * dt);
 			else
-				chunks[i].x += ((target_pos.x - target.x - speed) * dt);
+				current->data.x += ((target_pos.x - target.x - speed) * dt);
 		}
 	}
 
@@ -78,8 +78,8 @@ void Parallax::Update(float dt, fPoint target_pos)
 	}
 
 	// Print 
-	for (int i = 0; i < chunks.count(); i++)
-		App->scene->LayerBlit(layer, texture, { (int)floor(chunks[i].x), (int)floor(chunks[i].y) }, rect);
+	for (p2List_item<fPoint>* current = chunks.start; current != nullptr; current = current->next)
+		App->scene->LayerBlit(layer, texture, { (int)floor(current->data.x), (int)floor(current->data.y) }, rect);
 
 	target = target_pos;
 }

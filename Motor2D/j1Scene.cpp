@@ -122,8 +122,8 @@ void j1Scene::LayerBlit(int layer, SDL_Texture * texture, iPoint pos, const SDL_
 
 void j1Scene::OnCollision(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
 {
-	for(int i = 0; i<scenes.count(); i++)
-		scenes[i]->OnColl(bodyA, bodyB, fixtureA, fixtureB);
+	for(p2List_item<Scene*>* current = scenes.start; current != nullptr; current = current->next)
+		current->data->OnColl(bodyA, bodyB, fixtureA, fixtureB);
 }
 
 void j1Scene::DoLayerBlit()
