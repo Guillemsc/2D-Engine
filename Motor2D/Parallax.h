@@ -4,12 +4,24 @@
 #include "j1Render.h"
 #include "j1Scene.h"
 
+// -----------------------------------------
+// -----------------------------------------
+
+		    // PARALLAXXXXXX //
+
+// -----------------------------------------
+// -----------------------------------------
+
 class Parallax
 {
 public:
-	Parallax(int layer, fPoint pos, SDL_Texture* texture, SDL_Rect rect, float speed);
+	// -Layer refeers to the LayerBlit on the j1Scene
+	// -Chunks is the amount of simultanious copies one next to the other
+	// -Pos is the starting position of the image/s
+	Parallax(int layer, int chunks, fPoint pos, SDL_Texture* texture, SDL_Rect rect, float speed);
 	~Parallax();
 
+	// Target_pos is the target that the parallax will follow. Ex: Main character
 	void Update(float dt, fPoint target_pos);
 
 private:
@@ -26,6 +38,7 @@ private:
 
 	fPoint target = NULLPOINT;
 	int distance = 0;
+	int chunk_number = 0;
 
 	SDL_Texture* texture = nullptr;
 	SDL_Rect rect = NULLRECT;

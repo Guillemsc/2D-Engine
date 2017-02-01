@@ -1,12 +1,17 @@
 #include "Parallax.h"
 #include "p2Log.h"
 
-#define CHUNKS 4
+#define CHUNKS 8
 
-Parallax::Parallax(int _layer, fPoint _pos, SDL_Texture* _texture, SDL_Rect _rect, float _speed) 
+Parallax::Parallax(int _layer, int _chunks, fPoint _pos, SDL_Texture* _texture, SDL_Rect _rect, float _speed) 
 	: layer(_layer), target(_pos), texture(_texture), speed(_speed)
 {
 	rect = { _rect.x, _rect.y, _rect.w, _rect.h };
+
+	// Chunks always pair number!
+	if (_chunks % 2 != 0)
+		_chunks++;
+	chunk_number = _chunks;
 }
 
 Parallax::~Parallax()
@@ -21,7 +26,7 @@ void Parallax::Update(float dt, fPoint target_pos)
 		chunks.add({ target.x, target.y });
 
 		float to_print = target.x + rect.w;
-		for (int i = 0; i < CHUNKS / 2; i++)
+		for (int i = 0; i < chunk_number / 2; i++)
 		{
 			chunks.add({ to_print, target.y });
 			to_print += rect.w;
@@ -29,13 +34,13 @@ void Parallax::Update(float dt, fPoint target_pos)
 
 		to_print = target.x - rect.w;
 
-		for (int i = 0; i < CHUNKS / 2; i++)
+		for (int i = 0; i < chunk_number / 2; i++)
 		{
 			chunks.add({ to_print, target.y });
 			to_print -= rect.w;
 		}
 
-		distance = rect.w*CHUNKS;
+		distance = rect.w*chunk_number;
 		target = target_pos;
 
 		start = false;

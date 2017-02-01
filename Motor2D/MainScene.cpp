@@ -25,7 +25,7 @@ bool MainScene::Start()
 
 	LOG("Start MainScene");
 
-	PhysBody* b = App->physics->CreateStaticRectangle(0, 600, 1000, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
+	PhysBody* b = App->physics->CreateStaticRectangle(0, 600, 10000, 50, 1, 1, 0, CATEGORY_SCENERY, MASK_SCENERY);
 	b->type = pbody_type::p_t_world;
 	b->listener = App->scene;
 
@@ -37,7 +37,7 @@ bool MainScene::Start()
 	go->SetFixedRotation(true);
 
 	App->gui->GetAtlas();
-	p1 = new Parallax(2, fPoint(0, 0), App->gui->atlas, { 918 ,187, 200, 197 }, 70.0f);
+	p1 = new Parallax(2, 2, fPoint(0, 0), App->gui->atlas, { 988 ,187, 280, 197 }, 70.0f);
 
 	return ret;
 }
@@ -53,18 +53,18 @@ bool MainScene::Update(float dt)
 {
 	bool ret = true;
 
-	/*if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
-		App->render->camera.x;
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT)
+		App->render->camera.x++;
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT)
 		App->render->camera.x--;
 	if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_REPEAT)
 		App->render->camera.y++;
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_REPEAT)
-		App->render->camera.y--;*/
+		App->render->camera.y--;
 
-	App->render->camera.x = -go->GetPos().x + 400;
+	App->render->camera.x = -go->GetPos().x + 550;
 
-	float speed = (100 * dt);
+	float speed = (200 * dt);
 
 	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		go->SetPos({ go->fGetPos().x - speed, go->fGetPos().y });

@@ -8,7 +8,8 @@ class GameObject;
 class b2Fixture;
 class Parallax;
 
-class MainScene : public Scene {
+class MainScene : public Scene 
+{
 public:
 	MainScene();
 	~MainScene();
