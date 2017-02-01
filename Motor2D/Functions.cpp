@@ -20,6 +20,7 @@ float DistanceFromTwoPoints(float x1, float y1, float x2, float y2)
 	int distance_y = y2 - y1;
 	float sign = ((distance_x * distance_x) + (distance_y * distance_y));
 	float dist = abs((distance_x * distance_x) + (distance_y * distance_y));
+
 	if(sign > 0)
 		return sqrt(dist);
 	else
@@ -32,23 +33,6 @@ bool TextCmp(const char * text1, const char * text2)
 
 	if (strcmp(text1, text2) == 0)
 		ret = true;
-
-	return ret;
-}
-
-int SmoothMovement(int value, int destination, float speed, float dt)
-{
-	int ret = value;
-
-	int distance = destination - value;
-
-	if (abs(distance) > 0)
-	{
-		//int to_add = floor((speed * dt) * distance);
-		float to_add = (speed * (distance ^ 2));
-		ret = value + ceil(to_add * dt);
-		//LOG("%f %f", to_add * dt, dt);
-	}
 
 	return ret;
 }
