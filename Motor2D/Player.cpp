@@ -55,7 +55,7 @@ bool Player::PreUpdate()
 {
 	bool ret = true;
 
-	//App->render->camera.x = -player_go->GetPos().x + 550;
+
 
 	return ret;
 }
