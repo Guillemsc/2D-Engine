@@ -78,7 +78,7 @@ bool Player::Draw(float dt)
 {
 	bool ret = true;
 
-	App->scene->LayerBlit(2, player_go->GetTexture(), player_go->GetPos(), player_go->GetCurrentAnimationRect(dt));
+	App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 40, player_go->GetPos().y - 67 }, player_go->GetCurrentAnimationRect(dt));
 
 	return ret;
 }

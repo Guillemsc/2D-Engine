@@ -13,25 +13,26 @@ struct layer_blit
 {
 	layer_blit() {};
 
-	layer_blit(SDL_Texture* _texture, iPoint _pos, const SDL_Rect _section, float _speed, double _angle, int _pivot_x, int _pivot_y) 
+	layer_blit(SDL_Texture* _texture, iPoint _pos, const SDL_Rect _section, float _scale, SDL_RendererFlip _flip, double _angle, int _pivot_x, int _pivot_y)
 	{
 		texture = _texture; 
 		pos = _pos; 
 		section.x = _section.x;  section.y = _section.y; section.w = _section.w; section.h = _section.h;
-		speed = _speed;
+		scale = _scale;
+		flip = _flip;
 		angle = _angle;
 		pivot_x = _pivot_x;
 		pivot_y = _pivot_y;
 	};
 
-	SDL_Texture*  texture = nullptr;
-	iPoint        pos = NULLPOINT; 
-	SDL_Rect      section = NULLRECT;
-	float		  scale = 0.0f;
-	float         speed = 0.0f; 
-	double        angle = 0; 
-	int           pivot_x = 0;
-	int           pivot_y = 0;
+	SDL_Texture*	 texture = nullptr;
+	iPoint			 pos = NULLPOINT; 
+	SDL_Rect		 section = NULLRECT;
+	float			 scale = 0.0f;
+	SDL_RendererFlip flip;
+	double           angle = 0; 
+	int              pivot_x = 0;
+	int              pivot_y = 0;
 };
 
 class j1Scene : public j1Module
@@ -65,7 +66,7 @@ public:
 	void ChangeScene(Scene* new_scene);
 
 	// Blit choosing the layer
-	void LayerBlit(int layer, SDL_Texture* texture, iPoint pos, const SDL_Rect section = NULLRECT, float speed = 1.0f, double angle = 0, int pivot_x = INT_MAX, int pivot_y = INT_MAX);
+	void LayerBlit(int layer, SDL_Texture* texture, iPoint pos, const SDL_Rect section = NULLRECT, float scale = -1.0f, SDL_RendererFlip _flip = SDL_FLIP_NONE,  double angle = 0, int pivot_x = INT_MAX, int pivot_y = INT_MAX);
 	
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB, b2Fixture* fixtureA, b2Fixture* fixtureB);
 

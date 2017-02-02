@@ -3,10 +3,10 @@
 <file>
    <animations>
       <idle>
-	 <rect x = "0" y = "0" w = "40" h = "55"/>
-         <rect x = "55" y = "0" w = "40" h = "55"/>
- 	 <rect x = "110" y = "0" w = "40" h = "55"/>
-	 <rect x = "159" y = "0" w = "40" h = "55"/>
+	 <rect x = "0" y = "0" w = "98" h = "138"/>
+         <rect x = "137" y = "0" w = "98" h = "138"/>
+ 	 <rect x = "275" y = "0" w = "98" h = "138"/>
+	 <rect x = "397" y = "0" w = "98" h = "138"/>
       </idle>
    </animations>
 </file>

@@ -71,10 +71,8 @@ public:
 	// Sets an animation
 	void SetAnimation(const char* animation);
 
+	// Returns the rect of the current animation of the animator
 	SDL_Rect GetCurrentAnimationRect(float dt);
-
-	// Returns the animation
-	Animation* GetAnimation(const char* animation);
 
 	// Adds a box shape to the current body
 	void CreateCollision(iPoint offset, int width, int height, fixture_type type);
@@ -98,6 +96,7 @@ private:
 
 public:
 	PhysBody*      pbody = nullptr;
+	Animator*	   animator = nullptr;
 
 private:
 	float		   gravity_scale = 0.0f;
@@ -107,7 +106,6 @@ private:
 	int			   cat = 0;
 	int		       mask = 0;
 
-	Animator*	   animator = nullptr;
 	SDL_Texture*   texture = nullptr;
 };
 

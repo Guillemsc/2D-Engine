@@ -130,11 +130,15 @@ iPoint j1Render::ScreenToWorld(int x, int y) const
 }
 
 // Blit to screen
-bool j1Render::Blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float speed, double angle, int pivot_x, int pivot_y) const
+bool j1Render::Blit(SDL_Texture* texture, int x, int y, const SDL_Rect* section, float _scale, SDL_RendererFlip flip, double angle, int pivot_x, int pivot_y) const
 {
 	bool ret = true;
 
-	int scale = App->win->GetScale();
+	float scale = _scale;
+	if(_scale == -1)
+		scale = App->win->GetScale();
+
+	float speed = (1 * 1) / scale;
 
 	SDL_Rect rect;
 	rect.x = (int)(camera.x * speed) + x * scale;

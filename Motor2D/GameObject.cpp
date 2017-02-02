@@ -101,11 +101,6 @@ SDL_Rect GameObject::GetCurrentAnimationRect(float dt)
 	return animator->GetCurrentAnimation()->GetAnimationFrame(dt);
 }
 
-Animation * GameObject::GetAnimation(const char * animation)
-{
-	return nullptr;
-}
-
 void GameObject::CreateCollision(iPoint offset, int width, int height, fixture_type type)
 {
 	App->physics->AddRectangleToBody(pbody, offset.x, offset.y, width, height, type, density, 0, friction);
