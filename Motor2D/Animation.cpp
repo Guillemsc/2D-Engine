@@ -27,7 +27,6 @@ SDL_Rect& Animation::GetAnimationFrame(float dt)
 
 		loops++;
 	}
-	LOG("%f", curr_frame);
 	return frames[(int)floor(curr_frame)];
 }
 

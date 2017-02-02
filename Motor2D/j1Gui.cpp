@@ -6,6 +6,7 @@
 #include "j1Fonts.h"
 #include "j1Input.h"
 #include "j1Gui.h"
+#include "Functions.h"
 
 // Class Gui -------------------------
 // -----------------------------------
@@ -56,6 +57,13 @@ bool j1Gui::Start()
 // ---------------------------------------------------------------------
 bool j1Gui::Update(float dt)
 {
+	// Debug
+	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN && App->debug_mode)
+		debug = !debug;
+	else if (!App->debug_mode)
+		debug = false;
+
+
 	// Start -------------------------------------------------
 
 	if (start)
@@ -74,12 +82,6 @@ bool j1Gui::Update(float dt)
 	}
 
 	// -------------------------------------------------------
-
-	// Debug
-	if (App->input->GetKey(SDL_SCANCODE_F2) == KEY_DOWN && App->debug_mode)
-		debug = !debug;
-	else if (!App->debug_mode)
-		debug = false;
 	
 	// Update all elements in order
 	p2List<UI_Element*> to_top;
@@ -102,14 +104,14 @@ bool j1Gui::Update(float dt)
 			// Debug lines ------------------------------------
 			if (debug)
 			{
-				for (int y = 0; y < elements->data->childs.count(); y++)
+				for(p2List_item<UI_Element*>* elements_child = elements->data->childs.start; elements_child != nullptr; elements_child = elements_child->next)
 				{
-					if (elements->data->childs[y]->enabled)
+					if (elements_child->data->enabled)
 					{
 						App->render->DrawLine(elements->data->rect.x + elements->data->rect.w * 0.5f,
 							elements->data->rect.y + elements->data->rect.h * 0.5f,
-							elements->data->childs[y]->rect.x + elements->data->childs[y]->rect.w * 0.5f,
-							elements->data->childs[y]->rect.y + elements->data->childs[y]->rect.h * 0.5,
+							elements_child->data->rect.x + elements_child->data->rect.w * 0.5f,
+							elements_child->data->rect.y + elements_child->data->rect.h * 0.5,
 							255, 255, 255);
 					}
 				}
@@ -123,9 +125,9 @@ bool j1Gui::Update(float dt)
 	}
 
 	// Update
-	for (uint i = 0; i < to_update.count(); i++)
+	for (p2List_item<UI_Element*>* to_up = to_update.start; to_up != nullptr; to_up = to_up->next)
 	{
-		to_update[i]->update();
+		to_up->data->update();
 	}
 
 	// Move clicked elements
@@ -235,9 +237,10 @@ void j1Gui::GetChilds(UI_Element * element, p2List<UI_Element*>& visited)
 	visited.add(element);
 
 	// Add the current childs
-	for (int i = 0; i < element->childs.count(); i++)
+
+	for (p2List_item<UI_Element*>* element_child = element->childs.start; element_child != nullptr; element_child = element_child->next)
 	{
-		frontier.add(element->childs[i]);
+		frontier.add(element_child->data);
 	}
 
 	// Navigate through all the childs and add them (works but needs inprovement)
@@ -290,9 +293,9 @@ void j1Gui::GetAlwaysTopElements(p2List<UI_Element*>& always_top)
 			p2List<UI_Element*> childs;
 			GetChilds(elements->data, childs);
 
-			for (int i = 0; i < childs.count(); i++)
+			for (p2List_item<UI_Element*>* child = childs.start; child != nullptr; child = child->next)
 			{
-				childs[i]->always_top = true;
+				child->data->always_top = true;
 			}
 		}
 	}
@@ -322,9 +325,9 @@ void j1Gui::ReorderElements()
 	App->gui->elements_list.Clear();
 
 	// Place againt he elements on the PQ (now they are on the correct order)
-	for (int i = 0; i < copy.count(); i++)
+	for (p2List_item<UI_Element*>* current = copy.start; current != nullptr; current = current->next)
 	{
-		App->gui->elements_list.Push(copy[i], copy[i]->layer);
+		App->gui->elements_list.Push(current->data, current->data->layer);
 	}
 }
 
@@ -373,22 +376,23 @@ bool j1Gui::Move_Elements()
 		App->gui->GetChilds(to_move, visited);
 
 		// Move all childs ------
-		for (uint i = 0; i < visited.count(); i++)
+		for (p2List_item<UI_Element*>* current = visited.start; current != nullptr; current = current->next)
 		{
 			if (curr_x != mouse_x)
-				visited[i]->rect.x -= mouse_x - curr_x;
+				current->data->rect.x -= mouse_x - curr_x;
 
 			if (curr_y != mouse_y)
-				visited[i]->rect.y -= mouse_y - curr_y;
+				current->data->rect.y -= mouse_y - curr_y;
 		}
 
-		// Update mouse stored
-		for (uint i = 0; i < visited.count(); i++)
+		// Update mouse stored in childs
+		for (p2List_item<UI_Element*>* current = visited.start; current != nullptr; current = current->next)
 		{
-			visited[i]->mouse_x = curr_x;
-			visited[i]->mouse_y = curr_y;
+			current->data->mouse_x = curr_x;
+			current->data->mouse_y = curr_y;
 		}
 
+		// Update mouse stored in this element
 		mouse_x = curr_x;
 		mouse_y = curr_y;
 
@@ -434,12 +438,12 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 
 	if (elements_clicked.count() > 0)
 	{
-		for (uint i = 0; i < elements_clicked.count(); i++)
+		for (p2List_item<UI_Element*>* current = elements_clicked.start; current != nullptr; current = current->next)
 		{
-			if (elements_clicked[i]->layer > higher_layer)
+			if (current->data->layer > higher_layer)
 			{
-				higher_layer = elements_clicked[i]->layer;
-				higher_element = elements_clicked[i];
+				higher_layer = current->data->layer;
+				higher_element = current->data;
 			}
 		}
 
@@ -464,16 +468,21 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 	return higher_element;
 }
 
+// ---------------------------------------------------------------------
+// Deletes and frees an UI_Element.
+// ---------------------------------------------------------------------
 void j1Gui::DeleteElement(UI_Element * element)
 {
 	p2List<UI_Element*> childs;
 	App->gui->GetChilds(element, childs);
 
+	// Telete element and it's childs
 	for (int i = 0; i < childs.count(); i++)
 	{
 		if (childs[i]->parent != nullptr && childs[i]->parent->childs.find(element))
 			childs[i]->parent->childs.del(childs[i]->parent->childs.At(childs[i]->parent->childs.find(childs[i])));
 
+		// Delete elements from pQ
 		for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
 		{
 			if (elements->next != nullptr && elements->next->data == childs[i])
@@ -521,9 +530,9 @@ void UI_Element::SetEnabledAndChilds(bool set)
 	p2List<UI_Element*> visited;
 	App->gui->GetChilds(this, visited);
 
-	for (int i = 0; i < visited.count(); i++)
+	for (p2List_item<UI_Element*>* current = visited.start; current != nullptr; current = current->next)
 	{
-		visited[i]->enabled = set;
+		current->data->enabled = set;
 	}
 }
 
@@ -591,10 +600,10 @@ int UI_Element::CheckClickOverlap(int x, int y)
 	int higher_layer = -1;
 	if (contactors.count() > 0)
 	{
-		for (uint i = 0; i < contactors.count(); i++)
+		for (p2List_item<int>* current = contactors.start; current != nullptr; current = current->next)
 		{
-			if (contactors[i] > higher_layer)
-				higher_layer = contactors[i];
+			if (current->data > higher_layer)
+				higher_layer = current->data;
 		}
 	}
 
@@ -949,7 +958,6 @@ bool UI_Button::MouseEnter()
 
 	int mouse_x, mouse_y;
 	App->input->GetMousePosition(mouse_x, mouse_y);
-
 	mouse_x -= App->render->camera.x;
 	mouse_y -= App->render->camera.y;
 
@@ -976,7 +984,6 @@ bool UI_Button::MouseOut()
 	
 	int mouse_x, mouse_y;
 	App->input->GetMousePosition(mouse_x, mouse_y);
-
 	mouse_x -= App->render->camera.x;
 	mouse_y -= App->render->camera.y;
 
@@ -1004,7 +1011,6 @@ bool UI_Button::MouseClickEnterLeft()
 	{
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
-
 		mouse_x -= App->render->camera.x;
 		mouse_y -= App->render->camera.y;
 
@@ -1081,14 +1087,22 @@ bool UI_Button::MouseClickOutRight()
 	return false;
 }
 
-void UI_Button::AddImage(SDL_Rect rect)
+void UI_Button::AddImage(char* name, SDL_Rect rect)
 {
-	rect_list.add(rect);
+	rect_text rt(name, rect);
+	rect_list.add(rt);
 }
 
-void UI_Button::SetImage(int index)
+void UI_Button::SetImage(char* name)
 {
-	curr = rect_list[index];
+	for (p2List_item<rect_text>* current = rect_list.start; current != nullptr; current->next)
+	{
+		if (TextCmp(current->data.name.GetString(), name))
+		{
+			curr = current->data.rect;
+			break;
+		}
+	}
 }
 
 // -----------------------------------
@@ -1125,10 +1139,10 @@ void UI_Text::Set(iPoint _pos, _TTF_Font* _font, int _spacing, uint r, uint g, u
 void UI_Text::SetText(p2SString _text)
 {
 	// Clean last texts
-	for (int i = 0; i < texts_tex.count(); i++)
-		App->tex->UnLoadTexture(texts_tex[i]);
-	texts_tex.clear();
-	texts_str.clear();
+	for (p2List_item<tex_str>* current = tex_str_list.start; current != nullptr; current = current->next)
+		App->tex->UnLoadTexture(current->data.texture);
+
+	tex_str_list.clear();
 
 	char* tmp = new char[_text.Length() + 1];
 	strcpy_s(tmp, _text.Length() + 1, _text.GetString());
@@ -1155,8 +1169,8 @@ void UI_Text::SetText(p2SString _text)
 
 		string.create("%s\0", string.GetString());
 
-		texts_str.add(string);
-		texts_tex.add(App->font->Print(string.GetString(), color, font));
+		tex_str ts(string, App->font->Print(string.GetString(), color, font));
+		tex_str_list.add(ts);
 	}
 }
 
@@ -1165,10 +1179,11 @@ bool UI_Text::update()
 	if (!enabled)
 		return false;
 	
+	// Get highest w and add all h
 	int w = 0, h = 0;
-	for(int i = 0; i < texts_str.count(); i++)
+	for (p2List_item<tex_str>* current = tex_str_list.start; current != nullptr; current = current->next)
 	{
-		App->font->CalcSize(texts_str[i].GetString(), rect.w, rect.h, font);
+		App->font->CalcSize(current->data.text.GetString(), rect.w, rect.h, font);
 		h += rect.h;
 		if (rect.w > w)
 			w = rect.w;
@@ -1176,6 +1191,7 @@ bool UI_Text::update()
 
 	rect.w = w;
 	rect.h = h;
+	// ----------------------------
 
 	if (App->gui->debug)
 		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
@@ -1183,11 +1199,11 @@ bool UI_Text::update()
 	if (print)
 	{
 		int space = 0;
-		for (int i = 0; i < texts_str.count(); i++)
+		for (p2List_item<tex_str>* current = tex_str_list.start; current != nullptr; current = current->next)
 		{
-			if (strcmp(texts_str[i].GetString(), "") == 1)
+			if (!TextCmp(current->data.text.GetString(), ""))
 			{
-				App->render->Blit(texts_tex[i], rect.x, rect.y + space);
+				App->render->Blit(current->data.texture, rect.x, rect.y + space);
 				space += spacing;
 			}
 		}
@@ -1212,22 +1228,22 @@ UI_Image::~UI_Image()
 
 void UI_Image::Set(iPoint _pos, SDL_Rect _image)
 {
-	rect.x = _pos.x;
-	rect.y = _pos.y;
+	rect.x =  _pos.x;
+	rect.y =  _pos.y;
 
 	image.x = _image.x;
 	image.y = _image.y;
 	image.w = _image.w;
 	image.h = _image.h;
-	rect.w = _image.w;
-	rect.h = _image.h;
+	rect.w =  _image.w;
+	rect.h =  _image.h;
 
 	color.r = color.g = color.b = color.a = 255;
 }
 
 void UI_Image::ChangeImage(SDL_Rect _rect)
 {
-	image = { _rect };
+	image = { _rect.x, _rect.y, _rect.w, _rect.h };
 	rect.w = _rect.w;
 	rect.h = _rect.h;
 }
@@ -1239,18 +1255,18 @@ bool UI_Image::update()
 		return false;
 
 	if (App->gui->debug)
-	{
 		App->render->DrawQuad(rect, color.r, color.g, color.b, color.a, false);
-	}
 	
 	if(print)
 		App->render->Blit(App->gui->atlas, rect.x, rect.y, &image);
-
 
 	return true;
 }
 // -----------------------------------
 // ----------------------------- Image
+
+// -----------------------------------
+// Text Input ------------------------
 
 UI_Text_Input::UI_Text_Input()
 {
@@ -1360,8 +1376,8 @@ bool UI_Text_Input::TakeInput()
 		// Else, add word on the cursor position ---
 		else
 		{
-			p2SString back;
-			p2SString forward;
+			p2SString back("");
+			p2SString forward("");
 
 			// Prepare text --
 			char* tmp = new char[intern_text.Length() + 1];
@@ -1369,7 +1385,7 @@ bool UI_Text_Input::TakeInput()
 
 			char* word = tmp;
 			// ---------------
-
+			
 			// Take backward
 			for (uint i = 0; i < bar_pos; i++)
 			{
@@ -1421,11 +1437,14 @@ bool UI_Text_Input::Delete()
 			p2SString back;
 			p2SString forward;
 
+			// Prepare text --
 			char* tmp = new char[intern_text.Length() + 1];
 			strcpy_s(tmp, intern_text.Length() + 1, intern_text.GetString());
 
 			char* word = tmp;
+			// ---------------
 
+			// Take Back - 1
 			for (uint i = 0; i < bar_pos-1; i++)
 			{
 				if (back.Length() > 0)
@@ -1436,7 +1455,10 @@ bool UI_Text_Input::Delete()
 				if (i + 1 <= bar_pos)
 					word++;
 			}
+
 			word++;
+
+			// Take Forward
 			for (uint i = bar_pos + 1; i <= intern_text.Length(); i++)
 			{
 				if (forward.Length() > 0)
@@ -1446,6 +1468,7 @@ bool UI_Text_Input::Delete()
 				word++;
 			}
 
+			// Backward + Forward
 			intern_text.create("%s%s", back.GetString(), forward.GetString());
 			bar_pos--;
 
@@ -1482,10 +1505,12 @@ void UI_Text_Input::UpdateWordsLenght(p2SString l_text)
 {
 	words_lenght.clear();
 
+	// Prepare text --
 	char* tmp = new char[l_text.Length() + 1];
 	strcpy_s(tmp, l_text.Length() + 1, l_text.GetString());
 
 	char* word = tmp;
+	// ---------------
 
 	int acumulated = 0;
 	for (uint i = 0; i < intern_text.Length(); i++)
@@ -1497,7 +1522,7 @@ void UI_Text_Input::UpdateWordsLenght(p2SString l_text)
 
 		// Special cases (idk why this happens)
 		if (*word == 'j' || *word == 'f')
-			x-=2;
+			x-=1;
 		acumulated += x;
 		words_lenght.add(acumulated);
 
@@ -1539,6 +1564,7 @@ char* UI_Text_Input::Enter()
 		{
 			char* ret = new char[intern_text.Length() + 1];
 			strcpy_s(ret, intern_text.Length() + 1, intern_text.GetString());
+			Clear();
 		}
 	}
 
@@ -1562,7 +1588,6 @@ void UI_Text_Input::SetIsActive()
 	{
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
-
 		mouse_x -= App->render->camera.x;
 		mouse_y -= App->render->camera.y;
 

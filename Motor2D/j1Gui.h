@@ -172,8 +172,6 @@ public:
 	UI_Element*			parent_element = nullptr;
 	// ----------
 
-	//bool		        highlighted;
-
 	int					mouse_x = 0;
 	int					mouse_y = 0;
 
@@ -181,7 +179,6 @@ protected:
 	SDL_Color			color = NULLCOLOR;
 
 private:
-
 	bool				clicked = false;
 };
 
@@ -221,6 +218,18 @@ private:
 // -----------------------------------
 // Button ----------------------------
 
+struct rect_text
+{
+	rect_text() {};
+	rect_text(char* _name, SDL_Rect _rect) 
+	{
+		name.create("%s", _name);
+		rect = { _rect.x, _rect.y, _rect.w, _rect.h };
+	}
+	SDL_Rect rect = NULLRECT;
+	p2SString name;
+};
+
 class UI_Button : public UI_Element
 {
 public:
@@ -239,8 +248,8 @@ public:
 	bool MouseClickEnterRight();
 	bool MouseClickOutRight();
 
-	void AddImage(SDL_Rect rect);
-	void SetImage(int index);
+	void AddImage(char* name, SDL_Rect rect);
+	void SetImage(char* name);
 
 private:
 	void ChangeButtonStats();
@@ -248,7 +257,7 @@ private:
 public:
 
 private:
-	p2List<SDL_Rect>  rect_list;
+	p2List<rect_text> rect_list;
 	SDL_Rect		  curr = NULLRECT;
 
 	bool			  to_enter = false;
@@ -267,6 +276,14 @@ private:
 // -----------------------------------
 // Text ------------------------------
 
+struct tex_str
+{
+	tex_str() {};
+	tex_str(p2SString _text, SDL_Texture* _texture){text = _text, texture = _texture;}
+	SDL_Texture* texture = nullptr;
+	p2SString text;
+};
+
 class UI_Text : public UI_Element
 {
 public:
@@ -279,8 +296,7 @@ public:
 	void SetText(p2SString text);
 
 public:
-	p2List<SDL_Texture*>   texts_tex;
-	p2List<p2SString>     texts_str;
+	p2List<tex_str>        tex_str_list;  
 	SDL_Color	           color = NULLCOLOR;
 	_TTF_Font*	           font = nullptr;
 	int                    spacing = 0;
