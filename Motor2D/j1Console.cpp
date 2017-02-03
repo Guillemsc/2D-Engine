@@ -64,8 +64,9 @@ bool j1Console::Start()
 	top_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_h->rect.x, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 40, 40, 40, 250 });
 	top_scroll_h->click_through = true;
 
-	colored_rect_text_input = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w, 25, { 32, 32, 32, 255 });
-	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w - FRAMES_SIZE, App->font->default_15);
+	colored_rect_text_input = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w, FRAMES_SIZE * 2.5f, { 32, 32, 32, 255 });
+	colored_rect_text_input2 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5)), window->rect.w - FRAMES_SIZE * 2 - scroll->button_v->rect.w, FRAMES_SIZE*1.7f, { 20, 20, 20, 255 });
+	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE * 1.5f , scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5f)), window->rect.w - FRAMES_SIZE, App->font->default_15);
 
 	Log("Welcome to the console :-D");
 
