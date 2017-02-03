@@ -482,6 +482,9 @@ void j1Gui::DeleteElement(UI_Element * element)
 		if (childs[i]->parent != nullptr && childs[i]->parent->childs.find(element))
 			childs[i]->parent->childs.del(childs[i]->parent->childs.At(childs[i]->parent->childs.find(childs[i])));
 
+		if (childs[i]->parent_element != nullptr && childs[i]->parent_element->childs.find(childs[i]))
+			childs[i]->parent_element->childs.del(childs[i]->parent_element->childs.At(childs[i]->parent_element->childs.find(childs[i])));
+		
 		// Delete elements from pQ
 		for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
 		{
@@ -1715,8 +1718,6 @@ bool UI_Scroll_Bar::update()
 		if (button_v->MouseClickOutLeft() || button_h->MouseClickOutLeft())
 			parent->dinamic = true;
 	}
-
-	//LOG("%d %d %d", moving_rect.x, rect.x, min_bar_h);
 
 	return true;
 }
