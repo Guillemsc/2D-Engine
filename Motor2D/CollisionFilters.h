@@ -13,13 +13,13 @@ struct collision_filters
 {
 	collision_filters() {};
 
-	// Category 
-	int CATEGORY_PLAYER = 0x0001;
-	int CATEGORY_SCENERY = 0x0002;
+	// Category (1, 2, 4, 8, 16, 32, 64 ... 2^n)
+	short int CATEGORY_PLAYER = 0x0001;
+	short int CATEGORY_SCENERY = 0x0002;
 
 	// Mask
-	int MASK_PLAYER = CATEGORY_SCENERY;
-	int MASK_SCENERY = -1;
+	short int MASK_PLAYER = CATEGORY_SCENERY;
+	short int MASK_SCENERY = -1;
 };
 
 // PhysBody enum
