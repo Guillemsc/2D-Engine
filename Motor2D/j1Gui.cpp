@@ -476,7 +476,7 @@ void j1Gui::DeleteElement(UI_Element * element)
 	p2List<UI_Element*> childs;
 	App->gui->GetChilds(element, childs);
 
-	// Telete element and it's childs
+	// Delete element and it's childs
 	for (int i = 0; i < childs.count(); i++)
 	{
 		if (childs[i]->parent != nullptr && childs[i]->parent->childs.find(element))
