@@ -65,7 +65,7 @@ bool j1Console::Start()
 	top_scroll_h->click_through = true;
 
 	colored_rect_text_input = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w, FRAMES_SIZE * 2.5f, { 32, 32, 32, 255 });
-	colored_rect_text_input2 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5)), window->rect.w - FRAMES_SIZE * 2 - scroll->button_v->rect.w, FRAMES_SIZE*1.7f, { 20, 20, 20, 255 });
+	colored_rect_text_input2 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5)), window->rect.w - FRAMES_SIZE * 2 - scroll->button_v->rect.w, FRAMES_SIZE*1.7f, { 40, 40, 40, 255 });
 	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE * 1.5f , scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5f)), window->rect.w - FRAMES_SIZE, App->font->default_15);
 
 	Log("Welcome to the console :-D");
@@ -82,25 +82,7 @@ bool j1Console::PreUpdate()
 bool j1Console::Update(float dt)
 {
 	LoadLogs();
-
-	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
-	{
-		window->SetEnabledAndChilds(!window->enabled);
-		text_input->Clear();
-	}
-
-	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
-		top_scroll_v->enabled = false;
-	else
-		top_scroll_v->enabled = true;
-
-	if (scroll->max_bar_h == scroll->moving_rect.w || !scroll->parent->enabled)
-		top_scroll_h->enabled = false;
-	else
-		top_scroll_h->enabled = true;
-
-	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
-	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
+	ConsoleLogic();
 
 	if (text_input->active && text_input->intern_text.Length() > 0)
 	{
@@ -109,13 +91,6 @@ bool j1Console::Update(float dt)
 			Tokenize(text_input->intern_text);
 		}
 	}
-
-	if (scroll->button_v->MouseClickEnterLeft())
-		stay_bottom = false;
-
-	if (stay_bottom)
-		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
-
 
 	return true;
 }
@@ -150,6 +125,38 @@ void j1Console::Log(p2SString string, uint r, uint g, uint b)
 	}
 }
 
+void j1Console::ConsoleLogic()
+{
+	// Open/close console
+	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
+	{
+		window->SetEnabledAndChilds(!window->enabled);
+		text_input->Clear();
+	}
+
+	// Enable/disable scroll buttons
+	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
+		top_scroll_v->enabled = false;
+	else
+		top_scroll_v->enabled = true;
+
+	if (scroll->max_bar_h == scroll->moving_rect.w || !scroll->parent->enabled)
+		top_scroll_h->enabled = false;
+	else
+		top_scroll_h->enabled = true;
+
+	// Update size of scroll buttons
+	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
+	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
+
+	// Scroll always down
+	if (scroll->button_v->MouseClickEnterLeft())
+		stay_bottom = false;
+
+	if (stay_bottom)
+		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
+}
+
 void j1Console::Tokenize(p2SString s)
 {
 	p2List<p2SString> strings;
@@ -169,7 +176,20 @@ void j1Console::Tokenize(p2SString s)
 
 void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
 {
-	string cs = s.GetString();
+	// Text to lower case ---------
+	p2SString str;
+	string tmp = s.GetString();
+	for (int i = 0; i < s.Length(); i++)
+	{
+		if (str.Length() > 0)
+			str.create("%s%c", str.GetString(), tolower(tmp[i]));
+		else
+			str.create("%c", tolower(tmp[i]));
+	}
+
+	string cs = str.GetString();
+	// ------------------------------
+	
 
 	p2SString current;
 	p2SString number;
@@ -180,6 +200,7 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 	{
 		if (cs[i] != ' ')
 		{
+			// Numbers
 			if (isdigit(cs[i]) || (isdigit(cs[i + 1]) && cs[i] == '-') || (isdigit(cs[i + 1]) && cs[i] == '.'))
 			{
 				if (current.Length() > 0)
@@ -210,6 +231,7 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 					current.create("%c", cs[i]);
 			}
 		}
+		// Text
 		else
 		{
 			if (current.Length() > 0)
@@ -243,6 +265,7 @@ void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, 
 
 void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
 {
+	// Help
 	if (TextCmp(strings[0].GetString(), "help"))
 	{
 		Log(" ");
@@ -256,14 +279,17 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		Log("   - 'fps (float)': limits fps.");
 		Log(" ");
 	}
+	// Clear
 	else if (TextCmp(strings[0].GetString(), "clear"))
 	{
 		ClearConsole();
 	}
+	// Hide
 	else if (TextCmp(strings[0].GetString(), "hide"))
 	{
 		window->SetEnabledAndChilds(!window->enabled);
 	}
+	// Debug
 	else if (TextCmp(strings[0].GetString(), "debug"))
 	{
 		if (ints[0] == 1)
@@ -277,16 +303,19 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 			Log("> Debug mode OFF", succes.r, succes.g, succes.b);
 		}
 	}
+	// Exit
 	else if (TextCmp(strings[0].GetString(), "exit"))
 	{
 		Log("Exiting program");
 		App->EndSDL();
 	}
+	// Set title
 	else if (TextCmp(strings[0].GetString(), "set") && strcmp(strings[1].GetString(), "title") == 0)
 	{
 		Log(p2SString("Title changed to '%s'.", strings[2].GetString()), succes.r, succes.g, succes.b);
 		App->win->SetTitle(strings[2].GetString());
 	}
+	// Fps
 	else if (TextCmp(strings[0].GetString(), "fps"))
 	{
 		if (ints.count() > 0)
@@ -296,10 +325,12 @@ void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>&
 		}
 
 	}
+	// Hi
 	else if (TextCmp(strings[0].GetString(), "hi"))
 	{
 		Log("Hi! :D");
 	}
+	// Default
 	else
 	{
 		Log(p2SString("> The command '%s' does not exist. Type 'help' for some info.", s.GetString()), error.r, error.g, error.b);

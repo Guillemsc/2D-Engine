@@ -294,9 +294,10 @@ bool j1App::CleanUp()
 {
 	PERF_START(ptimer);
 	bool ret = true;
+
+	delete cf;
 	p2List_item<j1Module*>* item;
 	item = modules.end;
-	delete cf;
 
 	while(item != NULL && ret == true)
 	{
@@ -305,6 +306,7 @@ bool j1App::CleanUp()
 	}
 
 	PERF_PEEK(ptimer);
+
 	return ret;
 }
 

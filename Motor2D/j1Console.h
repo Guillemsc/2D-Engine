@@ -33,12 +33,25 @@ public:
 	// Called before quitting
 	bool CleanUp();
 
+	// Logs to console
 	void Log(p2SString string, uint r = 245, uint g = 245, uint b = 245);
+
+	// Console logic
+	void ConsoleLogic();
+
+	// Interpretate text
 	void Tokenize(p2SString string);
+
+	// Separates text into strings and numbers and puts all into lower case
 	void SeparateTextAndNumbers(p2SString text, p2List<p2SString> &strings, p2List<float> &ints);
+
+	// Check commands
 	void Commands(p2SString text, p2List<p2SString> &strings, p2List<float> &ints);
+
+	// Cleans console text
 	void ClearConsole();
 
+	// Loads logs and adds them to the console
 	void LoadLogs();
 
 private:
