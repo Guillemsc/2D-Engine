@@ -85,6 +85,7 @@ bool j1Console::Update(float dt)
 	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
 	{
 		window->SetEnabledAndChilds(!window->enabled);
+		text_input->Clear();
 	}
 
 	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
