@@ -32,10 +32,17 @@ bool Player::LoadEntity()
 
 	player_go->SetTexture(App->tex->LoadTexture("data/spritesheet.png"));
 
+	// Idle
 	p2List<SDL_Rect> idle_rects;
 	LoadAnimationFromXML(idle_rects, "player.xml", "idle");
-	Animation* idle = new Animation("idle", idle_rects, 2.0f);
+	Animation* idle = new Animation("idle", idle_rects, 5.0f);
 	player_go->AddAnimation(idle);
+
+	// Walk
+	p2List<SDL_Rect> walk_rects;
+	LoadAnimationFromXML(walk_rects, "player.xml", "walk");
+	Animation* walk = new Animation("walk", walk_rects, 5.0f);
+	player_go->AddAnimation(walk);
 
 	player_go->SetAnimation("idle");
 
@@ -64,11 +71,11 @@ bool Player::Update(float dt)
 {
 	bool ret = true;
 
-	float speed = (200 * dt);
+	float speed = (50 * dt);
 
 	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 		player_go->SetPos({ player_go->fGetPos().x - speed, player_go->fGetPos().y });
-	if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+	else if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
 		player_go->SetPos({ player_go->fGetPos().x + speed, player_go->fGetPos().y });
 
 	return ret;
@@ -78,7 +85,24 @@ bool Player::Draw(float dt)
 {
 	bool ret = true;
 
-	App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 40, player_go->GetPos().y - 67 }, player_go->GetCurrentAnimationRect(dt));
+	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
+	{
+		player_go->SetAnimation("walk");
+		flip = true;
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_D) == KEY_REPEAT)
+	{
+		player_go->SetAnimation("walk");
+		flip = false;
+	}
+	else
+		player_go->SetAnimation("idle");
+	
+
+	if(flip)
+		App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 50, player_go->GetPos().y - 25}, player_go->GetCurrentAnimationRect(dt), -1.0f, SDL_FLIP_HORIZONTAL);
+	else
+		App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 30, player_go->GetPos().y - 25 }, player_go->GetCurrentAnimationRect(dt), -1.0f, SDL_FLIP_NONE);
 
 	return ret;
 }

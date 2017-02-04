@@ -36,6 +36,8 @@ public:
 
 public:
 	GameObject* player_go = nullptr;
+
+	bool flip = false;
 };
 
 #endif

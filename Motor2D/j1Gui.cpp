@@ -1672,6 +1672,7 @@ void UI_Scroll_Bar::Set(iPoint pos, int view_w, int view_h, int button_size)
 	App->gui->elements_list.Push(button_h, button_h->layer);
 	// ----------
 
+	// Min and max bar movement allowed
 	min_bar_v = pos.y;
 	max_bar_v = min_bar_v + view_h;
 
@@ -1711,6 +1712,7 @@ bool UI_Scroll_Bar::update()
 	MoveBarV();
 	MoveBarH();
 	
+	// Lock element when moving scroll bars
 	if (parent->started_dinamic)
 	{
 		if (button_v->MouseClickEnterLeft() || button_h->MouseClickEnterLeft())
@@ -1743,18 +1745,18 @@ void UI_Scroll_Bar::ClearElements()
 
 void UI_Scroll_Bar::ChangeHeightMovingRect()
 {
-	// Taking lowest --
+	// Taking lowest element vertical --
 	int lowest = 0;
 	for (int i = 0; i<elements.count(); i++)
 	{
 		if (((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h + App->render->camera.y) > lowest)
 			lowest = ((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h) + App->render->camera.y;
 	}
-	// ----------------
+	// ----------------------------------
 
 	moving_rect.h = lowest;
 
-	// Regla de tres inversa
+	// Inverse rule of thirds
 	if (moving_rect.h > 0)
 	{
 		button_v->rect.h = (button_starting_v * starting_v) / moving_rect.h;
@@ -1767,29 +1769,33 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 		button_v->rect.h = button_starting_v;
 	}
 	
+	// Update min and max bar positions
 	min_bar_v = rect.y;
 	max_bar_v = rect.y + rect.h;
 }
 
 void UI_Scroll_Bar::ChangeWidthMovingRect()
 {
+	// Take higher element horizontal --
 	int higher = 0;
 	for (int i = 0; i < elements.count(); i++)
 	{
 		if (((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w + App->render->camera.x) > higher)
 			higher = ((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w) + App->render->camera.x;
 	}
+	// ----------------------------------
 
 	if (starting_h < higher)
 	{
 		moving_rect.w = higher;
 
-		// Regla de tres inversa
+		// Inverse rule of thirds
 		button_h->rect.w = (button_starting_h * starting_h) / moving_rect.w;
 		if (button_h->rect.w < 20)
 			button_h->rect.w = 20;
 	}
 
+	// Update min and max bar positions
 	min_bar_h = rect.x;
 	max_bar_h = min_bar_h + rect.w;
 }
@@ -1811,6 +1817,7 @@ void UI_Scroll_Bar::MoveBarV()
 
 		// ----------------------
 
+		// Move buttons
 		if (curr_y != mouse_y)
 		{
 			if (((button_v->rect.y + button_v->rect.h) - (mouse_y - curr_y)) <= max_bar_v && (button_v->rect.y - (mouse_y - curr_y)) >= min_bar_v)
@@ -1835,6 +1842,7 @@ void UI_Scroll_Bar::MoveBarV()
 		is_scrolling_v = false;
 	}
 
+	// Move elements inside the scroll 
 	int bar_distance = (min_bar_v + button_v->rect.h) - max_bar_v;
 	int moving_distance = (min_bar_v + moving_rect.h) - max_bar_v;
 	int position_bar = button_v->rect.y - min_bar_v;
@@ -1844,18 +1852,18 @@ void UI_Scroll_Bar::MoveBarV()
 		scroll_v = -floor((float)(position_bar * moving_distance) / bar_distance);
 		moving_rect.y = min_bar_v - scroll_v;
 
-		for (int i = 0; i < elements.count(); i++)
+		for(p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 		{
-			elements[i].element->rect.y = elements[i].starting_pos_y - scroll_v - App->render->camera.y;
+			current->data.element->rect.y = current->data.starting_pos_y - scroll_v - App->render->camera.y;
 		}
 	}
 	else
 	{
 		moving_rect.y = min_bar_v - scroll_v;
 
-		for (int i = 0; i < elements.count(); i++)
+		for (p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 		{
-			elements[i].element->rect.y = elements[i].starting_pos_y - scroll_v - App->render->camera.y;
+			current->data.element->rect.y = current->data.starting_pos_y - scroll_v - App->render->camera.y;
 		}
 	}
 
@@ -1911,18 +1919,18 @@ void UI_Scroll_Bar::MoveBarH()
 		scroll_h = -floor((float)(position_bar * moving_distance) / bar_distance);
 		moving_rect.x = min_bar_h - scroll_h;
 
-		for (int i = 0; i < elements.count(); i++)
+		for (p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 		{
-			elements[i].element->rect.x = elements[i].starting_pos_x - scroll_h - App->render->camera.x;
+			current->data.element->rect.x = current->data.starting_pos_x - scroll_h - App->render->camera.x;
 		}
 	}
 	else
 	{
 		moving_rect.x = min_bar_h - scroll_h;
 
-		for (int i = 0; i < elements.count(); i++)
+		for (p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 		{
-			elements[i].element->rect.x = elements[i].starting_pos_x - scroll_h - App->render->camera.x;
+			current->data.element->rect.x = current->data.starting_pos_x - scroll_h - App->render->camera.x;
 		}
 	}
 }

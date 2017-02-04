@@ -78,13 +78,16 @@ void Animation::Reset()
 
 const char* Animation::GetName()
 {
-	return name.GetString();
+	if (name.Length() > 0)
+		return name.GetString();
+	else
+		return "";
 }
 
 Animator::Animator()
 {
-	for (int i = 0; i < animations.count(); i++)
-		delete animations[i];
+	for (p2List_item<Animation*>* current = animations.start; current != nullptr; current = current->next)
+		delete current->data;
 }
 
 Animator::~Animator()
@@ -98,11 +101,14 @@ void Animator::AddAnimation(Animation* animation)
 
 void Animator::SetAnimation(const char* name)
 {
-	for (int i = 0; i < animations.count(); i++)
+	if (current_animation != nullptr && TextCmp(current_animation->GetName(), name))
+		return;
+
+	for (p2List_item<Animation*>* current = animations.start; current!= nullptr; current = current->next)
 	{
-		if (TextCmp(name, animations[i]->GetName()))
+		if (TextCmp(name, current->data->GetName()))
 		{
-			current_animation = animations[i];
+			current_animation = current->data;
 			break;
 		}
 	}
@@ -112,11 +118,11 @@ Animation* Animator::GetAnimation(const char * name)
 {
 	Animation* ret = nullptr;
 
-	for (int i = 0; i < animations.count(); i++)
+	for (p2List_item<Animation*>* current = animations.start; current != nullptr; current = current->next)
 	{
-		if (TextCmp(name, animations[i]->GetName()))
+		if (TextCmp(name, current->data->GetName()))
 		{
-			ret = animations[i];
+			ret = current->data;
 			break;
 		}
 	}
