@@ -518,9 +518,6 @@ void j1Gui::DeleteElement(UI_Element* element)
 
 			for (int i = 0; i < to_add.count(); i++)
 				App->gui->elements_list.Push(to_add[i], to_add[i]->layer);
-	
-
-		//LOG("%d", elements_list.Count());
 
 		RELEASE(childs[i]);
 	}
