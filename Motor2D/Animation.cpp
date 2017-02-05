@@ -101,14 +101,14 @@ void Animator::AddAnimation(Animation* animation)
 
 void Animator::SetAnimation(const char* name)
 {
-	if (current_animation != nullptr && TextCmp(current_animation->GetName(), name))
+	if (next_animation != nullptr && TextCmp(next_animation->GetName(), name))
 		return;
 
 	for (p2List_item<Animation*>* current = animations.start; current!= nullptr; current = current->next)
 	{
 		if (TextCmp(name, current->data->GetName()))
 		{
-			current_animation = current->data;
+			next_animation = current->data;
 			break;
 		}
 	}
@@ -136,7 +136,21 @@ Animation* Animator::GetAnimation(const char * name)
 	return ret;
 }
 
-Animation * Animator::GetCurrentAnimation()
+Animation* Animator::GetCurrentAnimation()
 {
+	for (p2List_item<anim_trans>* trans = anim_trans_list.start; trans != nullptr; trans = trans->next)
+	{
+		if (TextCmp(next_animation->GetName(), trans->data.a2.GetString()) && TextCmp(current_animation->GetName(), trans->data.a1.GetString()))
+		{
+			if (!GetAnimation(trans->data.transition_name.GetString())->Finished())
+				return GetAnimation(trans->data.transition_name.GetString());
+			else
+				GetAnimation(trans->data.transition_name.GetString())->Reset();
+		}
+	}
+
+	if(current_animation != next_animation || current_animation == nullptr || anim_trans_list.count() == 0)
+		current_animation = next_animation;
+
 	return current_animation;
 }

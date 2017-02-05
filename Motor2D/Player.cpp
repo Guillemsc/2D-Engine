@@ -42,8 +42,10 @@ bool Player::LoadEntity()
 	// Idle-Walk
 	p2List<SDL_Rect> idlewalk_rects;
 	LoadAnimationFromXML(idlewalk_rects, "player.xml", "idle-walk");
-	Animation* idlewalk = new Animation("idle-walk", idlewalk_rects, 6.0f);
+	Animation* idlewalk = new Animation("idle-walk", idlewalk_rects, 8.5f);
 	player_go->AddAnimation(idlewalk);
+	player_go->animator->SetAnimationTransition("idle-walk", "idle", "walk");
+	player_go->animator->SetAnimationTransition("idle-walk", "walk", "idle");
 
 	// Walk
 	p2List<SDL_Rect> walk_rects;
@@ -92,7 +94,7 @@ bool Player::Update(float dt)
 {
 	bool ret = true;
 
-	float speed = (50 * dt);
+	float speed = (40 * dt);
 
 	if (App->input->GetKey(SDL_SCANCODE_A) == KEY_REPEAT)
 	{
@@ -150,7 +152,7 @@ bool Player::Draw(float dt)
 	}
 	
 	if(flip)
-		App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 40, player_go->GetPos().y - 25}, player_go->GetCurrentAnimationRect(dt), -1.0f, SDL_FLIP_HORIZONTAL);
+		App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 46, player_go->GetPos().y - 25}, player_go->GetCurrentAnimationRect(dt), -1.0f, SDL_FLIP_HORIZONTAL);
 	else
 		App->scene->LayerBlit(2, player_go->GetTexture(), { player_go->GetPos().x - 30, player_go->GetPos().y - 25 }, player_go->GetCurrentAnimationRect(dt), -1.0f, SDL_FLIP_NONE);
 

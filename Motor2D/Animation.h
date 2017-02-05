@@ -52,6 +52,7 @@ public:
 
 private:
 	Animation*           current_animation = nullptr;
+	Animation*			 next_animation = nullptr;
 	p2List<Animation*>   animations;
 	p2List<anim_trans>   anim_trans_list;
 };
