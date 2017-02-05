@@ -154,7 +154,7 @@ void j1Console::ConsoleLogic()
 		stay_bottom = false;
 
 	if (stay_bottom)
-		scroll->button_v->rect.y = scroll->max_bar_v - scroll->button_v->rect.h;
+		scroll->button_v->rect.y = scroll->rect.y + scroll->rect.h - scroll->button_v->rect.h;
 }
 
 void j1Console::Tokenize(p2SString s)

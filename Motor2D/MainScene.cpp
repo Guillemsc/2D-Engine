@@ -30,7 +30,7 @@ bool MainScene::Start()
 	b->type = pbody_type::p_t_world;
 	b->listener = App->scene;
 
-	App->entity->CreateEntity(player);
+	//App->entity->CreateEntity(player);
 
 	return ret;
 }

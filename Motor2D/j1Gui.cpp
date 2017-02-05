@@ -1054,7 +1054,6 @@ bool UI_Button::MouseClickEnterRight()
 	{
 		int mouse_x, mouse_y;
 		App->input->GetMousePosition(mouse_x, mouse_y);
-
 		mouse_x -= App->render->camera.x;
 		mouse_y -= App->render->camera.y;
 
@@ -1359,7 +1358,6 @@ bool UI_Text_Input::update()
 			camera_before.y = App->render->camera.y;
 		}
 
-
 	}
 
 	return true;
@@ -1658,7 +1656,7 @@ void UI_Scroll_Bar::Set(iPoint pos, int view_w, int view_h, int button_size)
 	button_v = new UI_Button();
 	button_v->Set(iPoint(view_w + button_size, pos.y), button_size, view_h);
 	button_v->layer = App->gui->elements_list.Count() + 1;
-	childs.add(button_v);
+	AddChild(button_v);
 	button_starting_v = button_v->rect.h;
 	App->gui->elements_list.Push(button_v, button_v->layer);
 	// ----------
@@ -1667,7 +1665,7 @@ void UI_Scroll_Bar::Set(iPoint pos, int view_w, int view_h, int button_size)
 	button_h = new UI_Button();
 	button_h->Set(iPoint(pos.x, pos.y + view_h), view_w, button_size);
 	button_h->layer = App->gui->elements_list.Count() + 2;
-	childs.add(button_h);
+	AddChild(button_h);
 	button_starting_h = button_h->rect.w;
 	App->gui->elements_list.Push(button_h, button_h->layer);
 	// ----------
@@ -1698,9 +1696,9 @@ bool UI_Scroll_Bar::update()
 	// Viewport -----------
 	App->render->SetViewPort({ rect.x + App->render->camera.x, rect.y + App->render->camera.y, rect.x + rect.w + App->render->camera.x, rect.h});
 
-	for (int i = 0; i < elements.count(); i++)
+	for (p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 	{
-		elements[i].element->update();
+		current->data.element->update();
 	}
 
 	App->render->ResetViewPort();
@@ -1747,10 +1745,11 @@ void UI_Scroll_Bar::ChangeHeightMovingRect()
 {
 	// Taking lowest element vertical --
 	int lowest = 0;
-	for (int i = 0; i<elements.count(); i++)
+
+	for (p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 	{
-		if (((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h + App->render->camera.y) > lowest)
-			lowest = ((min_bar_v - moving_rect.y) + elements[i].element->rect.y + elements[i].element->rect.h) + App->render->camera.y;
+		if (((min_bar_v - moving_rect.y) + current->data.element->rect.y + current->data.element->rect.h + App->render->camera.y) > lowest)
+			lowest = ((min_bar_v - moving_rect.y) + current->data.element->rect.y + current->data.element->rect.h) + App->render->camera.y;
 	}
 	// ----------------------------------
 
@@ -1778,10 +1777,10 @@ void UI_Scroll_Bar::ChangeWidthMovingRect()
 {
 	// Take higher element horizontal --
 	int higher = 0;
-	for (int i = 0; i < elements.count(); i++)
+	for (p2List_item<scroll_element>* current = elements.start; current != nullptr; current = current->next)
 	{
-		if (((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w + App->render->camera.x) > higher)
-			higher = ((min_bar_h - moving_rect.x) + elements[i].element->rect.x + elements[i].element->rect.w) + App->render->camera.x;
+		if (((min_bar_h - moving_rect.x) + current->data.element->rect.x + current->data.element->rect.w + App->render->camera.x) > higher)
+			higher = ((min_bar_h - moving_rect.x) + current->data.element->rect.x + current->data.element->rect.w) + App->render->camera.x;
 	}
 	// ----------------------------------
 
@@ -1849,6 +1848,7 @@ void UI_Scroll_Bar::MoveBarV()
 
 	if (bar_distance < 0)
 	{
+		// Rule of thirds
 		scroll_v = -floor((float)(position_bar * moving_distance) / bar_distance);
 		moving_rect.y = min_bar_v - scroll_v;
 
