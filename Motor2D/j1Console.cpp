@@ -109,6 +109,7 @@ bool j1Console::Save(pugi::xml_node &node) const
 bool j1Console::CleanUp()
 {
 	App->gui->DeleteElement(window);
+
 	return true;
 }
 

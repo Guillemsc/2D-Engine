@@ -159,6 +159,13 @@ bool j1Gui::CleanUp()
 
 	App->tex->UnLoadTexture(atlas);
 
+	while (elements_list.Count() > 0)
+	{
+		p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start;
+		DeleteElement(elements->data);
+	    LOG("%d", elements_list.Count());
+	}
+
 	return true;
 }
 
@@ -471,32 +478,50 @@ UI_Element* j1Gui::CheckClickMove(int x, int y)
 // ---------------------------------------------------------------------
 // Deletes and frees an UI_Element.
 // ---------------------------------------------------------------------
-void j1Gui::DeleteElement(UI_Element * element)
+void j1Gui::DeleteElement(UI_Element* element)
 {
+	if (element == nullptr || element == NULL)
+		return;
+
+	if (element->type == ui_window && windows.count() == 0)
+		return;
+
 	p2List<UI_Element*> childs;
 	App->gui->GetChilds(element, childs);
 
 	// Delete element and it's childs
 	for (int i = 0; i < childs.count(); i++)
 	{
-		if (childs[i]->parent != nullptr && childs[i]->parent->childs.find(element))
-			childs[i]->parent->childs.del(childs[i]->parent->childs.At(childs[i]->parent->childs.find(childs[i])));
-
-		if (childs[i]->parent_element != nullptr && childs[i]->parent_element->childs.find(childs[i]))
-			childs[i]->parent_element->childs.del(childs[i]->parent_element->childs.At(childs[i]->parent_element->childs.find(childs[i])));
+		if (childs[i] == nullptr)
+			continue;
 		
-		// Delete elements from pQ
-		for (p2PQueue_item<UI_Element*>* elements = App->gui->elements_list.start; elements != nullptr; elements = elements->next)
-		{
-			if (elements->next != nullptr && elements->next->data == childs[i])
+			if (childs[i]->parent != nullptr && childs[i]->parent->childs.find(element) != -1)
+				childs[i]->parent->childs.del(childs[i]->parent->childs.At(childs[i]->parent->childs.find(childs[i])));
+
+			if (childs[i]->parent_element != nullptr && childs[i]->parent_element->childs.find(childs[i]) != -1)
+				childs[i]->parent_element->childs.del(childs[i]->parent_element->childs.At(childs[i]->parent_element->childs.find(childs[i])));
+
+			if (childs[i]->type == ui_window && windows.find((UI_Window*)childs[i]) != -1)
+				windows.del(windows.At(windows.find((UI_Window*)childs[i])));
+
+			// Delete from 
+			p2List<UI_Element*> to_add;
+
+			while (App->gui->elements_list.Count() > 0)
 			{
-				if (elements->next->next != nullptr)
-					elements->next == elements->next->next;
-				else
-					elements->next = nullptr;
-				break;
+				UI_Element* current = nullptr;
+				App->gui->elements_list.Pop(current);
+
+				if (current != childs[i])
+					to_add.add(current);
 			}
-		}
+
+			for (int i = 0; i < to_add.count(); i++)
+				App->gui->elements_list.Push(to_add[i], to_add[i]->layer);
+	
+
+		//LOG("%d", elements_list.Count());
+
 		RELEASE(childs[i]);
 	}
 }
@@ -1734,11 +1759,11 @@ void UI_Scroll_Bar::AddElement(UI_Element * element)
 
 void UI_Scroll_Bar::ClearElements()
 {
-	for (int i = 0; i < elements.count();)
+	for (int i = 0; i < elements.count(); i++)
 	{
 		App->gui->DeleteElement(elements[i].element);
-		elements.del(elements.At(i));
 	}
+	elements.clear();
 }
 
 void UI_Scroll_Bar::ChangeHeightMovingRect()
