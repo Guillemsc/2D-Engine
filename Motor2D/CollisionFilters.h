@@ -25,14 +25,15 @@ struct collision_filters
 // PhysBody enum
 enum class pbody_type
 {
-	p_t_null,
+	p_t_null = 0,
+	p_t_player,
 	p_t_world
 };
 
 // Fixture enum
 enum class fixture_type
 {
-	f_t_null,
+	f_t_null = 0,
 	f_t_down_ball
 };
 

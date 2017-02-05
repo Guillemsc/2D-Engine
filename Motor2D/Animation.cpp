@@ -114,6 +114,12 @@ void Animator::SetAnimation(const char* name)
 	}
 }
 
+void Animator::SetAnimationTransition(const char * transition_name, const char * a1, const char * a2)
+{
+	anim_trans at(transition_name, a1, a2);
+	anim_trans_list.add(at);
+}
+
 Animation* Animator::GetAnimation(const char * name)
 {
 	Animation* ret = nullptr;

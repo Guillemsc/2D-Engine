@@ -17,6 +17,20 @@ class Animation;
 // -----------------------------------------
 // -----------------------------------------
 
+struct anim_trans
+{
+	anim_trans() {};
+	anim_trans(const char* _transition_name, const char* _a1, const char* _a2)
+	{
+		transition_name.create("%s", _transition_name);
+		a1.create("%s", _a1);
+		a2.create("%s", _a2);
+	}
+	p2SString transition_name;
+	p2SString a1;
+	p2SString a2;
+};
+
 class Animator
 {
 public:
@@ -29,6 +43,8 @@ public:
 	// Set a current animation
 	void SetAnimation(const char* name);
 
+	void SetAnimationTransition(const char* transition_name, const char* a1, const char* a2);
+
 	// Returns the animation using the name
 	Animation* GetAnimation(const char* name);
 
@@ -37,6 +53,7 @@ public:
 private:
 	Animation*           current_animation = nullptr;
 	p2List<Animation*>   animations;
+	p2List<anim_trans>   anim_trans_list;
 };
 
 class Animation

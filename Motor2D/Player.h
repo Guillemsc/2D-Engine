@@ -38,6 +38,10 @@ public:
 	GameObject* player_go = nullptr;
 
 	bool flip = false;
+	bool on_ground = false;
+	bool going_up = false;
+
+	float last_height = 0.0f;
 };
 
 #endif
