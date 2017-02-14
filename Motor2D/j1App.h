@@ -64,9 +64,8 @@ public:
 	void SaveGame(const char* file) const;
 	void GetSaveGames(p2List<p2SString>& list_to_fill) const;
 
-	// Load and save an XML file
+	// Load an XML file
 	void LoadXML(const char* path, pugi::xml_document& doc);
-	void SaveLoadedXML(pugi::xml_document& doc, const char* path);
 
 	void CapFps(float fps);
 	void EndSDL();
@@ -117,7 +116,7 @@ public:
 	j1Entity*			entity = NULL;
 
 	// Console logs
-	p2List<p2SString>   logs;
+	list<string>        logs;
 
 	bool			    debug_mode = false;
 
@@ -127,12 +126,12 @@ private:
 
 	bool                end_program = false;
 
-	p2List<j1Module*>	modules;
+	list<j1Module*>  	modules;
 	int					argc;
 	char**				args;
 
-	p2SString			title;
-	p2SString			organization;
+	string		    	title;
+	string		     	organization;
 
 	mutable bool		want_to_save = false;
 	bool				want_to_load = false;

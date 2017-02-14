@@ -3,7 +3,7 @@
 
 #include "j1Module.h"
 #include "SDL\include\SDL_pixels.h"
-#include "p2List.h"
+#include <list>
 
 #define DEFAULT_FONT "fonts/open_sans/OpenSans-Regular.ttf"
 #define DEFAULT_FONT_SIZE 12
@@ -14,7 +14,6 @@ struct _TTF_Font;
 class j1Fonts : public j1Module
 {
 public:
-
 	j1Fonts();
 
 	// Destructor
@@ -35,10 +34,9 @@ public:
 	bool CalcSize(const char* text, int& width, int& height, _TTF_Font* font = NULL) const;
 
 public:
-
-	p2List<_TTF_Font*>	fonts;
-	_TTF_Font*			default = nullptr;
-	_TTF_Font*			default_15 = nullptr;
+	std::list<_TTF_Font*>	fonts;
+	_TTF_Font*			    default = nullptr;
+	_TTF_Font*			    default_15 = nullptr;
 };
 
 

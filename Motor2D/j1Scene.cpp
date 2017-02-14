@@ -8,11 +8,12 @@
 #include "j1Window.h"
 #include "j1Scene.h"
 #include "MainScene.h"
+#include "j1Console.h"
 
 
 j1Scene::j1Scene() : j1Module()
 {
-	name.create("scene");
+	name = "scene";
 }
 
 // Destructor
@@ -40,7 +41,7 @@ bool j1Scene::Start()
 
 	// Create scenes
 	main_scene = new MainScene();
-	scenes.add(main_scene);
+	scenes.push_back(main_scene);
 	// -------------
 
 	// Starting scene
@@ -122,8 +123,8 @@ void j1Scene::LayerBlit(int layer, SDL_Texture * texture, iPoint pos, const SDL_
 
 void j1Scene::OnCollision(PhysBody * bodyA, PhysBody * bodyB, b2Fixture * fixtureA, b2Fixture * fixtureB)
 {
-	for(p2List_item<Scene*>* current = scenes.start; current != nullptr; current = current->next)
-		current->data->OnColl(bodyA, bodyB, fixtureA, fixtureB);
+	for(list<Scene*>::iterator it = scenes.begin(); it != scenes.end(); it++)
+		(*it)->OnColl(bodyA, bodyB, fixtureA, fixtureB);
 }
 
 void j1Scene::DoLayerBlit()

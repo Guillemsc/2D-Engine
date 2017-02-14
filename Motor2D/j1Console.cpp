@@ -1,154 +1,113 @@
 #include "j1Console.h"
 #include "p2Defs.h"
+#include "p2Point.h"
+#include "j1Window.h"
+#include "j1FileSystem.h"
 #include "p2Log.h"
+#include "j1Gui.h"
 #include "j1App.h"
 #include "j1Render.h"
-#include "j1Textures.h"
-#include "j1Fonts.h"
 #include "j1Input.h"
-#include "j1Gui.h"
-#include "p2Point.h"
-#include "j1FileSystem.h"
-#include "j1Window.h"
 #include "Functions.h"
-#include <iostream>
+#include <sstream>
 
-using namespace std;
-
-#define CONSOLE_HEIGHT 300
+#define PADDING 15
+#define OUTPUT_TEXT_COLOR { 0, 178, 255, 255 }
+#define INPUT_TEXT_COLOR {235, 235, 235, 255}
+#define ERROR_TEXT_COLOR { 255, 67, 67, 255 }
 #define TOP_FRAME_SIZE 30
 #define FRAMES_SIZE 15
 #define SCROLL_BUTTON_SIZE 15
-#define TEXT_DISTANCE 22
+#define MAX_LABELS 40
+
+#define CONSOLE_COLOR_1 { 30, 30, 30, 155 }
+#define CONSOLE_COLOR_2 {60, 60, 60, 255}
+
+// -------------------------------------------------
+//                  Console
+// -------------------------------------------------
 
 j1Console::j1Console()
 {
-	name.create("Console");
+	name = "console";
 }
 
 j1Console::~j1Console()
 {
 }
 
-bool j1Console::Awake(pugi::xml_node &node)
+bool j1Console::Awake(pugi::xml_node &config)
 {
 	return true;
 }
 
 bool j1Console::Start()
 {
-	console_color = { 32, 32, 32, 200 };
+	LOG("Starting Console");
+	
+	App->win->GetWindowSize(win_w, win_h);
 
-	window = (UI_Window*)App->gui->UI_CreateWin(iPoint(App->render->camera.x, App->render->camera.y), 
-			 App->render->camera.x + App->render->camera.w, CONSOLE_HEIGHT, true);
+	window = (UI_Window*)App->gui->UI_CreateWin(iPoint(App->render->camera.x, App->render->camera.y),win_w, win_h/3);
 	window->always_top = true;
 
-	colored_rect1 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, console_color);
-	colored_rect_top = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, TOP_FRAME_SIZE, { 32, 32, 32, 255 });
-	colored_rect_left = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), FRAMES_SIZE, CONSOLE_HEIGHT, { 32, 32, 32, 255 });
-	colored_rect_right = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x + window->rect.w - FRAMES_SIZE, window->rect.y), FRAMES_SIZE, CONSOLE_HEIGHT, { 32, 32, 32, 255 });
-	colored_rect_bottom = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, CONSOLE_HEIGHT - FRAMES_SIZE), window->rect.w, FRAMES_SIZE, { 32, 32, 32, 255 });
+	console_background = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, window->rect.y), window->rect.w, window->rect.h, CONSOLE_COLOR_1);
+	console_background2 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x + FRAMES_SIZE, window->rect.y + TOP_FRAME_SIZE), window->rect.x + window->rect.w - (FRAMES_SIZE * 2) - 15, win_h / 3 - FRAMES_SIZE - TOP_FRAME_SIZE, CONSOLE_COLOR_1);
 
-	top_text = (UI_Text*)window->CreateText(iPoint(10, 4), App->font->default_15);
-	top_text->SetText("Console");
+	scroll = (UI_Scroll_Bar*)window->CreateScrollBar(iPoint(window->rect.x + FRAMES_SIZE, window->rect.y + TOP_FRAME_SIZE), window->rect.x + window->rect.w - (FRAMES_SIZE * 2) - 15, win_h / 3 - FRAMES_SIZE - TOP_FRAME_SIZE, SCROLL_BUTTON_SIZE);
 
-	scroll = (UI_Scroll_Bar*)window->CreateScrollBar(iPoint(window->rect.x + FRAMES_SIZE, window->rect.y + TOP_FRAME_SIZE), window->rect.x + window->rect.w - (FRAMES_SIZE*2) - 15, CONSOLE_HEIGHT - FRAMES_SIZE - TOP_FRAME_SIZE, SCROLL_BUTTON_SIZE);
+	button_v_background = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->min_bar_v), scroll->button_v->rect.w, scroll->rect.h, CONSOLE_COLOR_2);
+	button_v_background->click_through = true;
+	button_h_background = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->button_v->rect.y), scroll->button_v->rect.w, scroll->button_v->rect.h, CONSOLE_COLOR_2);
+	button_h_background->click_through = true;
 
-	bottom_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->min_bar_v), scroll->button_v->rect.w, scroll->rect.h, {80, 80, 80, 200});
-	bottom_scroll_v->click_through = true;
-	top_scroll_v = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_v->rect.x, scroll->button_v->rect.y), scroll->button_v->rect.w, scroll->button_v->rect.h, { 40, 40, 40, 250 });
-	top_scroll_v->click_through = true;
-
-	bottom_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->min_bar_h, scroll->button_h->rect.y), scroll->rect.w, scroll->button_h->rect.h, { 80, 80, 80, 200 });
-	bottom_scroll_h->click_through = true;
-	top_scroll_h = (UI_ColoredRect*)window->CreateColoredRect(iPoint(scroll->button_h->rect.x, scroll->button_h->rect.y), scroll->button_h->rect.w, scroll->button_h->rect.h, { 40, 40, 40, 250 });
-	top_scroll_h->click_through = true;
-
-	colored_rect_text_input = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w, FRAMES_SIZE * 2.5f, { 32, 32, 32, 255 });
-	colored_rect_text_input2 = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x + FRAMES_SIZE, scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5)), window->rect.w - FRAMES_SIZE * 2 - scroll->button_v->rect.w, FRAMES_SIZE*1.7f, { 40, 40, 40, 255 });
-	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE * 1.5f , scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5f)), window->rect.w - FRAMES_SIZE, App->font->default_15);
-
-	Log("Welcome to the console :-D");
+	input_background = (UI_ColoredRect*)window->CreateColoredRect(iPoint(window->rect.x, scroll->rect.y + scroll->rect.h + FRAMES_SIZE), window->rect.w, FRAMES_SIZE * 2.5f, CONSOLE_COLOR_1);
+	text_input = (UI_Text_Input*)window->CreateTextInput(iPoint(window->rect.x + FRAMES_SIZE * 1.5f, scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5f)), window->rect.w - FRAMES_SIZE, App->font->default_15);
+	input_mark = (UI_Text*)window->CreateText(iPoint(10, scroll->rect.y + scroll->rect.h + (FRAMES_SIZE*1.5f)), App->font->default_15);
+	input_mark->SetText(">");
 
 	window->SetEnabledAndChilds(false);
+
+	ready = true;
+
+	AddCommand("list", this, 0, 2, "List all commands and/or cvars. Min_args: 0 Max_args: 2 Args: commands, cvars, [searchword]");
+	AddCommand("clear", this, 0, 0, "Cleans console prompt. Min_args: 0 Max_args: 0");
+
 	return true;
 }
 
 bool j1Console::PreUpdate()
 {
-	return true;
+	bool ret = true;
+
+	return ret;
 }
 
 bool j1Console::Update(float dt)
 {
-	LoadLogs();
-	ConsoleLogic();
+	FastCommands();
 
-	if (text_input->active && text_input->intern_text.Length() > 0)
-	{
-		if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
-		{
-			Tokenize(text_input->intern_text);
-		}
-	}
-
-	return true;
-}
-
-bool j1Console::Load(pugi::xml_node &node)
-{
-	return false;
-}
-
-bool j1Console::Save(pugi::xml_node &node) const
-{
-
-	return true;
-}
-
-bool j1Console::CleanUp()
-{
-	App->gui->DeleteElement(window);
-
-	return true;
-}
-
-void j1Console::Log(p2SString string, uint r, uint g, uint b)
-{
-	if (string.Length() > 0)
-	{
-		UI_Text* text = new UI_Text();
-		text->Set(iPoint(3, last_text_pos), App->font->default_15, 15, r, g, b);
-		text->SetText(string.GetString());
-		scroll->AddElement(text);
-		last_text_pos += TEXT_DISTANCE;
-		stay_bottom = true;
-	}
-}
-
-void j1Console::ConsoleLogic()
-{
 	// Open/close console
 	if (App->input->GetKey(SDL_SCANCODE_GRAVE) == KEY_DOWN)
 	{
 		window->SetEnabledAndChilds(!window->enabled);
 		text_input->Clear();
+		text_input->active = true;
 	}
 
 	// Enable/disable scroll buttons
-	if (scroll->max_bar_v == scroll->moving_rect.h || !scroll->parent->enabled)
-		top_scroll_v->enabled = false;
+	if (scroll->button_v->rect.h == scroll->button_starting_v || !scroll->parent->enabled)
+		button_v_background->enabled = false;
 	else
-		top_scroll_v->enabled = true;
+		button_v_background->enabled = true;
 
-	if (scroll->max_bar_h == scroll->moving_rect.w || !scroll->parent->enabled)
-		top_scroll_h->enabled = false;
+	if (scroll->button_h->rect.w == scroll->button_starting_h || !scroll->parent->enabled)
+		button_h_background->enabled = false;
 	else
-		top_scroll_h->enabled = true;
+		button_h_background->enabled = true;
 
 	// Update size of scroll buttons
-	top_scroll_v->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
-	top_scroll_h->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
+	button_v_background->rect = { scroll->button_v->rect.x, scroll->button_v->rect.y, scroll->button_v->rect.w, scroll->button_v->rect.h };
+	button_h_background->rect = { scroll->button_h->rect.x, scroll->button_h->rect.y, scroll->button_h->rect.w, scroll->button_h->rect.h };
 
 	// Scroll always down
 	if (scroll->button_v->MouseClickEnterLeft())
@@ -156,201 +115,521 @@ void j1Console::ConsoleLogic()
 
 	if (stay_bottom)
 		scroll->button_v->rect.y = scroll->rect.y + scroll->rect.h - scroll->button_v->rect.h;
+
+	// Load logs
+	LoadLogs();
+
+	return true;
 }
 
-void j1Console::Tokenize(p2SString s)
+bool j1Console::PostUpdate()
 {
-	p2List<p2SString> strings;
-	p2List<float> ints;
+	bool ret = true;
 
-	// Separate text and numbers ----------------
-
-	SeparateTextAndNumbers(s, strings, ints);
-
-	// ----------------------------------------
-
-	Commands(s, strings, ints);
-
-	text_input->Clear();
-
+	return ret;
 }
 
-void j1Console::SeparateTextAndNumbers(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
+bool j1Console::CleanUp()
 {
-	// Text to lower case ---------
-	p2SString str;
-	string tmp = s.GetString();
-	for (int i = 0; i < s.Length(); i++)
+	bool ret = true;
+
+	return ret;
+}
+
+bool j1Console::Save(pugi::xml_node & node) const
+{
+	//Console save all the parameters on the config.xml
+
+	pugi::xml_document	config_file;
+	pugi::xml_node		config;
+
+	App->LoadXML("config.xml", config_file);
+
+	config = config_file.child("config");
+
+	for (std::list<CVar*>::const_iterator cvar = cvars.begin(); cvar != cvars.end(); cvar++) 
 	{
-		if (str.Length() > 0)
-			str.create("%s%c", str.GetString(), tolower(tmp[i]));
-		else
-			str.create("%c", tolower(tmp[i]));
+		std::list<std::string> tokens;
+		Tokenize((*cvar)->cvar_str, '.', tokens);
+
+		if (tokens.size() < 2) 
+			continue;
+		
+		pugi::xml_node node = config.child(tokens.front().c_str());
+		if (node == NULL) 
+			node = config.append_child(tokens.front().c_str());
+
+		std::list<std::string>::iterator it = tokens.begin();
+		it++;
+		pugi::xml_node parameter = node.child((*it).c_str());
+		if (parameter == NULL) 
+			parameter = node.append_child((*it).c_str());
+
+		(*cvar)->GetCallback()->SaveCVar((*it), parameter); //Each module is responsible to save their cvars
 	}
+	config_file.save_file("config.xml");
 
-	string cs = str.GetString();
-	// ------------------------------
-	
+	return true;
+}
 
-	p2SString current;
-	p2SString number;
-
-	// Separate text and numbers ----------------
-
-	for (int i = 0; i < s.Length(); i++)
+void j1Console::OnCommand(std::list<std::string>& tokens)
+{
+	std::list<std::string>::iterator it = tokens.begin();
+	switch (tokens.size())
 	{
-		if (cs[i] != ' ')
-		{
-			// Numbers
-			if (isdigit(cs[i]) || (isdigit(cs[i + 1]) && cs[i] == '-') || (isdigit(cs[i + 1]) && cs[i] == '.'))
-			{
-				if (current.Length() > 0)
-				{
-					strings.add(current);
-					current.Clear();
-				}
-
-				if (number.Length() > 0)
-					number.create("%s%c", number.GetString(), cs[i]);
-				else
-					number.create("%c", cs[i]);
+	case 1:
+		if ((*it) == "list") {
+			AddText("--- COMMANDS ---", Output);
+			for (std::list<Command*>::iterator item = commands.begin(); item != commands.end(); item++){
+				std::ostringstream oss;
+				oss << (*item)->command_str.c_str() << ": " << (*item)->help.c_str() << ".";
+				std::string command_text = oss.str();
+				AddText(command_text.c_str(), Output);
 			}
-			else
-			{
-				if (!isdigit(cs[i]))
-				{
-					if (number.Length() > 0)
-					{
-						ints.add(atoi(number.GetString()));
-						number.Clear();
+			AddText("     --- CVARS ---", Output);
+			for (std::list<CVar*>::iterator item = cvars.begin(); item != cvars.end(); item++) {
+				std::ostringstream oss;
+				oss << (*item)->cvar_str.c_str() << ": " << (*item)->help.c_str() << ".";
+				std::string cvar_text = oss.str();
+				AddText(cvar_text.c_str(), Output);
+			}
+		}
+		else if ((*it) == "quit") {
+			App->EndSDL();
+			ready = false;
+		}
+		else if ((*it) == "save") {
+			App->SaveGame("config.xml");
+		}
+		else if ((*it) == "clear") {
+			scroll->ClearElements();
+			labels.clear();
+		}
+		break;
+	case 2:
+		if ((*it) == "list") {
+			it++;
+			if ((*it) == "commands") {
+				for (std::list<Command*>::iterator item = commands.begin(); item != commands.end(); item++) {
+					std::ostringstream oss;
+					oss << (*item)->command_str.c_str() << ": " << (*item)->help.c_str() << ".";
+					std::string command_text = oss.str();
+					AddText(command_text.c_str(), Output);
+				}
+			}
+			else if ((*it) == "cvars") {
+				for (std::list<CVar*>::iterator item = cvars.begin(); item != cvars.end(); item++) {
+					std::ostringstream oss;
+					oss << (*item)->cvar_str.c_str() << ": " << (*item)->help.c_str() << ".";
+					std::string cvar_text = oss.str();
+					AddText(cvar_text.c_str(), Output);
+				}
+			}
+			else {
+				AddText("--- COMMANDS ---", Output);
+				for (std::list<Command*>::iterator item = commands.begin(); item != commands.end(); item++) {
+					if((*item)->command_str.find((*it).c_str()) != std::string::npos){
+						std::ostringstream oss;
+						oss << (*item)->command_str.c_str() << ": " << (*item)->help.c_str() << ".";
+						std::string command_text = oss.str();
+						AddText(command_text.c_str(), Output);
 					}
 				}
-
-				if (current.Length() > 0)
-					current.create("%s%c", current.GetString(), cs[i]);
-				else
-					current.create("%c", cs[i]);
+				AddText("     --- CVARS ---", Output);
+				for (std::list<CVar*>::iterator item = cvars.begin(); item != cvars.end(); item++) {
+					if((*item)->cvar_str.find((*it).c_str()) != std::string::npos){
+						std::ostringstream oss;
+						oss << (*item)->cvar_str.c_str() << ": " << (*item)->help.c_str() << ".";
+						std::string cvar_text = oss.str();
+						AddText(cvar_text.c_str(), Output);
+					}
+				}
 			}
 		}
-		// Text
-		else
+		else if ((*it) == "cap_fps")
 		{
-			if (current.Length() > 0)
+			it++;
+			float value = atof((*it).c_str());
+			if (value > 0)
 			{
-				strings.add(current);
-				current.Clear();
+				App->CapFps(value);
+				std::ostringstream oss;
+				oss.precision(3);
+				oss<<fixed;
+				oss << "FPS limited to " << value;
+				std::string str = oss.str();
+				AddText(str.c_str());
 			}
-
-			if (number.Length() > 0)
-			{
-				ints.add(atoi(number.GetString()));
-				number.Clear();
-			}
-		}
-	}
-
-	if (current.Length() > 0)
-	{
-		strings.add(current);
-		current.Clear();
-	}
-
-	if (number.Length() > 0)
-	{
-		ints.add(atoi(number.GetString()));
-		number.Clear();
-	}
-
-	// ----------------------------------------
-}
-
-void j1Console::Commands(p2SString s, p2List<p2SString>& strings, p2List<float>& ints)
-{
-	// Help
-	if (TextCmp(strings[0].GetString(), "help"))
-	{
-		Log(" ");
-		Log("\nBasic commands:");
-		Log("   - 'help': sends help :v.");
-		Log("   - 'clear': clears the console text.");
-		Log("   - 'hide': hides console.");
-		Log("   - 'exit': exits program.");
-		Log("   - 'debug (1 or 0)': sets debug mode.");
-		Log("   - 'set title (string)': changes the window title.");
-		Log("   - 'fps (float)': limits fps.");
-		Log(" ");
-	}
-	// Clear
-	else if (TextCmp(strings[0].GetString(), "clear"))
-	{
-		ClearConsole();
-	}
-	// Hide
-	else if (TextCmp(strings[0].GetString(), "hide"))
-	{
-		window->SetEnabledAndChilds(!window->enabled);
-	}
-	// Debug
-	else if (TextCmp(strings[0].GetString(), "debug"))
-	{
-		if (ints[0] == 1)
-		{
-			App->debug_mode = true;
-			Log("> Debug mode ON", succes.r, succes.g, succes.b);
-		}
-		if (ints[0] == 0)
-		{
-			App->debug_mode = false;
-			Log("> Debug mode OFF", succes.r, succes.g, succes.b);
-		}
-	}
-	// Exit
-	else if (TextCmp(strings[0].GetString(), "exit"))
-	{
-		Log("Exiting program");
-		App->EndSDL();
-	}
-	// Set title
-	else if (TextCmp(strings[0].GetString(), "set") && strcmp(strings[1].GetString(), "title") == 0)
-	{
-		Log(p2SString("Title changed to '%s'.", strings[2].GetString()), succes.r, succes.g, succes.b);
-		App->win->SetTitle(strings[2].GetString());
-	}
-	// Fps
-	else if (TextCmp(strings[0].GetString(), "fps"))
-	{
-		if (ints.count() > 0)
-		{
-			App->CapFps(ints[0]);
-			Log(p2SString("> Fps limited to %0f.", ints[0]), succes.r, succes.g, succes.b);
+			else
+				AddText("Invalid framerate", ConsoleTextType::Error);
 		}
 
-	}
-	// Hi
-	else if (TextCmp(strings[0].GetString(), "hi"))
-	{
-		Log("Hi! :D");
-	}
-	// Default
-	else
-	{
-		Log(p2SString("> The command '%s' does not exist. Type 'help' for some info.", s.GetString()), error.r, error.g, error.b);
+	default:
+		break;
 	}
 }
 
-void j1Console::ClearConsole()
+void j1Console::OnCVar(std::list<std::string>& tokens)
 {
-	last_text_pos = 1;
-	scroll->ClearElements();
+	std::list<std::string>::iterator it = tokens.begin();
+	switch (tokens.size())
+	{
+	case 2:
+		
+		break;
+	}
+}
+
+// Create a new command for the console. 
+void j1Console::AddCommand(const char * command, j1Module * callback, uint min_args, uint max_args, const char* help_txt)
+{
+	std::string name(command);
+
+	ToLowerCase(name);
+
+	Command* a;
+	if(!FindCommand(name, a))
+		commands.push_back(new Command(name.c_str(), callback, min_args, max_args, help_txt));
+}
+
+// Create a new cvar for the console. 
+void j1Console::AddCVar(const char * cvar, j1Module * callback, const char* help_txt)
+{
+	std::string name(cvar);
+
+	ToLowerCase(name);
+
+	CVar* a;
+	if (!FindCVar(name, a))
+		cvars.push_back(new CVar(name.c_str(), callback, help_txt));
+}
+
+// Add text to console. 
+// txt: text console should add.
+// type: input (check commands and cvars) or output (console return message).
+void j1Console::AddText(const char * txt, ConsoleTextType type)
+{
+	if (txt[0] != '\0' && ready) {
+		switch (type)
+		{
+		case Output: 
+		{
+			std::string text(txt);
+			std::list<std::string> tokens;
+			Tokenize(text, '\n', tokens);
+
+			for (std::list<std::string>::iterator token = tokens.begin(); token != tokens.end(); token++) 
+			{
+				if ((*token).length() > 1) 
+				{
+					Log((*token).c_str(), OUTPUT_TEXT_COLOR);
+				}
+			}
+			tokens.clear();
+		}
+			break;
+		case Input:
+		{
+			bool command_found = false;
+			bool command_valid = false;
+			Command* command = nullptr;
+
+			bool cvar_found = false;
+			bool cvar_valid = false;
+			CVar* cvar = nullptr;
+
+			std::string text(txt);
+			std::list<std::string> tokens;
+			Tokenize(text, ' ', tokens);
+
+			ToLowerCase(tokens.front());
+
+			command_found = FindCommand(tokens.front(), command);
+
+			if (command_found) 
+				command_valid = CheckCommandArguments(tokens.size() - 1, command);
+			else
+			{
+				cvar_found = FindCVar(tokens.front(), cvar);
+				if (cvar_found) cvar_valid = CheckCVarArguments(tokens.size() - 1, cvar);
+			}
+
+			if ((command_found && command_valid) || (cvar_found && cvar_valid)) {
+				Log(txt, INPUT_TEXT_COLOR);
+
+				if (command_found) 
+					command->GetCallback()->OnCommand(tokens);
+				else if (cvar_found) 
+					cvar->GetCallback()->OnCVar(tokens);
+				
+			}
+			else 
+			{
+				if (!command_found && !cvar_found) {
+					std::ostringstream oss;
+					oss << "Error: " << text << " don't exist.";
+					Log(std::string(oss.str()), ERROR_TEXT_COLOR);
+				}
+					
+				else if (!command_valid || !cvar_valid)
+				{
+					if (command_found)
+						Log("Error: Invalid command arguments.", ERROR_TEXT_COLOR);
+					else if (cvar_found) 
+						Log("Error: Invalid cvar arguments.", ERROR_TEXT_COLOR);
+				}
+			}	
+		}
+		break;
+		case Error:
+		{
+			std::string text(txt);
+			std::list<std::string> tokens;
+			Tokenize(text, '\n', tokens);
+
+			for (std::list<std::string>::iterator token = tokens.begin(); token != tokens.end(); token++) 
+			{
+				if ((*token).length() > 1) 
+					Log((*token), ERROR_TEXT_COLOR);
+			}
+			tokens.clear();
+		}
+		break;
+
+		default:
+			break;
+		}
+
+		// Delete labels when more than defined
+		if (labels.size() > MAX_LABELS)
+		{
+			scroll->DeleteScrollElement(scroll->elements.begin()->element);
+			labels.remove(labels.front());
+
+			// Change to STD when UI is done
+			for (list<scroll_element>::iterator it = scroll->elements.begin(); it != scroll->elements.end(); it++)
+			{
+				(*it).starting_pos_y -= 20;
+				(*it).element->rect.y -= 20;
+			}
+		}
+		currentLabel = labels.end();
+	}
+}
+
+void j1Console::ChangeCVarMaxArgs(const char* name, int args)
+{
+	for (std::list<CVar*>::iterator cvar = cvars.begin(); cvar != cvars.end(); cvar++) 
+	{
+		if ((*cvar)->cvar_str == name) 
+		{
+			(*cvar)->max_args = args;
+			break;
+		}
+	}
 }
 
 void j1Console::LoadLogs()
 {
-	for (int i = 0; i < App->logs.count(); i++)
-	{
-		Log(App->logs[i].GetString());
-	}
-
-	App->logs.clear();	
+	for(list<string>::iterator it = App->logs.begin(); it != App->logs.end(); it++)
+		AddText((*it).c_str());
+	
+	App->logs.clear();
 }
 
+void j1Console::FastCommands()
+{
+	if (text_input->active)
+	{
+		if (text_input->intern_text.size() > 0)
+		{
+			if (App->input->GetKey(SDL_SCANCODE_RETURN) == KEY_DOWN)
+			{
+				AddText(text_input->intern_text.c_str(), Input);
+				text_input->Clear();
+			}
+
+			// Get first command from list more similar to actual input text 
+			if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+			{
+				bool found = false;
+				for (std::list<Command*>::iterator command = commands.begin(); command != commands.end(); command++)
+				{
+					if ((*command)->command_str.find(text_input->intern_text.c_str()) != std::string::npos)
+					{
+						found = true;
+						text_input->SetTextInput((*command)->command_str.c_str());
+						break;
+					}
+				}
+				if (!found)
+				{
+					for (std::list<CVar*>::iterator cvar = cvars.begin(); cvar != cvars.end(); cvar++)
+					{
+						if ((*cvar)->cvar_str.find(text_input->intern_text.c_str()) != std::string::npos)
+						{
+							text_input->SetTextInput((*cvar)->cvar_str.c_str());
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Get last command from the commands used
+		if (App->input->GetKey(SDL_SCANCODE_UP) == KEY_DOWN)
+		{
+			if ((*currentLabel) == NULL)
+				currentLabel = labels.end();
+
+			// iterator backwards does not work, must change, code crash
+			for (std::list<UI_Text*>::iterator entry = currentLabel; entry != labels.begin(); entry--)
+			{
+				if ((*entry)->color.r == 255 && (*entry)->color.g == 255 && (*entry)->color.b == 255 && (*entry)->color.a == 255)
+				{
+					if (labels.size() == 1)
+					{
+						text_input->SetTextInput((*entry)->GetText());
+						currentLabel = entry;
+					}
+					else
+					{
+						if (currentLabel != entry)
+						{
+							text_input->SetTextInput((*entry)->GetText());
+							currentLabel = entry;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// Get first command from the commands used
+		if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN)
+		{
+			if ((*currentLabel) == NULL)
+				currentLabel = labels.begin();
+
+			for (std::list<UI_Text*>::iterator entry = currentLabel; entry != labels.end(); entry++)
+			{
+				if ((*entry)->color.r == 255 && (*entry)->color.g == 255 && (*entry)->color.b == 255 && (*entry)->color.a == 255)
+				{
+					if (labels.size() == 1)
+					{
+						text_input->SetTextInput((*entry)->GetText());
+						currentLabel = entry;
+					}
+					else
+					{
+						if (currentLabel != entry)
+						{
+							text_input->SetTextInput((*entry)->GetText());
+							currentLabel = entry;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+// Print to console
+void j1Console::Log(std::string text, SDL_Color color)
+{
+	UI_Text* new_label = new UI_Text();
+	new_label->Set(iPoint(PADDING * 2, labels.size() * 20), App->font->default_15, 15);
+	new_label->color = color;
+	new_label->SetText(text.c_str());
+	labels.push_back(new_label);
+	scroll->AddElement(new_label);
+	stay_bottom = true;
+}
+
+// Return true if command exist and fill pos with the index on the list.
+bool j1Console::FindCommand(std::string command, Command*& com) const
+{
+	bool ret = false;
+
+	int i = 0;
+	for (std::list<Command*>::const_iterator item = commands.begin(); item != commands.end(); item++)
+	{
+		if ((*item)->command_str == command) 
+		{
+			ret = true;
+			com = *item;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+// Check if the number of arguments inputed is correct for the command.
+bool j1Console::CheckCommandArguments(int num_args, Command* com) const
+{
+	std::list<Command*>::const_iterator it = find(commands.begin(), commands.end(), com);
+	return (num_args <= (*it)->max_args && num_args >= (*it)->min_args);
+}
+
+// Return true if cvar exist and fill pos with the index on the list.
+bool j1Console::FindCVar(std::string cvar, CVar*& var) const
+{
+	bool ret = false;
+
+	for (std::list<CVar*>::const_iterator item = cvars.begin(); item != cvars.end(); item++) 
+	{
+		if ((*item)->cvar_str == cvar) 
+		{
+			ret = true;
+			var = *item;
+			break;
+		}
+	}
+
+	return ret;
+}
+
+// Check if the number of arguments inputed is correct for the cvar.
+bool j1Console::CheckCVarArguments(int num_args, CVar* var) const
+{
+	std::list<CVar*>::const_iterator it = find(cvars.begin(), cvars.end(), var);
+	return (num_args <= (*it)->max_args && num_args >= (*it)->min_args);
+}
+
+// -------------------------------------------------
+//                  Command
+// -------------------------------------------------
+
+Command::Command(const char * txt, j1Module * callback, uint min_args, uint max_args, const char* help_txt) : command_str(txt), callback(callback), min_args(min_args), max_args(max_args), help(help_txt)
+{
+}
+
+Command::~Command()
+{
+}
+
+// Return callback module
+j1Module * Command::GetCallback() const
+{
+	return callback;
+}
+
+// -------------------------------------------------
+//                    CVar
+// -------------------------------------------------
+
+CVar::CVar(const char * txt, j1Module * callback, const char* help_txt) : cvar_str(txt), callback(callback), help(help_txt)
+{
+}
+
+CVar::~CVar()
+{
+}
+
+// Return callback module
+j1Module * CVar::GetCallback() const
+{
+	return callback;
+}

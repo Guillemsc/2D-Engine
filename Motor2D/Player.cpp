@@ -31,16 +31,16 @@ bool Player::LoadEntity()
 	player_go->SetListener((j1Module*)App->entity);
 	player_go->SetFixedRotation(true);
 
-	player_go->SetTexture(App->tex->LoadTexture("data/spritesheet.png"));
+	player_go->SetTexture(App->tex->LoadTexture("spritesheet.png"));
 
 	// Idle
-	p2List<SDL_Rect> idle_rects;
+	list<SDL_Rect> idle_rects;
 	LoadAnimationFromXML(idle_rects, "player.xml", "idle");
 	Animation* idle = new Animation("idle", idle_rects, 6.0f);
 	player_go->AddAnimation(idle);
 
 	// Idle-Walk
-	p2List<SDL_Rect> idlewalk_rects;
+	list<SDL_Rect> idlewalk_rects;
 	LoadAnimationFromXML(idlewalk_rects, "player.xml", "idle-walk");
 	Animation* idlewalk = new Animation("idle-walk", idlewalk_rects, 8.5f);
 	player_go->AddAnimation(idlewalk);
@@ -48,19 +48,19 @@ bool Player::LoadEntity()
 	player_go->animator->SetAnimationTransition("idle-walk", "walk", "idle");
 
 	// Walk
-	p2List<SDL_Rect> walk_rects;
+	list<SDL_Rect> walk_rects;
 	LoadAnimationFromXML(walk_rects, "player.xml", "walk");
 	Animation* walk = new Animation("walk", walk_rects, 7.0f);
 	player_go->AddAnimation(walk);
 
 	// Up
-	p2List<SDL_Rect> up_rects;
+	list<SDL_Rect> up_rects;
 	LoadAnimationFromXML(up_rects, "player.xml", "up");
 	Animation* up = new Animation("up", up_rects, 3.3f, false);
 	player_go->AddAnimation(up);
 
 	// Down
-	p2List<SDL_Rect> down_rects;
+	list<SDL_Rect> down_rects;
 	LoadAnimationFromXML(down_rects, "player.xml", "down");
 	Animation* down = new Animation("down", down_rects, 3.3f, false);
 	player_go->AddAnimation(down);

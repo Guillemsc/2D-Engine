@@ -27,8 +27,8 @@ public:
 	void Update(float dt, fPoint target_pos);
 
 private:
-	int GetLeftChunk();
-	int GetRightChunk();
+	fPoint GetLeftChunk();
+	fPoint GetRightChunk();
 
 private:
 	bool start = true;
@@ -36,7 +36,7 @@ private:
 	float speed = 0.0f;
 	int layer = 0;
 
-	p2List<fPoint> chunks;
+	list<fPoint> chunks;
 
 	fPoint target = NULLPOINT;
 	int distance = 0;

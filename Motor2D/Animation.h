@@ -22,13 +22,13 @@ struct anim_trans
 	anim_trans() {};
 	anim_trans(const char* _transition_name, const char* _a1, const char* _a2)
 	{
-		transition_name.create("%s", _transition_name);
-		a1.create("%s", _a1);
-		a2.create("%s", _a2);
+		transition_name =  _transition_name;
+		a1 = _a1;
+		a2 = _a2;
 	}
-	p2SString transition_name;
-	p2SString a1;
-	p2SString a2;
+	string transition_name;
+	string a1;
+	string a2;
 };
 
 class Animator
@@ -39,6 +39,9 @@ public:
 
 	// Add an animation
 	void AddAnimation(Animation* animation);
+
+	// Load Animations from XML
+	void LoadAnimationsFromXML(pugi::xml_node &node);
 
 	// Set a current animation
 	void SetAnimation(const char* name);
@@ -53,14 +56,14 @@ public:
 private:
 	Animation*           current_animation = nullptr;
 	Animation*			 next_animation = nullptr;
-	p2List<Animation*>   animations;
-	p2List<anim_trans>   anim_trans_list;
+	list<Animation*>     animations;
+	list<anim_trans>     anim_trans_list;
 };
 
 class Animation
 {
 public:
-	Animation(const char* name, p2List<SDL_Rect>& rects, float speed, bool loop = true);
+	Animation(const char* name, list<SDL_Rect>& rects, float speed, bool loop = true);
 	~Animation();
 
 	// Gets the animation frame adding speed
@@ -99,11 +102,11 @@ public:
 public:
 
 private:
-	p2SString			name;
+	string		    	name;
 	float			    speed = 0.0f;
 	bool			    loop = false;
 	int				    loops = 0;
-	p2List<SDL_Rect>    frames;
+	list<SDL_Rect>      frames;
 	float			    curr_frame = 0.0f;
 };
 

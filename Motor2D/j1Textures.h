@@ -2,10 +2,19 @@
 #define __j1TEXTURES_H__
 
 #include "j1Module.h"
-#include "p2List.h"
+#include <list>
 
 struct SDL_Texture;
 struct SDL_Surface;
+
+struct Texture 
+{
+	SDL_Texture* tex = nullptr;
+	string path;
+
+	Texture();
+	Texture(const char* path);
+};
 
 class j1Textures : public j1Module
 {
@@ -34,7 +43,7 @@ public:
 
 public:
 
-	p2List<SDL_Texture*>	textures;
+	std::list<Texture*>	textures;
 };
 
 

@@ -68,6 +68,9 @@ public:
 	// Adds an animation
 	void AddAnimation(Animation* animation);
 
+	// Loads all animations from an XML
+	void LoadAnimationsFromXML(pugi::xml_node & node);
+
 	// Sets an animation
 	void SetAnimation(const char* animation);
 

@@ -9,7 +9,7 @@
 
 j1Input::j1Input() : j1Module()
 {
-	name.create("input");
+	name = "input";
 
 	keyboard = new j1KeyState[MAX_KEYS];
 	memset(keyboard, KEY_IDLE, sizeof(j1KeyState) * MAX_KEYS);
@@ -87,7 +87,7 @@ bool j1Input::PreUpdate()
 
 	// GUI -------------------------
 	SDL_StartTextInput();
-	input_text.Clear();
+	input_text.clear();
 	// -----------------------------
 
 	while(SDL_PollEvent(&event) != 0)
@@ -142,7 +142,7 @@ bool j1Input::PreUpdate()
 			// GUI -------------------
 			case SDL_TEXTINPUT:
 			{
-				input_text.create("%s", event.text.text);
+				input_text.insert(input_text.size(), event.text.text);
 			}
 			break;
 

@@ -37,7 +37,32 @@ bool TextCmp(const char * text1, const char * text2)
 	return ret;
 }
 
-void LoadAnimationFromXML(p2List<SDL_Rect>& rects, const char * file, const char* animation_name)
+void Tokenize(std::string string, const char separator, std::list<std::string>& tokens)
+{
+	uint i = 0;
+	const char* str = string.c_str();
+	while (*(str + i) != 0) 
+	{
+		std::string temporal;
+		while (*(str + i) != separator && *(str + i) && *(str + i) != '\n') 
+		{
+			temporal.push_back(*(str + i));
+			i++;
+		}
+		tokens.push_back(temporal);
+		if (*(str + i)) i++;
+	}
+}
+
+void ToLowerCase(std::string str)
+{
+	for (uint i = 0; i < str.size() - 1; i++) {
+		str[i] = tolower(str[i]);
+	}
+}
+
+// Deprecated
+void LoadAnimationFromXML(list<SDL_Rect>& rects, const char * file, const char* animation_name)
 {
 	pugi::xml_document doc;
 	pugi::xml_node node;
@@ -53,6 +78,6 @@ void LoadAnimationFromXML(p2List<SDL_Rect>& rects, const char * file, const char
 		rect.y = curr.attribute("y").as_int();
 		rect.w = curr.attribute("w").as_int();
 		rect.h = curr.attribute("h").as_int();
-		rects.add(rect);
+		rects.push_back(rect);
 	}
 }

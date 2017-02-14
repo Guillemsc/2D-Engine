@@ -51,7 +51,7 @@ private:
 
 private:
 	// List with all entities
-	p2List<Entity*> entity_list;
+	list<Entity*> entity_list;
 
 };
 

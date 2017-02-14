@@ -2,12 +2,13 @@
 #include "Functions.h"
 #include "p2Log.h"
 
-Animation::Animation(const char* _name, p2List<SDL_Rect>& rects, float speed, bool loop) : speed(speed), loop(loop)
+Animation::Animation(const char* _name, list<SDL_Rect>& rects, float speed, bool loop) : speed(speed), loop(loop)
 {
-	for (p2List_item<SDL_Rect>* rect = rects.start; rect != nullptr; rect = rect->next)
-		frames.add(rect->data);
 
-	name.create("%s", _name);
+	for (list<SDL_Rect>::iterator it = rects.begin(); it != rects.end(); it++)
+		frames.push_back(*it);
+
+	name = _name;
 }
 
 Animation::~Animation()
@@ -18,21 +19,42 @@ SDL_Rect& Animation::GetAnimationFrame(float dt)
 {
 	curr_frame += (speed * dt);
 
-	if (curr_frame >= frames.count())
+	if (curr_frame >= frames.size())
 	{
 		if (!loop)
-			curr_frame = frames.count() - 1;
+			curr_frame = frames.size() - 1;
 		else
 			curr_frame = 0.0f;
 
 		loops++;
 	}
-	return frames[(int)floor(curr_frame)];
+
+	int counter = 0;
+	for (list<SDL_Rect>::iterator it = frames.begin(); it != frames.end(); it++, counter++)
+	{
+		if (counter == (int)(curr_frame))
+		{
+			return (*it);
+		}
+	}
+
+	SDL_Rect ret = NULLRECT;
+	return ret;
 }
 
 SDL_Rect& Animation::GetActualFrame()
 {
-	return frames[(int)curr_frame];
+	int counter = 0;
+	for (list<SDL_Rect>::iterator it = frames.begin(); it != frames.end(); it++, counter++)
+	{
+		if (counter == (int)curr_frame)
+		{
+			return (*it);
+		}
+	}
+
+	SDL_Rect ret = NULLRECT;
+	return ret;
 }
 
 float Animation::GetFrameIndex() const
@@ -42,7 +64,17 @@ float Animation::GetFrameIndex() const
 
 SDL_Rect & Animation::GetFrame(int frame)
 {
-	return frames[frame];
+	int counter = 0;
+	for (list<SDL_Rect>::iterator it = frames.begin(); it != frames.end(); it++, counter++)
+	{
+		if (counter == frame)
+		{
+			return (*it);
+		}
+	}
+
+	SDL_Rect ret = NULLRECT;
+	return ret;
 }
 
 void Animation::SetCurrFrame(int frame)
@@ -78,25 +110,45 @@ void Animation::Reset()
 
 const char* Animation::GetName()
 {
-	if (name.Length() > 0)
-		return name.GetString();
+	if (name.size() > 0)
+		return name.c_str();
 	else
 		return "";
 }
 
 Animator::Animator()
 {
-	for (p2List_item<Animation*>* current = animations.start; current != nullptr; current = current->next)
-		delete current->data;
 }
 
 Animator::~Animator()
 {
+	for (list<Animation*>::iterator it = animations.begin(); it != animations.end(); it++)
+		delete (*it);
 }
 
 void Animator::AddAnimation(Animation* animation)
 {
-	animations.add(animation);
+	animations.push_back(animation);
+}
+
+void Animator::LoadAnimationsFromXML(pugi::xml_node & node)
+{
+	for (pugi::xml_node anim = node.child("anim"); anim != NULL; anim = anim.next_sibling("anim")) 
+	{
+	    list<SDL_Rect> anim_rects;
+		float speed = anim.attribute("speed").as_float(1.0f);
+		string name = anim.attribute("name").as_string("null");
+		bool loop = anim.attribute("loop").as_bool(true);
+
+		for (pugi::xml_node frame = anim.child("frame"); frame != NULL; frame = frame.next_sibling("frame")) 
+		{
+			SDL_Rect new_frame = { frame.attribute("x").as_int(0),frame.attribute("y").as_int(0),frame.attribute("w").as_int(0),frame.attribute("h").as_int(0) };
+			anim_rects.push_back(new_frame);
+		}
+
+		Animation* animation = new Animation(name.c_str(), anim_rects, speed, loop);
+		AddAnimation(animation);
+	}
 }
 
 void Animator::SetAnimation(const char* name)
@@ -104,11 +156,11 @@ void Animator::SetAnimation(const char* name)
 	if (next_animation != nullptr && TextCmp(next_animation->GetName(), name))
 		return;
 
-	for (p2List_item<Animation*>* current = animations.start; current!= nullptr; current = current->next)
+	for (list<Animation*>::iterator it = animations.begin(); it != animations.end(); it++)
 	{
-		if (TextCmp(name, current->data->GetName()))
+		if (TextCmp(name, (*it)->GetName()))
 		{
-			next_animation = current->data;
+			next_animation = (*it);
 			break;
 		}
 	}
@@ -117,18 +169,18 @@ void Animator::SetAnimation(const char* name)
 void Animator::SetAnimationTransition(const char * transition_name, const char * a1, const char * a2)
 {
 	anim_trans at(transition_name, a1, a2);
-	anim_trans_list.add(at);
+	anim_trans_list.push_back(at);
 }
 
 Animation* Animator::GetAnimation(const char * name)
 {
 	Animation* ret = nullptr;
 
-	for (p2List_item<Animation*>* current = animations.start; current != nullptr; current = current->next)
+	for (list<Animation*>::iterator it = animations.begin(); it != animations.end(); it++)
 	{
-		if (TextCmp(name, current->data->GetName()))
+		if (TextCmp(name, (*it)->GetName()))
 		{
-			ret = current->data;
+			ret = (*it);
 			break;
 		}
 	}
@@ -138,18 +190,18 @@ Animation* Animator::GetAnimation(const char * name)
 
 Animation* Animator::GetCurrentAnimation()
 {
-	for (p2List_item<anim_trans>* trans = anim_trans_list.start; trans != nullptr; trans = trans->next)
+	for (list<anim_trans>::iterator it = anim_trans_list.begin(); it != anim_trans_list.end(); it++)
 	{
-		if (TextCmp(next_animation->GetName(), trans->data.a2.GetString()) && TextCmp(current_animation->GetName(), trans->data.a1.GetString()))
+		if (TextCmp(next_animation->GetName(), (*it).a2.c_str()) && TextCmp(current_animation->GetName(), (*it).a1.c_str()))
 		{
-			if (!GetAnimation(trans->data.transition_name.GetString())->Finished())
-				return GetAnimation(trans->data.transition_name.GetString());
+			if (!GetAnimation((*it).transition_name.c_str())->Finished())
+				return GetAnimation((*it).transition_name.c_str());
 			else
-				GetAnimation(trans->data.transition_name.GetString())->Reset();
+				GetAnimation((*it).transition_name.c_str())->Reset();
 		}
 	}
 
-	if(current_animation != next_animation || current_animation == nullptr || anim_trans_list.count() == 0)
+	if(current_animation != next_animation || current_animation == nullptr || anim_trans_list.size() == 0)
 		current_animation = next_animation;
 
 	return current_animation;

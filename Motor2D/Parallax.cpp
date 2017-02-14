@@ -23,12 +23,12 @@ void Parallax::Update(float dt, fPoint target_pos)
 	// Start
 	if (start)
 	{
-		chunks.add({ target.x, target.y });
+		chunks.push_back({ target.x, target.y });
 
 		float to_print = target.x + rect.w;
 		for (int i = 0; i < chunk_number / 2; i++)
 		{
-			chunks.add({ to_print, target.y });
+			chunks.push_back({ to_print, target.y });
 			to_print += rect.w;
 		}
 
@@ -36,7 +36,7 @@ void Parallax::Update(float dt, fPoint target_pos)
 
 		for (int i = 0; i < chunk_number / 2; i++)
 		{
-			chunks.add({ to_print, target.y });
+			chunks.push_back({ to_print, target.y });
 			to_print -= rect.w;
 		}
 
@@ -49,69 +49,68 @@ void Parallax::Update(float dt, fPoint target_pos)
 	// Move
 	if (target_pos.x != target.x)
 	{
-		for (p2List_item<fPoint>* current = chunks.start; current != nullptr; current = current->next)
+		for(list<fPoint>::iterator it = chunks.begin(); it != chunks.end(); it++)
 		{
 			if (target_pos.x - target.x > 0)
-				current->data.x += ((target_pos.x - target.x + speed) * dt);
+				(*it).x += ((target_pos.x - target.x + speed) * dt);
 			else
-				current->data.x += ((target_pos.x - target.x - speed) * dt);
+				(*it).x += ((target_pos.x - target.x - speed) * dt);
 		}
 	}
 
 	// Create or delte
-	for (int i = 0; i < chunks.count();)
+	for (list<fPoint>::iterator it = chunks.begin(); it != chunks.end(); it++)
 	{
 		// Delete left
-		if (chunks[i].x + rect.w < target_pos.x - (distance*0.5f))
+		if ((*it).x + rect.w < target_pos.x - (distance*0.5f))
 		{
-			chunks.add({ chunks[GetRightChunk()].x + rect.w, chunks[i].y });
-			chunks.del(chunks.At(i));
+			chunks.push_back({ GetRightChunk().x + rect.w, (*it).y });
+			chunks.remove((*it));
 		}
 
 		// Delete right
-		if (chunks[i].x + rect.w > target_pos.x + (distance*0.5f))
+		if ((*it).x + rect.w > target_pos.x + (distance*0.5f))
 		{
-			chunks.add({ chunks[GetLeftChunk()].x - rect.w, chunks[i].y });
-			chunks.del(chunks.At(i));
+			chunks.push_back({ GetLeftChunk().x - rect.w, (*it).y });
+			chunks.remove((*it));
 		}
-		i++;
 	}
 
 	// Print 
-	for (p2List_item<fPoint>* current = chunks.start; current != nullptr; current = current->next)
-		App->scene->LayerBlit(layer, texture, { (int)floor(current->data.x), (int)floor(current->data.y) }, rect);
+	for (list<fPoint>::iterator it = chunks.begin(); it != chunks.end(); it++)
+		App->scene->LayerBlit(layer, texture, { (int)floor((*it).x), (int)floor((*it).y) }, rect);
 
 	target = target_pos;
 }
 
-int Parallax::GetLeftChunk()
+fPoint Parallax::GetLeftChunk()
 {
-	int ret = 0;
-	float smallest = chunks.start->data.x;
+	fPoint ret;
+	float smallest = chunks.front().x;
 
-	for (int i = 0; i < chunks.count(); i++)
+	for (list<fPoint>::iterator it = chunks.begin(); it != chunks.end(); it++)
 	{
-		if (chunks[i].x < smallest)
+		if ((*it).x < smallest)
 		{
-			smallest = chunks[i].x;
-			ret = i;
+			smallest = (*it).x;
+			ret = (*it);
 		}
 	}
 
 	return ret;
 }
 
-int Parallax::GetRightChunk()
+fPoint Parallax::GetRightChunk()
 {
-	int ret = 0;
-	float highest = chunks.start->data.x;
+	fPoint ret;
+	float highest = chunks.front().x;
 
-	for (int i = 0; i < chunks.count(); i++)
+	for (list<fPoint>::iterator it = chunks.begin(); it != chunks.end(); it++)
 	{
-		if (chunks[i].x > highest)
+		if ((*it).x > highest)
 		{
-			highest = chunks[i].x;
-			ret = i;
+			highest = (*it).x;
+			ret = (*it);
 		}
 	}
 

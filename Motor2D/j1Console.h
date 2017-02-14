@@ -1,92 +1,135 @@
-#ifndef __j1CONSOLE_H__
-#define __j1CONSOLE_H__
+#ifndef _J1CONSOLE_
+#define _J1CONSOLE_
 
 #include "j1Module.h"
-#include "p2Point.h"
-#include "p2List.h"
-#include "j1Fonts.h"
+#include <string>
+#include <list>
 
 class UI_Window;
 class UI_Text;
 class UI_ColoredRect;
 class UI_Scroll_Bar;
 class UI_Text_Input;
-class j1Console : public j1Module
+
+class SDL_Color;
+
+enum ConsoleTextType
+{
+	Output, Input, Error
+};
+
+class Command 
+{
+public:
+	std::string command_str;
+	std::string help;
+	uint min_args = 0;
+	uint max_args = 0;
+private:
+	j1Module* callback = nullptr;
+
+public:
+	Command(const char* txt, j1Module* callback, uint min_args, uint max_args, const char* help_txt);
+	~Command();
+
+	j1Module* GetCallback() const;
+};
+
+class CVar 
+{
+public:
+	std::string cvar_str;
+	std::string help;
+	uint min_args = 0;
+	uint max_args = 1;
+private:
+	j1Module* callback = nullptr;
+
+public:
+	CVar(const char* txt, j1Module* callback, const char* help_txt);
+	~CVar();
+
+	j1Module* GetCallback() const;
+};
+
+class j1Console :public j1Module 
 {
 public:
 	j1Console();
+	~j1Console();
 
-	// Destructor
-	virtual ~j1Console();
+	// Called when before render is available
+	bool Awake(pugi::xml_node& config);
 
-	// Called before render is available
-	bool Awake(pugi::xml_node& node);
-
+	// Call before first frame
 	bool Start();
 
+	// Called before all Updates
 	bool PreUpdate();
+
+	// Update Elements
 	bool Update(float dt);
-	
-	bool Load(pugi::xml_node& node);
-	bool Save(pugi::xml_node& node) const;
+
+	// Called after all Updates
+	bool PostUpdate();
 
 	// Called before quitting
 	bool CleanUp();
 
-	// Logs to console
-	void Log(p2SString string, uint r = 245, uint g = 245, uint b = 245);
+	bool Save(pugi::xml_node& node) const;
 
-	// Console logic
-	void ConsoleLogic();
+	void OnCommand(std::list<std::string>& tokens);
 
-	// Interpretate text
-	void Tokenize(p2SString string);
+	void OnCVar(std::list<std::string>& tokens);
 
-	// Separates text into strings and numbers and puts all into lower case
-	void SeparateTextAndNumbers(p2SString text, p2List<p2SString> &strings, p2List<float> &ints);
+	void AddCommand(const char* command, j1Module* callback, uint min_args, uint max_args, const char* help_txt);
 
-	// Check commands
-	void Commands(p2SString text, p2List<p2SString> &strings, p2List<float> &ints);
+	void AddCVar(const char* cvar, j1Module* callback, const char* help_txt);
 
-	// Cleans console text
-	void ClearConsole();
+	void AddText(const char* txt, ConsoleTextType type = ConsoleTextType::Output);
+
+	void ChangeCVarMaxArgs(const char* name, int args);
 
 	// Loads logs and adds them to the console
 	void LoadLogs();
 
-private:
-	int last_text_pos = 1;
-
 public:
-	SDL_Color console_color;
-	UI_Scroll_Bar* scroll = nullptr;
+	bool                 ready = false;
 
 private:
-	UI_Window* window = nullptr;
-	p2List<UI_Text*> console_text;
+	std::list<Command*>  commands;
+	std::list<CVar*>     cvars;
 
-	UI_ColoredRect* colored_rect1 = nullptr;
-	UI_ColoredRect* colored_rect_top = nullptr;
-	UI_ColoredRect* colored_rect_left = nullptr;
-	UI_ColoredRect* colored_rect_right = nullptr;
-	UI_ColoredRect* colored_rect_bottom = nullptr;
-	UI_ColoredRect*	colored_rect_text_input = nullptr;
-	UI_ColoredRect*	colored_rect_text_input2 = nullptr;
-	UI_Text* top_text = nullptr;
+	std::list<UI_Text*>  labels;
 
-	UI_ColoredRect* bottom_scroll_v = nullptr;
-	UI_ColoredRect* top_scroll_v = nullptr;
+	uint                 win_w = 0, win_h = 0;
 
-	UI_ColoredRect* bottom_scroll_h = nullptr;
-	UI_ColoredRect* top_scroll_h = nullptr;
+	UI_Window*           window = nullptr;
+	UI_ColoredRect*      console_background = nullptr;
+	UI_ColoredRect*      console_background2 = nullptr;
+	UI_Scroll_Bar*       scroll = nullptr;
+	UI_ColoredRect*      input_background = nullptr;
+	UI_Text_Input*       text_input = nullptr;
+	UI_Text*             input_mark = nullptr;
+	UI_ColoredRect*      button_h_background = nullptr;
+	UI_ColoredRect*      button_v_background = nullptr;
+	
 
-	UI_Text_Input* text_input = nullptr;
+	std::list<UI_Text*>::iterator currentLabel;
+
+private:
+	void FastCommands();
+	void Log(std::string text, SDL_Color color);
+
+	bool FindCommand(std::string command, Command*& com) const;
+	bool CheckCommandArguments(int num_args, Command* com) const;
+
+	bool FindCVar(std::string cvar, CVar*& var) const;
+	bool CheckCVarArguments(int num_args, CVar* var) const;
 
 	bool stay_bottom = true;
 
-	SDL_Color error = { 255, 67, 67, 255 };
-	SDL_Color succes = { 0, 178, 255, 255 };
-
 };
 
-#endif // __j1CONSOLE_H__
+
+#endif // !_J1CONSOLE_

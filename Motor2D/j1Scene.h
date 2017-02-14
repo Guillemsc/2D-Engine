@@ -83,7 +83,7 @@ private:
 	p2PQueue<layer_blit> layer_list;
 
 	// Scenes list
-	p2List<Scene*>       scenes;
+	list<Scene*>         scenes;
 
 	// Current scene
 	Scene*               current_scene = nullptr;

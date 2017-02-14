@@ -50,7 +50,7 @@ public:
 
 public:
 
-	SDL_Renderer*	renderer;
+	SDL_Renderer*	renderer = nullptr;
 	SDL_Rect		camera = NULLRECT;
 	SDL_Rect		viewport = NULLRECT;
 	SDL_Color		background = NULLCOLOR;

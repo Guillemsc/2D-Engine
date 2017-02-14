@@ -4,28 +4,30 @@
 #include "j1Module.h"
 #include "j1Fonts.h"
 #include "p2PQueue.h"
+#include "j1Render.h"
+
+// -----------------------------------------
+// -----------------------------------------
+
+                 // UI :D //
+
+// -----------------------------------------
+// -----------------------------------------
 
 #define CURSOR_WIDTH 2
 
 enum ui_element
 {
-	ui_text_input,
+	ui_window,
 	ui_button,
 	ui_text,
+	ui_text_input,
 	ui_image,
-	ui_window,
 	ui_scroll_bar,
 	ui_colored_rect,
 	ui_element_null
 };
 
-// -----------------------------------------
-// -----------------------------------------
-
-		        // UI :D //
-
-// -----------------------------------------
-// -----------------------------------------
 
 // Class Gui -------------------------
 // -----------------------------------
@@ -34,7 +36,6 @@ struct TTF_Font;
 class UI_Element;
 class UI_Window;
 class UI_Text;
-class UI_WindowManager;
 
 class j1Gui : public j1Module
 {
@@ -67,13 +68,9 @@ public:
 
 	UI_Element* UI_CreateWin(iPoint pos, int w, int h, bool dinamic = false, bool is_ui = true);
 
-	void UI_CreateWinManager(iPoint pos, int w, int h, bool dinamic = false);
-
-	void Tab();
-
-	void GetChilds(UI_Element * element, p2List<UI_Element*>& visited);
-	void GetParentElements(UI_Element * element, p2List<UI_Element*>& visited);
-	void GetAlwaysTopElements(p2List<UI_Element*>& always_top);
+	void GetChilds(UI_Element * element, list<UI_Element*>& visited);
+	void GetParentElements(UI_Element * element, list<UI_Element*>& visited);
+	void GetAlwaysTopElements(list<UI_Element*>& always_top);
 	void ReorderElements();
 	bool Move_Elements();
 	UI_Element* CheckClickMove(int x, int y);
@@ -84,7 +81,7 @@ private:
 public:
 	// Atlas --
 	SDL_Texture*		   atlas = nullptr;
-	p2SString			   atlas_file_name;
+	string			       atlas_file_name;
 	// --------
 
 	// All elements
@@ -92,13 +89,10 @@ public:
 	double				   higher_layer = 0;
 
 	// Elements that can tab
-	p2List<UI_Element*>    tab_list;
+	list<UI_Element*>      tab_list;
 
 	// All windows
-	p2List<UI_Window*>     windows;
-
-	// Window Manager
-	UI_WindowManager*	   window_manager = nullptr;
+	list<UI_Window*>       windows;
 
 	// Debug when F1
 	bool				   debug = false;
@@ -130,6 +124,8 @@ public:
 	~UI_Element();
 
 	virtual bool update();
+
+	virtual bool cleanup();
 
 	// Enable function
 	void SetEnabled(bool set);
@@ -167,11 +163,12 @@ public:
 
 	// Layers --
 	double				layer = 0;
-	p2List<UI_Element*> childs;
+	list<UI_Element*>   childs;
 	UI_Window*			parent = nullptr;
 	UI_Element*			parent_element = nullptr;
 	// ----------
 
+	// Intern mouse control
 	int					mouse_x = 0;
 	int					mouse_y = 0;
 
@@ -223,11 +220,11 @@ struct rect_text
 	rect_text() {};
 	rect_text(char* _name, SDL_Rect _rect) 
 	{
-		name.create("%s", _name);
+		name = _name;
 		rect = { _rect.x, _rect.y, _rect.w, _rect.h };
 	}
 	SDL_Rect rect = NULLRECT;
-	p2SString name;
+	string name;
 };
 
 class UI_Button : public UI_Element
@@ -257,7 +254,7 @@ private:
 public:
 
 private:
-	p2List<rect_text> rect_list;
+	list<rect_text>   rect_list;
 	SDL_Rect		  curr = NULLRECT;
 
 	bool			  to_enter = false;
@@ -279,9 +276,9 @@ private:
 struct tex_str
 {
 	tex_str() {};
-	tex_str(p2SString _text, SDL_Texture* _texture){text = _text, texture = _texture;}
+	tex_str(string _text, SDL_Texture* _texture){text = _text, texture = _texture;}
 	SDL_Texture* texture = nullptr;
-	p2SString text;
+	string text;
 };
 
 class UI_Text : public UI_Element
@@ -291,12 +288,14 @@ public:
 	~UI_Text();
 
 	bool update();
+	bool cleanup();
 
 	void Set(iPoint pos, _TTF_Font* font, int spacing,  uint r = 255, uint g = 255, uint b = 255);
-	void SetText(p2SString text);
+	void SetText(string text);
+	const char* GetText();
 
 public:
-	p2List<tex_str>        tex_str_list;  
+	list<tex_str>          tex_str_list;  
 	SDL_Color	           color = NULLCOLOR;
 	_TTF_Font*	           font = nullptr;
 	int                    spacing = 0;
@@ -337,12 +336,13 @@ public:
 	~UI_Text_Input();
 
 	bool update();
+	bool cleanup();
 
 	void Set(iPoint pos, int w, _TTF_Font* font, uint r, uint g, uint b);
 
-	char* Enter();
-
 	void Clear();
+
+	void SetTextInput(string text);
 
 private:
 	void SetIsActive();
@@ -352,38 +352,55 @@ private:
 	bool TakeInput();
 	bool Delete();
 	void MoveCursor();
-	void UpdateWordsLenght(p2SString l_text);
+	void UpdateWordsLenght(string l_text);
 	void DrawBar();
 	void SetPasword();
+	void SetCursorToEnd();
 
 public:
-	p2SString	 intern_text;
+	string	     intern_text;
 	bool		 pasword = false;
 	UI_Text*	 text = nullptr;
 
 	bool		 active = false;
 
 private:
+	// Bar control
 	SDL_Rect	 bar = NULLRECT;
 	uint		 bar_pos = 0;
 	uint		 bar_x = 0;
 
+	list<int>	 words_lenght;
+
 	SDL_Rect     camera_before = NULLRECT;
 
-	p2List<int>	 words_lenght;
+	// Change text manually
+	string       text_change;
+	bool         change = false;
 };
 
-// -----------------------------
+// ------------------------
 // ------------------------ Text Input
 
 // -----------------------------------
 // Scroll Bar ------------------------
 
-struct scroll_element
+class scroll_element
 {
-	UI_Element* element;
-	int starting_pos_x = 0;
-	int starting_pos_y = 0;
+public:
+	scroll_element() {};
+	~scroll_element() {};
+
+	bool operator == (scroll_element sc)
+	{
+		if (sc.element == element && sc.starting_pos_x == starting_pos_x && sc.starting_pos_y == starting_pos_y)
+			return true; 
+		return false;
+	}
+
+	UI_Element*  element = nullptr;
+	int          starting_pos_x = 0;
+	int          starting_pos_y = 0;
 };
 
 class UI_Scroll_Bar : public UI_Element
@@ -395,8 +412,10 @@ public:
 	void Set(iPoint pos, int w, int h, int button_size = 11);
 
 	bool update();
+	bool cleanup();
 
 	void AddElement(UI_Element* element);
+	void DeleteScrollElement(UI_Element* element);
 
 	void ClearElements();
 
@@ -408,76 +427,40 @@ private:
 
 public:
 	// Vertical
-	UI_Button* button_v = nullptr;
-	int        min_bar_v = 0;
-	int        max_bar_v = 0;
+	UI_Button*           button_v = nullptr;
+	int                  min_bar_v = 0;
+	int                  max_bar_v = 0;
 
 	// Horizontal
-	UI_Button* button_h = nullptr;
-	int        min_bar_h = 0;
-	int        max_bar_h = 0;
+	UI_Button*           button_h = nullptr;
+	int                  min_bar_h = 0;
+	int                  max_bar_h = 0;
 
-	SDL_Rect   moving_rect = NULLRECT;
+	SDL_Rect             moving_rect = NULLRECT;
+
+	list<scroll_element> elements;
+
+	int                  starting_h = 0;
+	int                  button_starting_h = 0;
+
+	int                  starting_v = 0;
+	int                  button_starting_v = 0;
 
 private:
-	p2List<scroll_element> elements;
-
 	// Movement
-	int mouse_x = 0;
-	int mouse_y = 0;
-	bool is_scrolling_v = false;
-	bool is_scrolling_h = false;
-	int scroll_v = 0;
-	int scroll_h = 0;
-
-	int starting_h = 0;
-	int button_starting_h = 0;
-
-	int starting_v = 0;
-	int button_starting_v = 0;
+	int                 mouse_x = 0;
+	int                 mouse_y = 0;
+	bool                is_scrolling_v = false;
+	bool                is_scrolling_h = false;
+	int                 scroll_v = 0;
+	int                 scroll_h = 0;
 };
 
 // ------------------------
 // ------------------------ Scroll Bar
 
-struct WindowManagerObject
-{
-	WindowManagerObject() {};
-	WindowManagerObject(SDL_Rect _rect, UI_Window* _window)
-	{
-		button = new UI_Button();
-		button->Set(iPoint(_rect.x, _rect.y), _rect.w, _rect.h);
-		window = _window;
-	};
-
-	~WindowManagerObject() {};
-
-	UI_Button* button = nullptr;
-	UI_Window* window = nullptr;
-};
-
-class UI_WindowManager : public UI_Element
-{
-public:
-	UI_WindowManager();
-	~UI_WindowManager();
-
-	void Set(iPoint pos, int w, int h);
-
-	bool update();
-
-private:
-	void SetObjects();
-	void UpdateWindowObjects();
-	void MinimizeOrMaximise();
-
-	p2List<WindowManagerObject> windows_rects;
-
-private:
-	int  max_w = 0;
-	bool one_time = false;
-
-};
+// -----------------------------------
+// Colored Rect ----------------------
 
 class UI_ColoredRect : public UI_Element
 {
@@ -495,7 +478,10 @@ public:
 	
 private:
 	SDL_Color color = NULLCOLOR;
-	bool filled = true;
+	bool      filled = true;
 };
 
-#endif // __j1GUI_H__
+// ----------------------
+// ---------------------- Colored Rect
+
+#endif // !_j1GUI_H__
